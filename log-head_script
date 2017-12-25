@@ -22,7 +22,9 @@ os-log_script() {
 }
 
 os-head_script() {
+
 	scriptname=$(basename "$0")                                             # The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"                                      # The current timestamp
 	echo && echo "Starting $scriptname script on $now..." && echo           # Write heading to logfile
+
 }
