@@ -1,6 +1,6 @@
 #!/bin/bash
 
-define_formatting() {
+os-define_formatting() {
 
 	r=$(tput setaf 1)
 	g=$(tput setaf 2)

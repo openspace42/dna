@@ -1,6 +1,6 @@
 #!/bin/bash
 
-log_script() {
+os-log_script() {
 
 	# All in One Bash Logger | v0.52 | 20171018 | 20171225 | Nk
 
