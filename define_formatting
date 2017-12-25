@@ -1,0 +1,12 @@
+#!/bin/bash
+
+define_formatting() {
+
+	r=$(tput setaf 1)
+	g=$(tput setaf 2)
+	l=$(tput setaf 4)
+	m=$(tput setaf 5)
+	x=$(tput sgr0)
+	b=$(tput bold)
+
+}
