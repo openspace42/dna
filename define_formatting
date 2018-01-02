@@ -2,11 +2,13 @@
 
 os-define_formatting() {
 
-	r=$(tput setaf 1)
-	g=$(tput setaf 2)
-	l=$(tput setaf 4)
-	m=$(tput setaf 5)
-	x=$(tput sgr0)
-	b=$(tput bold)
+	r=$'\e[1;31m'
+	g=$'\e[1;32m'
+	l=$'\e[1;34m'
+	m=$'\e[1;35m'
+	y=$'\e[1;33m'
+	c=$'\e[1;36m'
+	x=$'\e[0m'
+	b=$'\033[1m'
 
 }
