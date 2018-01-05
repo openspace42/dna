@@ -5,28 +5,22 @@ os-setup_backup_restore() {
 	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
 	echo
 
-	os-set_duplicity_min_backups() {
+	describe_setting() {
 
-		describe_setting() {
+		echo "${b}Please set how many backups should be kept locally at the very minimum.${x}"
+		echo
 
-			echo "${b}Please set how many backups should be kept locally at the very minimum.${x}"
-			echo
-
-		}
-
-		os-set_option -o min_local_backups -v n -d y
 	}
 
-	os-set_duplicity_min_backups() {
+	os-set_option -o min_local_backups -v n -d y
 
-		describe_setting() {
+	describe_setting() {
 
-			echo "${b}Please set the manimum number of backups that should be kept locally.${x}"
-			echo
+		echo "${b}Please set the manimum number of backups that should be kept locally.${x}"
+		echo
 
-		}
-
-		os-set_option -o max_local_backups -v n -d y
 	}
+
+	os-set_option -o max_local_backups -v n -d y
 
 }
