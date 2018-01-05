@@ -12,7 +12,7 @@ os-set_option() {
 				;;
 			d)	describe="$OPTARG"
 				;;
-			\?)	echo "${r}${b}Invalid option -$OPTARG${x}"
+			\?)	echo "${r}${b}Invalid option -$OPTARG for function | ${FUNCNAME[0]} |.${x}"
 				echo
 				os-exit_function
 				;;
@@ -21,7 +21,7 @@ os-set_option() {
 
 	if [ -z "${option-}" ]
 	then
-		echo "${r}${b}Argument | option [-o] | must be supplied for function ${FUNCNAME[0]}.${x}"
+		echo "${r}${b}Argument | option [-o] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
 		echo
 		os-exit_function
 	fi
@@ -33,7 +33,7 @@ os-set_option() {
 				;;
 			n)	validate_input=n
 				;;
-			*)	echo "${r}${b}Invalid content for validate argument{x}"
+			*)	echo "${r}${b}Invalid content for validate argument in function | ${FUNCNAME[0]} |.${x}"
 				echo
 				os-exit_function
 				;;
@@ -47,7 +47,7 @@ os-set_option() {
 				;;
 			n)	describe_setting=n
 				;;
-			*)	echo "${r}${b}Invalid content for describe argument{x}"
+			*)	echo "${r}${b}Invalid content for describe argument in function | ${FUNCNAME[0]} |.${x}"
 				echo
 				os-exit_function
 				;;
@@ -116,7 +116,9 @@ os-set_option() {
 					if [ "${describe_setting-}" = "y" ]
 					then
 						### describe_setting must be defined immediately prior to calling this function.
+
 						describe_setting
+
 						echo
 					fi
 					read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
