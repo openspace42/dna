@@ -21,7 +21,7 @@ os-set_option() {
 
 	if [ -z "${option-}" ]
 	then
-		echo "${r}${b}Argument | option [-o] | must be supplied.${x}"
+		echo "${r}${b}Argument | option [-o] | must be supplied for function ${FUNCNAME[0]}.${x}"
 		echo
 		os-exit_function
 	fi
