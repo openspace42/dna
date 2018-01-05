@@ -101,7 +101,6 @@ os-set_option() {
 			echo
 			skip_descr=y
 		fi
-		skip_descr=n
 	fi
 
 	if [ -z "${value-}" ]
@@ -113,7 +112,7 @@ os-set_option() {
 			new_val=""
 			until [ ! $new_val = "" ]
 			do
-				if [ $skip_descr = "y" ]
+				if [ "${skip_descr-}" = "y" ]
 				then
 					read -rp "${b}Now specify your new value for option | $option |: ${x}" new_val
 					echo
