@@ -62,7 +62,7 @@ os-set_option() {
 	then
 		prev_val="$(cat $opt_path)"
 
-		if [ "$validate_input" = "y" ]
+		if [ "${validate_input-}" = "y" ]
 		then
 
 			### validate_option must be defined immediately prior to calling this function.
