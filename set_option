@@ -72,15 +72,17 @@ os-set_option() {
 
 	if [ $valid = "y" ]
 	then
-		echo "${g}${b}Your previous value for option | $option | was: | $prev_val |. ${x}"
+		echo "${b}Your previous value for option | ${g}$option${x}${b} | was: | ${g}$prev_val${x}${b} |. ${x}"
 		echo
 		read -rp "${b}Is this still correct? (Y/n): ${x}" -n 1
 		echo
 		if [[ ! $REPLY =~ ^[Nn]$ ]]
 		then
-			echo "${b}Ok, keeping | $prev_val | as your value for option | $opt |.${x}"
+			echo "${b}Ok, keeping | $prev_val | as your value for option | $option |.${x}"
 			echo
 			value="$prev_val"
+		else
+			echo
 		fi
 	fi
 
