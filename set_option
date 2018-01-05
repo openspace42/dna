@@ -84,9 +84,7 @@ os-set_option() {
 		fi
 	fi
 
-	os-check_var_defined "${value-}"
-
-	if [ $var_defined = n ]
+	if [ -z "${value-}" ]
 	then
 
 		defined=n
@@ -140,6 +138,7 @@ os-set_option() {
 		echo "${b}Option | $option | set to value | $new_val |. ${x}"
 		echo
 		value="$(cat $opt_path)"
+
 	fi
 	clear
 
