@@ -115,11 +115,11 @@ os-set_option() {
 				else
 					if [ "${describe_setting-}" = "y" ]
 					then
+
 						### describe_setting must be defined immediately prior to calling this function.
 
 						describe_setting
 
-						echo
 					fi
 					read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
 					echo
