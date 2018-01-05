@@ -19,14 +19,14 @@ os-set_option() {
 		esac
 	done
 
-	if [ "$option" = "" ]
+	if [ -z "${option-}" ]
 	then
 		echo "${r}${b}Argument | option [-o] | must be supplied -$OPTARG${x}"
 		echo
 		os-exit_function
 	fi
 
-	if [ "$validate" = "" ]
+	if [ -z "${validate-}" ]
 	then
 		echo "${r}${b}Argument | validate [-v] | must be supplied -$OPTARG${x}"
 		echo
@@ -121,8 +121,8 @@ os-set_option() {
 					then
 						### describe_setting must be defined immediately prior to calling this function.
 						describe_setting
+						echo
 					fi
-					echo
 					read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
 					echo
 				fi
