@@ -173,4 +173,6 @@ os-set_option() {
 
 	OPTIND=1
 
+	unset arguments option validate describe validate_input describe_setting valid value skip_descr defined new_val
+
 }
