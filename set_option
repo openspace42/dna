@@ -84,7 +84,7 @@ os-set_option() {
 		fi
 	fi
 
-	os-check_var_defined "$value"
+	os-check_var_defined "${value-}"
 
 	if [ $var_defined = n ]
 	then
