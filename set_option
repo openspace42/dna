@@ -12,7 +12,7 @@ os-set_option() {
 				;;
 			d)	describe="$OPTARG"
 				;;
-			\?)	echo "${r}${b}Invalid option -$OPTARG for function | ${FUNCNAME[0]} |.${x}"
+			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
 				echo
 				os-exit_function
 				;;
