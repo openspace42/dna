@@ -21,28 +21,24 @@ os-set_option() {
 
 	if [ -z "${option-}" ]
 	then
-		echo "${r}${b}Argument | option [-o] | must be supplied -$OPTARG${x}"
+		echo "${r}${b}Argument | option [-o] | must be supplied.${x}"
 		echo
 		os-exit_function
 	fi
 
-	if [ -z "${validate-}" ]
+	if [ ! -z "${validate-}" ]
 	then
-		echo "${r}${b}Argument | validate [-v] | must be supplied -$OPTARG${x}"
-		echo
-		os-exit_function
+		case $validate in
+			y)	validate_input=y
+				;;
+			n)	validate_input=n
+				;;
+			*)	echo "${r}${b}Invalid content for validate argument{x}"
+				echo
+				os-exit_function
+				;;
+		esac
 	fi
-
-	case $validate in
-		y)	validate_input=y
-			;;
-		n)	validate_input=n
-			;;
-		*)	echo "${r}${b}Invalid content for validate argument{x}"
-			echo
-			os-exit_function
-			;;
-	esac
 
 	if [ ! -z "${describe-}" ]
 	then
