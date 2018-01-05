@@ -1,92 +1,96 @@
 #!/bin/bash
 
-echo "${b}$short_name sends you email notifications for any scheduled job runtime errors and / or failures.${x}"
-echo
+os-set_admin_email() {
 
-if [ -f $conf_dir/admin_mail ]
-then
-	prevadminmail="$(cat $conf_dir/admin_mail)"
-
-	### Perform any future email address validation here and return validprevadminmail=[y/n].
-	### Now defaulting to y.
-
-	validprevadminmail=y
-else
-	touch $conf_dir/admin_mail
-	validprevadminmail=n
-fi
-
-if [ $validprevadminmail = "y" ]
-then
-	echo "${g}${b}You previously setting for $curr_setting_descr to be: | $prevadminmail | ${x}"
+	echo "${b}$short_name sends you email notifications for any scheduled job runtime errors and / or failures.${x}"
 	echo
-	read -rp "${b}Is this still correct? (Y/n): ${x}" -n 1
-	echo
-	if [[ ! $REPLY =~ ^[Nn]$ ]]
+
+	if [ -f $conf_dir/admin_mail ]
 	then
-		echo "${b}Ok, keeping | $prevadminmail | as your admin email address.${x}"
-		echo
-		adminmail=$prevadminmail
+		prevadminmail="$(cat $conf_dir/admin_mail)"
+
+		### Perform any future email address validation here and return validprevadminmail=[y/n].
+		### Now defaulting to y.
+
+		validprevadminmail=y
 	else
+		touch $conf_dir/admin_mail
+		validprevadminmail=n
+	fi
+
+	if [ $validprevadminmail = "y" ]
+	then
+		echo "${g}${b}You previously setting for $curr_setting_descr to be: | $prevadminmail | ${x}"
 		echo
+		read -rp "${b}Is this still correct? (Y/n): ${x}" -n 1
+		echo
+		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		then
+			echo "${b}Ok, keeping | $prevadminmail | as your admin email address.${x}"
+			echo
+			adminmail=$prevadminmail
+		else
+			echo
+			adminmail=notyetset
+		fi
+	else
 		adminmail=notyetset
 	fi
-else
-	adminmail=notyetset
-fi
 
-if [ $adminmail = "notyetset" ]
-then
-	defined=n
-	until [ $defined = "y" ]
-	do
-		newadminmail=""
-		until [ ! $newadminmail = "" ]
+	if [ $adminmail = "notyetset" ]
+	then
+		defined=n
+		until [ $defined = "y" ]
 		do
-			read -rp "${b}Now set your admin email address: ${x}" newadminmail
-			echo
+			newadminmail=""
+			until [ ! $newadminmail = "" ]
+			do
+				read -rp "${b}Now set your admin email address: ${x}" newadminmail
+				echo
+			done
+			valid=n
+			until [ $valid = "y" ]
+			do
+				read -n 1 -rp "${b}Is | $newadminmail | correct? (Y/n/e[xit]) ${x}" answer;
+				case $answer in
+				"")
+					echo
+					valid=y
+					defined=y
+					;;
+				y)
+					echo -e "\\n"
+					valid=y
+					defined=y
+					;;
+				n)
+					echo -e "\\n"
+					echo "${b}Ok, then please try again...${x}"
+					echo
+					valid=y
+					defined=n
+					;;
+				e)
+					echo -e "\\n"
+					echo "${b}Exiting...${x}"
+					echo
+					exit
+					;;
+				*)
+					echo -e "\\n"
+					echo "${r}${b}Invalid option. Retry...${x}"
+					echo
+					valid=n
+					defined=n
+					;;
+				esac
+			done
 		done
-		valid=n
-		until [ $valid = "y" ]
-		do
-			read -n 1 -rp "${b}Is | $newadminmail | correct? (Y/n/e[xit]) ${x}" answer;
-			case $answer in
-			"")
-				echo
-				valid=y
-				defined=y
-				;;
-			y)
-				echo -e "\\n"
-				valid=y
-				defined=y
-				;;
-			n)
-				echo -e "\\n"
-				echo "${b}Ok, then please try again...${x}"
-				echo
-				valid=y
-				defined=n
-				;;
-			e)
-				echo -e "\\n"
-				echo "${b}Exiting...${x}"
-				echo
-				exit
-				;;
-			*)
-				echo -e "\\n"
-				echo "${r}${b}Invalid option. Retry...${x}"
-				echo
-				valid=n
-				defined=n
-				;;
-			esac
-		done
-	done
-	echo "$newadminmail" > "$configdir"/adminmail
-	echo "${b}New admin email address set to | $newadminmail | ${x}"
-	echo
-	adminmail="$(cat $conf_dir/admin_mail)"
-fi
-clear
+		echo "$newadminmail" > "$configdir"/adminmail
+		echo "${b}New admin email address set to | $newadminmail | ${x}"
+		echo
+		adminmail="$(cat $conf_dir/admin_mail)"
+	fi
+	clear
+
+}
