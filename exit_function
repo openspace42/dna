@@ -1,0 +1,9 @@
+#!/bin/bash
+
+os-exit_function() {
+
+        echo "${r}${b}Exiting...${x}"
+        echo
+        exit 1
+
+}

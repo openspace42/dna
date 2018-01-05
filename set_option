@@ -1,0 +1,146 @@
+#!/bin/bash
+
+os-set_option() {
+
+	########################################################################
+
+	while getopts ":o:v:" arguments; do
+		case $arguments in
+		o)	option="$OPTARG"
+			;;
+		v)	validate="$OPTARG"
+			;;
+		\?)	echo "${r}${b}Invalid option -$OPTARG${x}"
+			echo
+			os-exit_function
+			;;
+		esac
+	done
+
+	if [ "$option" = "" ]
+	then
+		echo "${r}${b}Argument | option [-o] | must be supplied -$OPTARG${x}"
+		echo
+		os-exit_function
+	fi
+
+	if [ "$validate" = "" ]
+	then
+		echo "${r}${b}Argument | validate [-v] | must be supplied -$OPTARG${x}"
+		echo
+		os-exit_function
+	fi
+
+	case $validate in
+	y)	validate_input=y
+		;;
+	n)	validate_input=n
+		;;
+	*)	echo "${r}${b}Invalid content for validate argument{x}"
+		echo
+		os-exit_function
+		;;
+	esac
+
+	########################################################################
+
+	opt_path="$conf_dir/$option"
+
+	if [ -f "$opt_path" ]
+	then
+		prev_val="$(cat $opt_path)"
+
+		if [ "$validate" = "y" ]
+		then
+
+			### validate_option must be defined immediately prior to calling this function.
+
+			validate_option
+
+		else
+
+			valid=y
+
+		fi
+
+	else
+
+		touch $opt_path
+		valid=n
+
+	fi
+
+	if [ $valid = "y" ]
+	then
+		echo "${g}${b}Your previous value for option | $option | was: | $prev_val |. ${x}"
+		echo
+		read -rp "${b}Is this still correct? (Y/n): ${x}" -n 1
+		echo
+		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		then
+			echo "${b}Ok, keeping | $prev_val | as your value for option | $opt |.${x}"
+			echo
+			value="$prev_val"
+		fi
+	fi
+
+	os-check_var_defined "$value"
+
+	if [ $var_defined = n ]
+	then
+
+		defined=n
+		until [ $defined = "y" ]
+		do
+			new_val=""
+			until [ ! $new_val = "" ]
+			do
+				read -rp "${b}Now specify your new value for option | $option |: ${x}" new_val
+				echo
+			done
+			valid=n
+			until [ $valid = "y" ]
+			do
+				read -n 1 -rp "${b}Is | $new_val | correct? (Y/n/e[xit]) ${x}" answer;
+				case $answer in
+				"")
+					echo
+					valid=y
+					defined=y
+					;;
+				y)
+					echo -e "\\n"
+					valid=y
+					defined=y
+					;;
+				n)
+					echo -e "\\n"
+					echo "${b}Ok, then please try again...${x}"
+					echo
+					valid=y
+					defined=n
+					;;
+				e)
+					echo -e "\\n"
+					echo "${b}Exiting...${x}"
+					echo
+					exit
+					;;
+				*)
+					echo -e "\\n"
+					echo "${r}${b}Invalid option. Retry...${x}"
+					echo
+					valid=n
+					defined=n
+					;;
+				esac
+			done
+		done
+		echo "$new_val" > "$opt_path"
+		echo "${b}Option | $option | set to value | $new_val |. ${x}"
+		echo
+		value="$(cat $opt_path)"
+	fi
+	clear
+
+}
