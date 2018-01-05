@@ -171,4 +171,6 @@ os-set_option() {
 	fi
 	clear
 
+	OPTIND=1
+
 }
