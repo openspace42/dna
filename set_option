@@ -105,8 +105,10 @@ os-set_option() {
 
 	if [ -z "${value-}" ]
 	then
+		unset defined
 		until [ "${defined-null}" = "y" ]
 		do
+			unset valid
 			until [ "${valid-null}" = "y" ]
 			do
 				unset new_val
