@@ -69,7 +69,7 @@ os-setup_backup_restore() {
 	if [ $backup_location = "s3" ]
 	then
 
-		mkdir "$conf_dir/s3"
+		mkdir -p "$conf_dir/s3"
 
 		read -rp "${b}Do you have an S3 file storage server already set up? (Y/n): ${x}" -n 1
 		echo
@@ -99,13 +99,15 @@ os-setup_backup_restore() {
 
 			else
 
-				echo "${b}NOT selected restore mode, will allow S3 backups..."
+				echo
+				echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
 				echo
 
 			fi
 
 		else
 
+			echo
 			echo "${b}No problem, follow this guide [link will be published here when ready] to configure your S3 file storage server.${x}"
 			echo
 			echo "${b}Keeping backups local for now [simply re-run this installation when you're ready to upgrade your backups to S3 enabled].${x}"
