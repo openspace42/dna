@@ -43,7 +43,7 @@ os-setup_backup_restore() {
 
 	validate_input() {
 
-		case $describe in
+		case $input in
 			local)	backup_location=local
 				valid=y
 				;;
