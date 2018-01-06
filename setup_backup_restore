@@ -126,7 +126,5 @@ os-setup_backup_restore() {
 
 	fi
 
-	fi
-
 
 }
