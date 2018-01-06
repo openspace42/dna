@@ -67,9 +67,9 @@ os-set_option() {
 
 			input="$prev_val"
 
-			### validate_option must be defined immediately prior to calling this function.
+			### validate_input must be defined immediately prior to calling this function.
 
-			validate_option
+			validate_input
 
 		else
 
@@ -127,21 +127,21 @@ os-set_option() {
 						read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
 						echo
 					fi
-					if [ "${validate_input-null}" = "y" ]
-					then
-
-						input="$new_val"
-
-						### validate_option must be defined immediately prior to calling this function.
-
-						validate_option
-
-					else
-
-						valid=y
-
-					fi
 				done
+				if [ "${validate_input-null}" = "y" ]
+				then
+
+					input="$new_val"
+
+					### validate_input must be defined immediately prior to calling this function.
+
+					validate_input
+
+				else
+
+					valid=y
+
+				fi
 			done
 			acceptable=n
 			until [ $acceptable = "y" ]

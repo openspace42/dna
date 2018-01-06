@@ -58,6 +58,6 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_location -v n -d y
+	os-set_option -o backup_location -v y -d y
 
 }
