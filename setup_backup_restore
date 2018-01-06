@@ -36,7 +36,7 @@ os-setup_backup_restore() {
 
 		echo "${b}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x}"
 		echo
-		echo "${b}Activate it now?${x}"
+		echo "${b}Now specify your desired backup storage location [local/s3]:${x}"
 		echo
 
 	}

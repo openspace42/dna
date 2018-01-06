@@ -98,7 +98,9 @@ os-set_option() {
 		else
 			echo
 			skip_descr=y
+			unset valid
 		fi
+		unset valid
 	fi
 
 	if [ -z "${value-}" ]
@@ -111,7 +113,7 @@ os-set_option() {
 				do
 					if [ "${skip_descr-null}" = "y" ]
 					then
-						read -rp "${b}Now specify your new value | [local/s3] | for option | $option |: ${x}" new_val
+						read -rp "${b}Now specify your new value for option | $option |: ${x}" new_val
 						echo
 					else
 						if [ "${describe_setting-null}" = "y" ]
@@ -122,7 +124,7 @@ os-set_option() {
 							describe_setting
 
 						fi
-						read -rp "${b}Now specify your value | [local/s3] | for option | $option |: ${x}" new_val
+						read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
 						echo
 					fi
 					if [ "${validate_input-null}" = "y" ]
