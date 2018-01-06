@@ -62,7 +62,7 @@ os-set_option() {
 	then
 		prev_val="$(cat $opt_path)"
 
-		if [ "${validate_input-}" = "y" ]
+		if [ "${validate_input-null}" = "y" ]
 		then
 
 			input="$prev_val"
@@ -103,18 +103,18 @@ os-set_option() {
 
 	if [ -z "${value-}" ]
 	then
-		until [ ${defined-} = "y" ]
+		until [ "${defined-null}" = "y" ]
 		do
-			until [ ${valid-} = "y" ]
+			until [ "${valid-null}" = "y" ]
 			do
 				until [ ! -z "${new_val-}" ]
 				do
-					if [ "${skip_descr-}" = "y" ]
+					if [ "${skip_descr-null}" = "y" ]
 					then
 						read -rp "${b}Now specify your new value | [local/s3] | for option | $option |: ${x}" new_val
 						echo
 					else
-						if [ "${describe_setting-}" = "y" ]
+						if [ "${describe_setting-null}" = "y" ]
 						then
 
 							### describe_setting must be defined immediately prior to calling this function.
@@ -125,7 +125,7 @@ os-set_option() {
 						read -rp "${b}Now specify your value | [local/s3] | for option | $option |: ${x}" new_val
 						echo
 					fi
-					if [ "${validate_input-}" = "y" ]
+					if [ "${validate_input-null}" = "y" ]
 					then
 
 						input="$new_val"
