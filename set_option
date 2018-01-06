@@ -109,6 +109,7 @@ os-set_option() {
 		do
 			until [ "${valid-null}" = "y" ]
 			do
+				unset new_val
 				until [ ! -z "${new_val-}" ]
 				do
 					if [ "${skip_descr-null}" = "y" ]
