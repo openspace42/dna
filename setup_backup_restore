@@ -7,7 +7,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set how many backups should be kept locally at the very minimum.${x}"
+		echo "${b}Please set how many backups should be kept locally at the very minimum [suggested between 3 and 7].${x}"
 		echo
 
 	}
@@ -16,11 +16,48 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set the manimum number of backups that should be kept locally.${x}"
+		echo "${b}Please set the maximum number of backups that should be kept locally [suggested between 8 and 42].${x}"
 		echo
 
 	}
 
 	os-set_option -o max_local_backups -v n -d y
+
+	describe_setting() {
+
+		echo "${b}Please set the maximum space that local archives storage should occupy in MB [suggested between 1000 and 8000].${x}"
+		echo
+
+	}
+
+	os-set_option -o max_local_storage -v n -d y
+
+	describe_setting() {
+
+		echo "${b}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x}"
+		echo
+		echo "${b}Activate it now?${x}"
+		echo
+
+	}
+
+	validate_input() {
+
+		case $describe in
+			local)	backup_location=local
+				valid=y
+				;;
+			s3)	backup_location=s3
+				valid=y
+				;;
+			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
+				echo
+				valid=n
+				;;
+		esac
+
+	}
+
+	os-set_option -o backup_location -v n -d y
 
 }

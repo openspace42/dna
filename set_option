@@ -65,6 +65,8 @@ os-set_option() {
 		if [ "${validate_input-}" = "y" ]
 		then
 
+			input="$prev_val"
+
 			### validate_option must be defined immediately prior to calling this function.
 
 			validate_option
@@ -101,50 +103,64 @@ os-set_option() {
 
 	if [ -z "${value-}" ]
 	then
-
-		defined=n
-		until [ $defined = "y" ]
+		until [ ${defined-} = "y" ]
 		do
-			new_val=""
-			until [ ! $new_val = "" ]
+			until [ ${valid-} = "y" ]
 			do
-				if [ "${skip_descr-}" = "y" ]
-				then
-					read -rp "${b}Now specify your new value for option | $option |: ${x}" new_val
-					echo
-				else
-					if [ "${describe_setting-}" = "y" ]
+				until [ ! -z "${new_val-}" ]
+				do
+					if [ "${skip_descr-}" = "y" ]
+					then
+						read -rp "${b}Now specify your new value | [local/s3] | for option | $option |: ${x}" new_val
+						echo
+					else
+						if [ "${describe_setting-}" = "y" ]
+						then
+
+							### describe_setting must be defined immediately prior to calling this function.
+
+							describe_setting
+
+						fi
+						read -rp "${b}Now specify your value | [local/s3] | for option | $option |: ${x}" new_val
+						echo
+					fi
+					if [ "${validate_input-}" = "y" ]
 					then
 
-						### describe_setting must be defined immediately prior to calling this function.
+						input="$new_val"
 
-						describe_setting
+						### validate_option must be defined immediately prior to calling this function.
+
+						validate_option
+
+					else
+
+						valid=y
 
 					fi
-					read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
-					echo
-				fi
+				done
 			done
-			valid=n
-			until [ $valid = "y" ]
+			acceptable=n
+			until [ $acceptable = "y" ]
 			do
 				read -n 1 -rp "${b}Is | $new_val | correct? (Y/n/e[xit]) ${x}" answer;
 				case $answer in
 				"")
 					echo
-					valid=y
+					acceptable=y
 					defined=y
 					;;
 				y)
 					echo -e "\\n"
-					valid=y
+					acceptable=y
 					defined=y
 					;;
 				n)
 					echo -e "\\n"
 					echo "${b}Ok, then please try again...${x}"
 					echo
-					valid=y
+					acceptable=y
 					defined=n
 					;;
 				e)
@@ -157,7 +173,7 @@ os-set_option() {
 					echo -e "\\n"
 					echo "${r}${b}Invalid option. Retry...${x}"
 					echo
-					valid=n
+					acceptable=n
 					defined=n
 					;;
 				esac
@@ -167,7 +183,6 @@ os-set_option() {
 		echo "${b}Option | $option | set to value | $new_val |. ${x}"
 		echo
 		value="$(cat $opt_path)"
-
 	fi
 	clear
 
