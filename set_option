@@ -60,8 +60,9 @@ os-set_option() {
 
 	if [ ! -z "${subdir-}" ]
 	then
-		mkdir -p $subdir
-		opt_path="$conf_dir/$subdir/$option"
+		sub_path="$conf_dir/$subdir"
+		mkdir -p "$sub_path"
+		opt_path="$sub_path/$option"
 	else
 		opt_path="$conf_dir/$option"
 	fi
