@@ -104,12 +104,19 @@ os-set_option() {
 			echo "${b}Ok, keeping | $prev_val | as your value for option | $option |.${x}"
 			echo
 			value="$prev_val"
+			prev_val_outcome=kept
 		else
 			echo
 			skip_descr=y
 			unset valid
+			prev_val_outcome=not-kept
 		fi
 		unset valid
+
+	else
+
+		prev_val_outcome=not-applicable
+
 	fi
 
 	if [ -z "${value-}" ]
