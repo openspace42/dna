@@ -2,6 +2,8 @@
 
 os-setup_backup_restore() {
 
+	clear
+
 
 	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
 	echo
@@ -160,6 +162,115 @@ os-setup_backup_restore() {
 			echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
 			echo
 			read -rp "${b}[press enter to continue reading...]${x}"
+			clear
+
+			s3_accepted=n
+
+			until [ $s3_setup_accepted = "y" ]
+			do
+
+				declare -A options_array=(
+					[s3_aki]="AWS Access Key ID"
+					[s3_sak]="AWS Secret Access Key"
+					[s3_endpoint]="S3 Endpoint URL"
+					[s3_bucket]="S3 Bucket Name"
+				)
+
+				for i in "${!options_array[@]}"
+				do
+
+					echo $i is the stub #debug
+					echo ${options_array[$i]} is the description #debug
+
+					describe_setting() {
+
+						echo "${b}Now set your ${options_array[$i]}.${x}"
+						echo
+
+					}
+
+					os-set_option -o "$i" -v n -d y -s backups/s3
+
+				done
+
+				s3_aki="$(cat $conf_s3_dir/s3_aki)"
+				s3_sak="$(cat $conf_s3_dir/s3_sak)"
+				s3_endpoint="$(cat $conf_s3_dir/s3_endpoint)"
+				s3_bucket="$(cat $conf_s3_dir/s3_bucket)"
+
+				echo "----------------"
+				echo
+				echo "${b}To make sure everything is correct:${x}"
+				echo
+				echo "1] Your ${b}AWS Access Key ID${x} will be:"
+				echo
+				echo "${b} | $s3_aki | ${x}"
+				echo
+				echo "2] Your ${b}AWS Secret Access Key${x} will be:"
+				echo
+				echo "${b} | $s3_sak | ${x}"
+				echo
+				echo "3] Your ${b}S3 Endpoint URL${x} will be:"
+				echo
+				echo "${b} | $s3_endpoint | ${x}"
+				echo
+				echo "4] Your ${b}S3 Bucket Name${x} will be:"
+				echo
+				echo "${b} | $s3_bucket | ${x}"
+				echo
+				echo "----------------"
+				echo
+
+				read -rp "${b}Does everything look all right? (Y/n): ${x}" -n 1
+				echo
+				if [[ ! $REPLY =~ ^[Nn]$ ]]
+				then
+
+					echo "${b}Ok, proceeding to check S3 connection details${x}."
+					echo
+
+					### Check S3 connection
+
+					s3cmd --configure --access_key="$s3_aki" --secret_key="$s3_sak" --host="$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
+					set +e
+					s3cmd info s3://"$s3_bucket" >/dev/null 2>&1
+
+					if [[ $? -eq 0 ]]; then
+						echo "${g}${b}S3 connection details appear to be valid.${x}"
+						echo
+						s3_setup_accepted=y
+						sleep 1
+					else
+						echo "${r}${b}S3 connection details do NOT appear to be valid.${x}"
+						echo
+						read -rp "${b}Would you like to try setting it up again? (Y/n): ${x}" -n 1
+					    	echo
+					    	if [[ ! $REPLY =~ ^[Nn]$ ]]
+					    	then
+							s3_setup_accepted=n
+							echo "${b}Ok, repeating S3 setup...${x}"
+							echo
+						else
+							s3_setup_accepted=y
+							echo
+							echo "${b}Ok, skipping S3 setup and REMOVING s3 setting from $short_name...${x}"
+							echo
+							backup_location=local
+							echo "local" > $conf_backups_dir/backup_location
+							read -rp "${b}[press enter to continue reading...]${x}"
+							clear
+						fi
+					fi
+					set -e
+
+				else
+					s3_setup_accepted=n
+					echo
+					echo "${b}Ok, repeating S3 setup...${x}"
+					echo
+				fi
+
+			done
 			clear
 
 		fi
