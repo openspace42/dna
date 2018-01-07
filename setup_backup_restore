@@ -95,7 +95,7 @@ os-setup_backup_restore() {
 				echo
 
 				restore_intent=y
-				touch "$conf_dir/s3/block_s3_backups"
+				touch "$conf_dir/backups/s3/block_s3_backups"
 
 			else
 

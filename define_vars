@@ -1,0 +1,24 @@
+#!/bin/bash
+
+os-define_vars() {
+
+        ### Define variables. Don't change these! | No trailing slash!
+
+        ### Define these in the project itself
+	### proj_name="EasyEngine-Backup-Restore"
+	### short_name="ee-br"
+
+	source_dir=/root/$proj_name
+	base_dir=/root/openspace42
+	install_dir=$base_dir/$short_name
+	conf_dir=$install_dir/conf
+        conf_backups_dir=$conf_dir/backups
+        conf_s3_dir=$conf_backups_dir/s3
+	backups_dir=$install_dir/backups
+	archive_dir=$backups_dir/archive
+	latest_dir=$backups_dir/latest
+	restores_dir=$install_dir/restores
+	tmp_dir=/tmp/$short_name
+	www_dir=/var/www
+
+}
