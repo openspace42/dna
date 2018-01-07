@@ -69,7 +69,7 @@ os-setup_backup_restore() {
 	if [ $backup_location = "s3" ]
 	then
 
-		mkdir -p "$conf_dir/backups/s3"
+		mkdir -p "$conf_s3_dir"
 
 		read -rp "${b}Do you have an S3 file storage server already set up? (Y/n): ${x}" -n 1
 		echo
@@ -95,7 +95,7 @@ os-setup_backup_restore() {
 				echo
 
 				restore_intent=y
-				touch "$conf_dir/backups/s3/block_s3_backups"
+				touch "$conf_s3_dir/block_s3_backups"
 
 			else
 
@@ -105,17 +105,17 @@ os-setup_backup_restore() {
 
 			fi
 
-			if [ ! -f "$conf_dir/backups/s3/passphrase" ]
+			if [ ! -f "$conf_s3_dir/passphrase" ]
 			then
-				touch "$conf_dir/backups/s3/passphrase"
-				chmod 700 "$conf_dir/backups/s3/passphrase"
+				touch "$conf_s3_dir/passphrase"
+				chmod 700 "$conf_s3_dir/passphrase"
 				generated_passphrase="$(pwgen 42 1)"
-				echo "$generated_passphrase" > "$conf_dir/backups/s3/passphrase"
+				echo "$generated_passphrase" > "$conf_s3_dir/passphrase"
 			else
-				chmod 700 "$conf_dir/backups/s3/passphrase" # In case someone accidentally modified permissions on $conf_dir/backups/s3
+				chmod 700 "$conf_s3_dir/passphrase" # In case someone accidentally modified permissions on $conf_s3_dir
 			fi
 
-			passphrase="$(cat $conf_dir/backups/s3/passphrase)"
+			passphrase="$(cat $conf_s3_dir/passphrase)"
 
 			echo "${b}Your S3 backups encryption passphrase is:${x}"
 			echo
