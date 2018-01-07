@@ -1,6 +1,6 @@
 #!/bin/bash
 
-os-setup_backup_restore()
+os-setup_backup_restore() {
 
 
 	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
