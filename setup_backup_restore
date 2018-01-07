@@ -201,19 +201,19 @@ os-setup_backup_restore() {
 				echo
 				echo "1] Your ${b}AWS Access Key ID${x} will be:"
 				echo
-				echo "${b} | $s3_access_key_id | ${x}"
+				echo "${b} | ${g}$s3_access_key_id${x}${b} | ${x}"
 				echo
 				echo "2] Your ${b}AWS Secret Access Key${x} will be:"
 				echo
-				echo "${b} | $s3_secret_access_key | ${x}"
+				echo "${b} | ${g}$s3_secret_access_key${x}${b} | ${x}"
 				echo
 				echo "3] Your ${b}S3 Endpoint URL${x} will be:"
 				echo
-				echo "${b} | $s3_endpoint | ${x}"
+				echo "${b} | ${g}$s3_endpoint${x}${b} | ${x}"
 				echo
 				echo "4] Your ${b}S3 Bucket Name${x} will be:"
 				echo
-				echo "${b} | $s3_bucket_name | ${x}"
+				echo "${b} | ${g}$s3_bucket_name${x}${b} | ${x}"
 				echo
 				echo "----------------"
 				echo
