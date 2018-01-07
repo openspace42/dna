@@ -4,13 +4,15 @@ os-set_option() {
 
 	########################################################################
 
-	while getopts ":o:v:d:" arguments; do
+	while getopts ":o:v:d:s:" arguments; do
 		case $arguments in
 			o)	option="$OPTARG"
 				;;
 			v)	validate="$OPTARG"
 				;;
 			d)	describe="$OPTARG"
+				;;
+			s)	subdir="$OPTARG"
 				;;
 			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
 				echo
@@ -56,7 +58,13 @@ os-set_option() {
 
 	########################################################################
 
-	opt_path="$conf_dir/$option"
+	if [ ! -z "${subdir-}" ]
+	then
+		mkdir -p $subdir
+		opt_path="$conf_dir/$subdir/$option"
+	else
+		opt_path="$conf_dir/$option"
+	fi
 
 	if [ -f "$opt_path" ]
 	then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-os-setup_backup_restore() {
+os-setup_backup_restore()
 
 
 	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
@@ -14,7 +14,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o min_local_backups -v n -d y
+	os-set_option -o min_local_backups -v n -d y -s backups
 
 
 	describe_setting() {
@@ -24,7 +24,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_backups -v n -d y
+	os-set_option -o max_local_backups -v n -d y -s backups
 
 
 	describe_setting() {
@@ -34,7 +34,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_storage -v n -d y
+	os-set_option -o max_local_storage -v n -d y -s backups
 
 
 	describe_setting() {
@@ -63,13 +63,13 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_location -v y -d y
+	os-set_option -o backup_location -v y -d y -s backups
 
 
 	if [ $backup_location = "s3" ]
 	then
 
-		mkdir -p "$conf_dir/s3"
+		mkdir -p "$conf_dir/backups/s3"
 
 		read -rp "${b}Do you have an S3 file storage server already set up? (Y/n): ${x}" -n 1
 		echo
