@@ -170,10 +170,10 @@ os-setup_backup_restore() {
 			do
 
 				declare -A options_array=(
-					[s3_aki]="AWS Access Key ID"
-					[s3_sak]="AWS Secret Access Key"
+					[s3_access_key_id]="AWS Access Key ID"
+					[s3_secret_access_key]="AWS Secret Access Key"
 					[s3_endpoint]="S3 Endpoint URL"
-					[s3_bucket]="S3 Bucket Name"
+					[s3_bucket_name]="S3 Bucket Name"
 				)
 
 				for i in "${!options_array[@]}"
