@@ -2,6 +2,8 @@
 
 os-setup_backup_restore() {
 
+	os-install_dependencies s3cmd
+
 	clear
 
 
@@ -164,9 +166,7 @@ os-setup_backup_restore() {
 			read -rp "${b}[press enter to continue reading...]${x}"
 			clear
 
-			s3_accepted=n
-
-			until [ $s3_setup_accepted = "y" ]
+			until [ ${s3_setup_accepted-null} = "y" ]
 			do
 
 				declare -A options_array=(

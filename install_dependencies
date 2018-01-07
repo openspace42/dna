@@ -1,0 +1,22 @@
+#!/bin/bash
+
+os-install_dependencies() {
+
+        if [ $# -eq 0 ]
+        then
+                echo "${r}${b}No argument supplied.${x}"
+                echo
+                echo "${b}Exiting...${x}"
+                echo
+                exit 1
+        fi
+
+        echo "${b}Now installing dependencies...${x}"
+        echo
+        apt-get update
+        apt-get -y install "$1"
+        echo
+        echo "${b}Finished installing dependencies.${x}"
+        echo
+
+}
