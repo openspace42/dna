@@ -207,6 +207,8 @@ os-set_option() {
 	fi
 	clear
 
+	export ${option}=$value
+
 	OPTIND=1
 
 	unset arguments option validate describe validate_input describe_setting valid value skip_descr defined new_val

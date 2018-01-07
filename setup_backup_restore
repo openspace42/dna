@@ -171,22 +171,22 @@ os-setup_backup_restore() {
 			until [ ${s3_setup_accepted-null} = "y" ]
 			do
 
-				declare -A options_array=(
+				declare -A s3_options_array=(
 					[s3_access_key_id]="AWS Access Key ID"
 					[s3_secret_access_key]="AWS Secret Access Key"
 					[s3_endpoint]="S3 Endpoint URL"
 					[s3_bucket_name]="S3 Bucket Name"
 				)
 
-				for i in "${!options_array[@]}"
+				for i in "${!s3_options_array[@]}"
 				do
 
 					echo $i is the stub #debug
-					echo ${options_array[$i]} is the description #debug
+					echo ${s3_options_array[$i]} is the description #debug
 
 					describe_setting() {
 
-						echo "${b}Now set your ${options_array[$i]}.${x}"
+						echo "${b}Now set your ${s3_options_array[$i]}.${x}"
 						echo
 
 					}
@@ -195,22 +195,17 @@ os-setup_backup_restore() {
 
 				done
 
-				s3_aki="$(cat $conf_backups_s3_dir/s3_aki)"
-				s3_sak="$(cat $conf_backups_s3_dir/s3_sak)"
-				s3_endpoint="$(cat $conf_backups_s3_dir/s3_endpoint)"
-				s3_bucket="$(cat $conf_backups_s3_dir/s3_bucket)"
-
 				echo "----------------"
 				echo
 				echo "${b}To make sure everything is correct:${x}"
 				echo
 				echo "1] Your ${b}AWS Access Key ID${x} will be:"
 				echo
-				echo "${b} | $s3_aki | ${x}"
+				echo "${b} | $s3_access_key_id | ${x}"
 				echo
 				echo "2] Your ${b}AWS Secret Access Key${x} will be:"
 				echo
-				echo "${b} | $s3_sak | ${x}"
+				echo "${b} | $s3_secret_access_key | ${x}"
 				echo
 				echo "3] Your ${b}S3 Endpoint URL${x} will be:"
 				echo
@@ -218,7 +213,7 @@ os-setup_backup_restore() {
 				echo
 				echo "4] Your ${b}S3 Bucket Name${x} will be:"
 				echo
-				echo "${b} | $s3_bucket | ${x}"
+				echo "${b} | $s3_bucket_name | ${x}"
 				echo
 				echo "----------------"
 				echo
@@ -233,9 +228,9 @@ os-setup_backup_restore() {
 
 					### Check S3 connection
 
-					s3cmd --configure --access_key="$s3_aki" --secret_key="$s3_sak" --host="$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
+					s3cmd --configure --access_key="$s3_access_key_id" --secret_key="$s3_secret_access_key" --host="$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
 					set +e
-					s3cmd info s3://"$s3_bucket" >/dev/null 2>&1
+					s3cmd info s3://"$s3_bucket_name" >/dev/null 2>&1
 
 					if [[ $? -eq 0 ]]; then
 						echo "${g}${b}S3 connection details appear to be valid.${x}"
