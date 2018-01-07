@@ -4,6 +4,8 @@ os-setup_backup_restore() {
 
 	os-install_dependencies s3cmd
 
+	mkdir -p $conf_backups_local_dir
+
 	clear
 
 
@@ -18,7 +20,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o min_local_backups -v n -d y -s backups
+	os-set_option -o min_local_backups -v n -d y -s backups/local
 
 
 	describe_setting() {
@@ -28,7 +30,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_backups -v n -d y -s backups
+	os-set_option -o max_local_backups -v n -d y -s backups/local
 
 
 	describe_setting() {
@@ -38,7 +40,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_storage -v n -d y -s backups
+	os-set_option -o max_local_storage -v n -d y -s backups/local
 
 
 	describe_setting() {
@@ -111,7 +113,7 @@ os-setup_backup_restore() {
 		if [ "${s3_continue_setup-null}" = "y" ]
 		then
 
-			mkdir -p "$conf_s3_dir"
+			mkdir -p "$conf_backups_s3_dir"
 
 			echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
 			echo
@@ -129,7 +131,7 @@ os-setup_backup_restore() {
 				echo
 
 				restore_intent=y
-				touch "$conf_s3_dir/block_s3_backups"
+				touch "$conf_backups_s3_dir/block_s3_backups"
 
 			else
 
@@ -141,17 +143,17 @@ os-setup_backup_restore() {
 			read -rp "${b}[press enter to continue reading...]${x}"
 			clear
 
-			if [ ! -f "$conf_s3_dir/passphrase" ]
+			if [ ! -f "$conf_backups_s3_dir/passphrase" ]
 			then
-				touch "$conf_s3_dir/passphrase"
-				chmod 700 "$conf_s3_dir/passphrase"
+				touch "$conf_backups_s3_dir/passphrase"
+				chmod 700 "$conf_backups_s3_dir/passphrase"
 				generated_passphrase="$(pwgen 42 1)"
-				echo "$generated_passphrase" > "$conf_s3_dir/passphrase"
+				echo "$generated_passphrase" > "$conf_backups_s3_dir/passphrase"
 			else
-				chmod 700 "$conf_s3_dir/passphrase" # In case someone accidentally modified permissions on $conf_s3_dir
+				chmod 700 "$conf_backups_s3_dir/passphrase" # In case someone accidentally modified permissions on $conf_backups_s3_dir
 			fi
 
-			passphrase="$(cat $conf_s3_dir/passphrase)"
+			passphrase="$(cat $conf_backups_s3_dir/passphrase)"
 
 			echo "${b}Your S3 backups encryption passphrase is:${x}"
 			echo
@@ -193,10 +195,10 @@ os-setup_backup_restore() {
 
 				done
 
-				s3_aki="$(cat $conf_s3_dir/s3_aki)"
-				s3_sak="$(cat $conf_s3_dir/s3_sak)"
-				s3_endpoint="$(cat $conf_s3_dir/s3_endpoint)"
-				s3_bucket="$(cat $conf_s3_dir/s3_bucket)"
+				s3_aki="$(cat $conf_backups_s3_dir/s3_aki)"
+				s3_sak="$(cat $conf_backups_s3_dir/s3_sak)"
+				s3_endpoint="$(cat $conf_backups_s3_dir/s3_endpoint)"
+				s3_bucket="$(cat $conf_backups_s3_dir/s3_bucket)"
 
 				echo "----------------"
 				echo

@@ -13,7 +13,8 @@ os-define_vars() {
 	install_dir=$base_dir/$short_name
 	conf_dir=$install_dir/conf
         conf_backups_dir=$conf_dir/backups
-        conf_s3_dir=$conf_backups_dir/s3
+        conf_backups_local_dir=$conf_backups_dir/local
+        conf_backups_s3_dir=$conf_backups_dir/s3
 	backups_dir=$install_dir/backups
 	archive_dir=$backups_dir/archive
 	latest_dir=$backups_dir/latest
