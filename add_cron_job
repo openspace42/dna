@@ -11,10 +11,12 @@ os-add_cron_job() {
                 os-exit_function
         fi
 
-        while getopts ":n:c:" arguments; do
+        while getopts ":n:t:c:" arguments; do
 		case $arguments in
 			n)	name="$OPTARG"
 				;;
+                        t)	time="$OPTARG"
+                                ;;
 			c)	content="$OPTARG"
 				;;
 			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
@@ -30,6 +32,13 @@ os-add_cron_job() {
 		echo
 		os-exit_function
 	fi
+
+        if [ -z "${time-}" ]
+        then
+                echo "${r}${b}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+                echo
+                os-exit_function
+        fi
 
         if [ -z "${content-}" ]
         then
@@ -49,7 +58,7 @@ os-add_cron_job() {
         echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "$job_path"
         echo "MAILTO=$admin_mail" >> "$job_path"
         echo >> "$job_path"
-        echo "root cronic $content" >> "$job_path"
+        echo "$time root cronic $content" >> "$job_path"
         echo "${b}Finished adding backup script to daily crontab...${x}"
         echo
 

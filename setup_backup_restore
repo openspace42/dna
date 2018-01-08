@@ -143,21 +143,23 @@ os-setup_backup_restore() {
 			read -rp "${b}[press enter to continue reading...]${x}"
 			clear
 
-			if [ ! -f "$conf_backups_s3_dir/passphrase" ]
+			backups_passphrase_conf_path="$(cat $conf_backups_s3_dir/backups_passphrase)"
+
+			if [ ! -f "$backups_passphrase_conf_path" ]
 			then
-				touch "$conf_backups_s3_dir/passphrase"
-				chmod 700 "$conf_backups_s3_dir/passphrase"
+				touch "$backups_passphrase_conf_path"
+				chmod 700 "$backups_passphrase_conf_path"
 				generated_passphrase="$(pwgen 42 1)"
-				echo "$generated_passphrase" > "$conf_backups_s3_dir/passphrase"
+				echo "$generated_passphrase" > "$backups_passphrase_conf_path"
 			else
-				chmod 700 "$conf_backups_s3_dir/passphrase" # In case someone accidentally modified permissions on $conf_backups_s3_dir
+				chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
 			fi
 
-			passphrase="$(cat $conf_backups_s3_dir/passphrase)"
+			backups_passphrase="$(cat $backups_passphrase_conf_path)"
 
 			echo "${b}Your S3 backups encryption passphrase is:${x}"
 			echo
-			echo "${g}${b} | $passphrase | ${x}"
+			echo "${g}${b} | $backups_passphrase | ${x}"
 			echo
 			echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
 			echo
