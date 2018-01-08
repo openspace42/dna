@@ -6,7 +6,7 @@ os-read_conf_settings() {
 
         for conf_file in $conf_files
         do
-                name="$(basename $conf_file)"
+                conf_file_name="$(basename $conf_file)"
                 echo $conf_file_name
                 export $conf_file_name="$(cat $conf_file)"
         done

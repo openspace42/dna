@@ -207,7 +207,7 @@ os-set_option() {
 	fi
 	clear
 
-	export ${option}=$value
+	export "${option}"="$value"
 
 	OPTIND=1
 
