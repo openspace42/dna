@@ -1,0 +1,15 @@
+#!/bin/bash
+
+os-read_conf_settings() {
+
+        conf_files="$(find $conf_dir -type f | xargs)"
+
+        for conf_file in $conf_files
+        do
+                name="$(basename $conf_file)"
+                echo $conf_file_name
+                export $conf_file_name="$(cat $conf_file)"
+        done
+
+
+}
