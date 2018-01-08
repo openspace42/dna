@@ -302,7 +302,7 @@ os-setup_backup_restore() {
 
 			}
 
-			os-set_option -o s3_monthly_uploads -v n -d y -s backups/s3
+			os-set_option -o s3_monthly_uploads -v y -d y -s backups/s3
 
 		fi
 
