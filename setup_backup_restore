@@ -2,8 +2,6 @@
 
 os-setup_backup_restore() {
 
-	os-install_dependencies s3cmd
-
 	mkdir -p $conf_backups_local_dir
 
 	clear
@@ -113,6 +111,8 @@ os-setup_backup_restore() {
 		if [ "${s3_continue_setup-null}" = "y" ]
 		then
 
+			os-install_dependencies s3cmd
+
 			mkdir -p "$conf_backups_s3_dir"
 
 			echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
@@ -180,9 +180,6 @@ os-setup_backup_restore() {
 
 				for i in "${!s3_options_array[@]}"
 				do
-
-					echo $i is the stub #debug
-					echo ${s3_options_array[$i]} is the description #debug
 
 					describe_setting() {
 
