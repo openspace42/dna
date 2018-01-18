@@ -12,7 +12,7 @@ os-define_vars() {
 	### Projects will be installed in this location: | /root/$proj_author/$short_name |.
 
 	source_dir=/root/$proj_name
-	base_dir=/root/$proj_author
+	base_dir=/root/$author_name
 	os_base_dir=/root/openspace42
 	install_dir=$base_dir/$short_name
 	conf_dir=$install_dir/conf
