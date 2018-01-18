@@ -2,7 +2,7 @@
 
 os-add_cron_job() {
 
-        os-install_dependencies cronic
+        os-install_dependencies -p cronic
 
         ########################################################################
 
