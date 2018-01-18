@@ -40,4 +40,6 @@ os-install_dependencies() {
         echo "${b}Finished installing dependencies.${x}"
         echo
 
+        OPTIND=1
+
 }
