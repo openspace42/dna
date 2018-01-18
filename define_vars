@@ -15,16 +15,18 @@ os-define_vars() {
 	base_dir=/root/$author_name
 	os_base_dir=/root/openspace42
 	install_dir=$base_dir/$short_name
+
+	backups_dir=$install_dir/backups
+	backups_archive_dir=$backups_dir/archive
+	backups_latest_dir=$backups_dir/latest
 	conf_dir=$install_dir/conf
         conf_backups_dir=$conf_dir/backups
         conf_backups_local_dir=$conf_backups_dir/local
         conf_backups_s3_dir=$conf_backups_dir/s3
-	backups_dir=$install_dir/backups
-	backups_archive_dir=$backups_dir/archive
-	backups_latest_dir=$backups_dir/latest
 	restores_dir=$install_dir/restores
 	tls_dir=/etc/ssl/$short_name
 	tmp_dir=/tmp/$short_name
+	tools_dir=$install_dir/tools
 	www_dir=/var/www
 
 }

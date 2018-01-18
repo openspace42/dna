@@ -111,7 +111,7 @@ os-setup_backup_restore() {
 		if [ "${s3_continue_setup-null}" = "y" ]
 		then
 
-			os-install_dependencies s3cmd
+			os-install_dependencies -p s3cmd
 
 			mkdir -p "$conf_backups_s3_dir"
 

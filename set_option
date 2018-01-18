@@ -58,6 +58,8 @@ os-set_option() {
 
 	########################################################################
 
+	mkdir -p $conf_dir
+
 	if [ ! -z "${subdir-}" ]
 	then
 		sub_path="$conf_dir/$subdir"
