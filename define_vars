@@ -7,9 +7,13 @@ os-define_vars() {
         ### Define these in the project itself
 	### proj_name="EasyEngine-Backup-Restore"
 	### short_name="ee-br"
+	### author_name="nikksno"
+
+	### Projects will be installed in this location: | /root/$proj_author/$short_name |.
 
 	source_dir=/root/$proj_name
-	base_dir=/root/openspace42
+	base_dir=/root/$proj_author
+	os_base_dir=/root/openspace42
 	install_dir=$base_dir/$short_name
 	conf_dir=$install_dir/conf
         conf_backups_dir=$conf_dir/backups
@@ -19,6 +23,7 @@ os-define_vars() {
 	backups_archive_dir=$backups_dir/archive
 	backups_latest_dir=$backups_dir/latest
 	restores_dir=$install_dir/restores
+	tls_dir=/etc/ssl/$short_name
 	tmp_dir=/tmp/$short_name
 	www_dir=/var/www
 

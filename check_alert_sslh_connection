@@ -1,0 +1,29 @@
+#!/bin/bash
+
+os-check_sslh_connection() {
+
+        # Determine if user is connected via SSH on SSLH port 443
+
+        printenvssh443="$(printenv | grep SSH | grep "::1" | wc -l)"
+
+        if [ ! "$printenvssh443" = 0 ]
+        then
+                sessiontype=SSLH
+        else
+                sessiontype=other
+        fi
+
+        if [ $sessiontype = "SSLH" ]
+        then
+                echo "${r}${b}You appear to be connected via SSH on port 443 thanks to SSLH.${x}"
+        	echo
+        	echo "${b}This is usually perfectly fine, but not during installation, as we will be terminating SSLH during one of the steps.${x}"
+        	echo
+        	echo "${b}Please connect via your normal SSH port until you're finished re-installing $short_name${x}"
+        	echo
+        	echo "${b}Exiting...${x}"
+        	echo
+        	exit
+        fi
+
+}

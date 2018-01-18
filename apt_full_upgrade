@@ -1,0 +1,36 @@
+#!/bin/bash
+
+os-apt_full_upgrade() {
+
+        while getopts ":e" arguments; do
+		case $arguments in
+			e)	allow_errors="y"
+				;;
+			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+				echo
+				os-exit_function
+				;;
+		esac
+	done
+
+        echo "${b}Now performing APT upgrade, dist-upgrade, and autoremove...${x}"
+        echo
+
+        if [ "${allow_errors-null}" = "y" ]
+	then
+		set +e
+	fi
+
+	apt-get -y update
+	apt-get -y upgrade
+	apt-get -y dist-upgrade
+	apt-get -y autoremove
+
+        echo
+
+	set -e
+
+        echo "${b}Finished performing APT upgrade, dist-upgrade, and autoremove.${x}"
+        echo
+
+}

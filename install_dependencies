@@ -9,11 +9,34 @@ os-install_dependencies() {
                 os-exit_function
         fi
 
+        while getopts ":ep:" arguments; do
+		case $arguments in
+			e)	allow_errors="y"
+				;;
+                        p)	packages="$OPTARG"
+                                ;;
+			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+				echo
+				os-exit_function
+				;;
+		esac
+	done
+
         echo "${b}Now installing dependencies...${x}"
         echo
+
+        if [ "${allow_errors-null}" = "y" ]
+	then
+		set +e
+	fi
+
         apt-get update
-        apt-get -y install "$1"
+        apt-get -y install "$packages"
+
         echo
+
+        set -e
+
         echo "${b}Finished installing dependencies.${x}"
         echo
 
