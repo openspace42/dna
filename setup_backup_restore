@@ -127,37 +127,6 @@ os-setup_backup_restore() {
 			if [[ $REPLY =~ ^[Yy]$ ]]
 			then
 
-				echo
-				echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
-				echo
-
-				backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
-
-				if [ ! -f "$backups_passphrase_conf_path" ]
-				then
-					touch "$backups_passphrase_conf_path"
-					chmod 700 "$backups_passphrase_conf_path"
-					generated_passphrase="$(pwgen 42 1)"
-					echo "$generated_passphrase" > "$backups_passphrase_conf_path"
-				else
-					chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
-				fi
-
-				backups_passphrase="$(cat $backups_passphrase_conf_path)"
-
-				echo "${b}Your S3 backups encryption passphrase is:${x}"
-				echo
-				echo "${g}${b} | $backups_passphrase | ${x}"
-				echo
-				echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
-				echo
-				echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
-				echo
-				echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
-				echo
-
-			else
-
 				echo "${r}${b}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x}"
 				echo
 
@@ -192,6 +161,37 @@ os-setup_backup_restore() {
 					touch $conf_dir/block_s3_restores
 
 				fi
+
+			else
+
+				echo
+				echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
+				echo
+
+				backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
+
+				if [ ! -f "$backups_passphrase_conf_path" ]
+				then
+					touch "$backups_passphrase_conf_path"
+					chmod 700 "$backups_passphrase_conf_path"
+					generated_passphrase="$(pwgen 42 1)"
+					echo "$generated_passphrase" > "$backups_passphrase_conf_path"
+				else
+					chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
+				fi
+
+				backups_passphrase="$(cat $backups_passphrase_conf_path)"
+
+				echo "${b}Your S3 backups encryption passphrase is:${x}"
+				echo
+				echo "${g}${b} | $backups_passphrase | ${x}"
+				echo
+				echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
+				echo
+				echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
+				echo
+				echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
+				echo
 
 			fi
 			read -rp "${b}[press enter to continue reading...]${x}"
