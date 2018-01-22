@@ -4,11 +4,11 @@ os-check_install_version() {
 
         ### Check if a previous installation was at the very least initiated
 
-        if [ -f $conf_dir/version_initiated ]
+        if [ -f $conf_dir/version/version_initiated ]
         then
 
         	prev_install_initiated=y
-                prev_version_initiated="$(cat $conf_dir/version_initiated)"
+                prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
 
         	echo "${g}${b}Found a previous install of $short_name.${x}"
         	echo
@@ -28,7 +28,7 @@ os-check_install_version() {
 
                 ### If instead this is the first install...
 
-        	mkdir -p $conf_dir
+        	mkdir -p $conf_dir/version
         	skip_intro=n
 
         fi
@@ -38,9 +38,9 @@ os-check_install_version() {
         if [ -f "$conf_dir/beta" ]
         then
                 latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
-                echo "bleeding_edge $latest_commit" > "$conf_dir"/version_initiated
+                echo "bleeding_edge $latest_commit" > "$conf_dir/version/version_initiated"
         else
-                echo "$latest_vers" > "$conf_dir"/version_initiated
+                echo "$latest_vers" > "$conf_dir/version/version_initiated"
         fi
 
         ### If a previous installation was at the very least initiated...
@@ -50,12 +50,12 @@ os-check_install_version() {
 
                 ### If a previous version was successfully finished installing...
 
-                if [ -f $conf_dir/version_installed ]
+                if [ -f $conf_dir/version/version_installed ]
                 then
 
                         ### Check that version_initiated and version_installed match
 
-                        prev_version_installed="$(cat $conf_dir/version_installed)"
+                        prev_version_installed="$(cat $conf_dir/version/version_installed)"
 
                         if [ "$prev_version_installed" = "$prev_version_initiated" ]
                         then
@@ -67,7 +67,7 @@ os-check_install_version() {
                                 if [ ! -f $conf_dir/beta ]
                                 then
 
-                        		prev_version_installed="$(cat $conf_dir/version_installed)"
+                        		prev_version_installed="$(cat $conf_dir/version/version_installed)"
 
                                         if grep -q "bleeding_edge" "$prev_version_installed"
                                         then
