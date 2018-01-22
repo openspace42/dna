@@ -128,7 +128,7 @@ os-check_install_version() {
                 	echo
                 	echo "${b}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x}"
                 	echo
-                	echo "${b}In either case, if you're having any issue, simply file an issue report at:${x}"
+                	echo "${b}In either case, if you're having any issues, simply file an issue report at:${x}"
                 	echo
                 	echo "${b} | https://github.com/$author_name/$short_name/issues | ${x}"
                 	echo
