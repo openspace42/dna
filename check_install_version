@@ -2,6 +2,8 @@
 
 os-check_install_version() {
 
+        ### Check if a previous installation was at the very least initiated
+
         if [ -f $conf_dir/version_initiated ]
         then
 
@@ -24,9 +26,21 @@ os-check_install_version() {
 
         else
 
+                ### If instead this is the first install...
+
         	mkdir -p $conf_dir
         	skip_intro=n
 
+        fi
+
+        ### Log current version being installed to version_initiated
+
+        if [ -f "$conf_dir/beta" ]
+        then
+                latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H")"
+                echo "bleeding_edge $latest_commit" > "$conf_dir"/version_initiated
+        else
+                echo "$latest_vers" > "$conf_dir"/version_initiated
         fi
 
         ### If a previous installation was at the very least initiated...
