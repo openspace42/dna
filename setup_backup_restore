@@ -18,7 +18,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o min_local_backups -v n -d y -s backups/local
+	os-set_option -o min_local_backups -v n -d y -p backups/local
 
 
 	describe_setting() {
@@ -28,7 +28,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_backups -v n -d y -s backups/local
+	os-set_option -o max_local_backups -v n -d y -p backups/local
 
 
 	describe_setting() {
@@ -38,7 +38,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_storage -v n -d y -s backups/local
+	os-set_option -o max_local_storage -v n -d y -p backups/local
 
 
 	describe_setting() {
@@ -67,7 +67,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_location -v y -d y -s backups
+	os-set_option -o backup_location -v y -d y -p backups
 
 
 	if [ $backup_location = "s3" ]
@@ -179,7 +179,7 @@ os-setup_backup_restore() {
 
 					}
 
-					os-set_option -o backups_passphrase -v n -d y -s backups/s3
+					os-set_option -o backups_passphrase -v n -d y -p backups/s3
 
 				else
 
@@ -217,7 +217,7 @@ os-setup_backup_restore() {
 
 					}
 
-					os-set_option -o "$i" -v n -d y -s backups/s3
+					os-set_option -o "$i" -v n -d y -p backups/s3
 
 				done
 
@@ -305,7 +305,7 @@ os-setup_backup_restore() {
 
 			}
 
-			os-set_option -o duplicity_min_history -v n -d y -s backups/s3
+			os-set_option -o duplicity_min_history -v n -d y -p backups/s3
 
 			describe_setting() {
 
@@ -331,7 +331,7 @@ os-setup_backup_restore() {
 
 			}
 
-			os-set_option -o s3_monthly_uploads -v y -d y -s backups/s3
+			os-set_option -o s3_monthly_uploads -v y -d y -p backups/s3
 
 		fi
 
