@@ -76,7 +76,7 @@ os-set_option() {
 		then
 			opt_base_path="$path"
 		else
-			opt_base_path="$conf_dir/$subdir"
+			opt_base_path="$conf_dir/$path"
 			mkdir -p "$opt_base_path"
 		fi
 
