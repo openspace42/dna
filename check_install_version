@@ -37,7 +37,7 @@ os-check_install_version() {
 
         if [ -f "$conf_dir/beta" ]
         then
-                latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H")"
+                latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
                 echo "bleeding_edge $latest_commit" > "$conf_dir"/version_initiated
         else
                 echo "$latest_vers" > "$conf_dir"/version_initiated
