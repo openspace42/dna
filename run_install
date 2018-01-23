@@ -7,7 +7,6 @@ os-run_install() {
         define_vars
 
         now="$(date +"%Y-%m-%d_%H-%M-%S")"
-        source_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
         ### Define latest version
         export latest_vers="$(grep 'refs/tags/' $source_dir/.git/packed-refs | tail -1 | awk '{print $2}' | sed "s|refs/tags/v||g")"
