@@ -1,0 +1,72 @@
+#!/bin/bash
+
+os-run_install() {
+
+        os-define_formatting
+
+        define_vars
+
+        now="$(date +"%Y-%m-%d_%H-%M-%S")"
+        source_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+        ### Define latest version
+        export latest_vers="$(grep 'refs/tags/' $source_dir/.git/packed-refs | tail -1 | awk '{print $2}' | sed "s|refs/tags/v||g")"
+
+        base_dir=/root/$author_name
+        install_dir=$base_dir/$short_name
+        conf_dir=$install_dir/conf
+
+        ### Launch the installer
+
+        if [ -f $conf_dir/beta ]
+        then
+                echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
+        	echo
+                echo "Installing bleeding-edge version of $short_name up to latest git commit."
+                echo
+                echo "[delete the | $conf_dir/beta | file to cancel your opt-in to bleeding-edge versions]"
+                echo
+                echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
+                ( cd $source_dir && bash ./install --return-check )
+        else
+                echo "Installing $short_name v$latest_vers"
+                echo
+        	( cd $source_dir && git checkout tags/v$latest_vers && bash ./install --return-check )
+        fi
+
+        ### Read the installer exit code and exit the script
+
+        if [ ${install_complete-null} = "y" ]
+        then
+
+                echo "${g-}${b-}Installation complete.${x-}"
+                echo
+
+                ### Set installation complete checkfile with installed version
+
+                cp $conf_dir/version/version_initiated $conf_dir/version/version_installed
+
+                ### Remove installer directory
+
+                echo "${b-}Now removing installer directory...${x-}"
+                echo
+                echo "${b-}Run | ${g-}git clone https://github.com/$author_name/$proj_name${x-}${b-} | once again to download the latest installer."
+                echo
+
+                rm -r $source_dir
+
+                echo "${b-}Exiting installer.${x-}"
+                echo
+
+        else
+
+                echo "${r-}${b-}The installation has encountered an error.${x-}"
+                echo
+                echo "${b-}Please inspect the any error messages above and try the installation again or open an issue on GitHub. Thank you.${x-}"
+                echo
+
+                os-exit_function
+
+        fi
+
+}

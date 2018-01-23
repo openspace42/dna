@@ -164,7 +164,6 @@ os-setup_backup_restore() {
 
 			else
 
-				echo
 				echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
 				echo
 
