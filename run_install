@@ -2,9 +2,7 @@
 
 os-run_install() {
 
-        os-define_formatting
-
-        define_vars
+        echo
 
         now="$(date +"%Y-%m-%d_%H-%M-%S")"
 
