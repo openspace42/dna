@@ -48,6 +48,8 @@ os-check_install_version() {
         if [ ${prev_install_initiated-null} = "y" ]
         then
 
+                os-install_dependencies bc
+
                 ### If a previous version was successfully finished installing...
 
                 if [ -f $conf_dir/version/version_installed ]

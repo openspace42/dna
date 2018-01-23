@@ -33,7 +33,7 @@ os-run_install() {
 
         ### Read the installer exit code and exit the script
 
-        if [ -f $source_dir/install-complete ]
+        if [ -f $source_dir/install_complete ]
         then
 
                 echo "${g-}${b-}Installation complete.${x-}"
