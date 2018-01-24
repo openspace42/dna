@@ -155,6 +155,12 @@ os-check_install_version() {
                 echo
                 if bash $source_dir/tools/$short_name-backup
                 then
+                    backup_output=ok
+                else
+                    backup_output=failed
+                fi
+                if [ $backup_output = "ok" ]
+                then
                     echo "${b}Backup complete. Continuing installation...${x}"
                     echo
                 else
