@@ -2,8 +2,8 @@
 
 os-exit_function() {
 
-        echo "${r}${b}Exiting...${x}"
-        echo
-        exit 1
+    echo "${r}${b}Exiting...${x}"
+    echo
+    exit 1
 
 }

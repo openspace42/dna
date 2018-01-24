@@ -2,32 +2,32 @@
 
 os-ask_for_boolean_def_yes() {
 
-        unset ask_for_boolean_output
-        read -p "$ask_for_boolean_question" -n 1 -r
-	echo
-	if [[ ! $REPLY =~ ^[Nn]$ ]]
-	then
-                ask_for_boolean_output=y
-        else
-                echo
-                ask_for_boolean_output=n
-        fi
-        unset ask_for_boolean_question
+    unset ask_for_boolean_output
+    read -p "$ask_for_boolean_question" -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]
+    then
+        ask_for_boolean_output=y
+    else
+        echo
+        ask_for_boolean_output=n
+    fi
+    unset ask_for_boolean_question
 
 }
 
 os-ask_for_boolean_def_no() {
 
-        unset ask_for_boolean_output
-        read -p "$ask_for_boolean_question" -n 1 -r
-	echo
-	if [[ $REPLY =~ ^[Yy]$ ]]
-        then
-                ask_for_boolean_output=n
-        else
-                echo
-                ask_for_boolean_output=y
-        fi
-        unset ask_for_boolean_question
+    unset ask_for_boolean_output
+    read -p "$ask_for_boolean_question" -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        ask_for_boolean_output=n
+    else
+        echo
+        ask_for_boolean_output=y
+    fi
+    unset ask_for_boolean_question
 
 }

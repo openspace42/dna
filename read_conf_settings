@@ -2,13 +2,13 @@
 
 os-read_conf_settings() {
 
-        conf_files="$(find $conf_dir -type f | xargs)"
+    conf_files="$(find $conf_dir -type f | xargs)"
 
-        for conf_file in $conf_files
-        do
-                conf_file_name="$(basename $conf_file)"
-                export $conf_file_name="$(cat $conf_file)"
-        done
+    for conf_file in $conf_files
+    do
+        conf_file_name="$(basename $conf_file)"
+        export $conf_file_name="$(cat $conf_file)"
+    done
 
 
 }

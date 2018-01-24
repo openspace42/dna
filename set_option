@@ -7,17 +7,17 @@ os-set_option() {
 	while getopts ":o:v:d:p:" arguments; do
 		case $arguments in
 			o)	option="$OPTARG"
-				;;
+			;;
 			v)	validate="$OPTARG"
-				;;
+			;;
 			d)	describe="$OPTARG"
-				;;
+			;;
 			p)	path="$OPTARG"
-				;;
+			;;
 			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
-				echo
-				os-exit_function
-				;;
+			echo
+			os-exit_function
+			;;
 		esac
 	done
 
@@ -32,13 +32,13 @@ os-set_option() {
 	then
 		case $validate in
 			y)	validate_input=y
-				;;
+			;;
 			n)	validate_input=n
-				;;
+			;;
 			*)	echo "${r}${b}Invalid content for validate argument in function | ${FUNCNAME[0]} |.${x}"
-				echo
-				os-exit_function
-				;;
+			echo
+			os-exit_function
+			;;
 		esac
 	fi
 
@@ -46,13 +46,13 @@ os-set_option() {
 	then
 		case $describe in
 			y)	describe_setting=y
-				;;
+			;;
 			n)	describe_setting=n
-				;;
+			;;
 			*)	echo "${r}${b}Invalid content for describe argument in function | ${FUNCNAME[0]} |.${x}"
-				echo
-				os-exit_function
-				;;
+			echo
+			os-exit_function
+			;;
 		esac
 	fi
 
@@ -188,30 +188,30 @@ os-set_option() {
 			do
 				read -n 1 -rp "${b}Is | $new_val | correct? (Y/n/e[xit]) ${x}" answer;
 				case $answer in
-				"")
+					"")
 					echo
 					acceptable=y
 					defined=y
 					;;
-				y)
+					y)
 					echo -e "\\n"
 					acceptable=y
 					defined=y
 					;;
-				n)
+					n)
 					echo -e "\\n"
 					echo "${b}Ok, then please try again...${x}"
 					echo
 					acceptable=y
 					defined=n
 					;;
-				e)
+					e)
 					echo -e "\\n"
 					echo "${b}Exiting...${x}"
 					echo
 					exit
 					;;
-				*)
+					*)
 					echo -e "\\n"
 					echo "${r}${b}Invalid option. Retry...${x}"
 					echo

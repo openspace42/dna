@@ -2,9 +2,9 @@
 
 os-define_vars() {
 
-        ### Define variables. Don't change these! | No trailing slash!
+	### Define variables. Don't change these! | No trailing slash!
 
-        ### Define these in the project itself
+	### Define these in the project itself
 	### proj_name="EasyEngine-Backup-Restore"
 	### short_name="ee-br"
 	### author_name="nikksno"
@@ -20,9 +20,9 @@ os-define_vars() {
 	backups_archive_dir=$backups_dir/archive
 	backups_latest_dir=$backups_dir/latest
 	conf_dir=$install_dir/conf
-        conf_backups_dir=$conf_dir/backups
-        conf_backups_local_dir=$conf_backups_dir/local
-        conf_backups_s3_dir=$conf_backups_dir/s3
+	conf_backups_dir=$conf_dir/backups
+	conf_backups_local_dir=$conf_backups_dir/local
+	conf_backups_s3_dir=$conf_backups_dir/s3
 	restores_dir=$install_dir/restores
 	tls_dir=/etc/ssl/$short_name
 	tmp_dir=/tmp/$short_name

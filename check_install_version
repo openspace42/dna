@@ -2,168 +2,168 @@
 
 os-check_install_version() {
 
-        ### Check if a previous installation was at the very least initiated
+    ### Check if a previous installation was at the very least initiated
 
-        if [ -f $conf_dir/version/version_initiated ]
+    if [ -f $conf_dir/version/version_initiated ]
+    then
+
+        prev_install_initiated=y
+        prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
+
+        echo "${g}${b}Found a previous install of $short_name.${x}"
+        echo
+        read -rp "${b}Skip the introduction on how it works? (Y/n): ${x}" -n 1
+        echo
+        if [[ ! $REPLY =~ ^[Nn]$ ]]
         then
-
-        	prev_install_initiated=y
-                prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
-
-        	echo "${g}${b}Found a previous install of $short_name.${x}"
-        	echo
-        	read -rp "${b}Skip the introduction on how it works? (Y/n): ${x}" -n 1
-        	echo
-        	if [[ ! $REPLY =~ ^[Nn]$ ]]
-        	then
-        		echo "${b}Ok, continuing...${x}"
-        		echo
-        		skip_intro=y
-        	else
-        		echo
-        		skip_intro=n
-        	fi
-
+            echo "${b}Ok, continuing...${x}"
+            echo
+            skip_intro=y
         else
-
-                ### If instead this is the first install...
-
-        	mkdir -p $conf_dir/version
-        	skip_intro=n
-
+            echo
+            skip_intro=n
         fi
 
-        ### Log current version being installed to version_initiated
+    else
 
-        if [ -f "$conf_dir/beta" ]
+        ### If instead this is the first install...
+
+        mkdir -p $conf_dir/version
+        skip_intro=n
+
+    fi
+
+    ### Log current version being installed to version_initiated
+
+    if [ -f "$conf_dir/beta" ]
+    then
+        latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
+        echo "bleeding_edge-$latest_commit" > "$conf_dir/version/version_initiated"
+    else
+        echo "$latest_vers" > "$conf_dir/version/version_initiated"
+    fi
+
+    ### If a previous installation was at the very least initiated...
+
+    if [ ${prev_install_initiated-null} = "y" ]
+    then
+
+        os-install_dependencies -p bc
+
+        ### If a previous version was successfully finished installing...
+
+        if [ -f $conf_dir/version/version_installed ]
         then
-                latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
-                echo "bleeding_edge-$latest_commit" > "$conf_dir/version/version_initiated"
-        else
-                echo "$latest_vers" > "$conf_dir/version/version_initiated"
-        fi
 
-        ### If a previous installation was at the very least initiated...
+            ### Check that version_initiated and version_installed match
 
-        if [ ${prev_install_initiated-null} = "y" ]
-        then
+            prev_version_installed="$(cat $conf_dir/version/version_installed)"
 
-                os-install_dependencies -p bc
-
-                ### If a previous version was successfully finished installing...
-
-                if [ -f $conf_dir/version/version_installed ]
-                then
-
-                        ### Check that version_initiated and version_installed match
-
-                        prev_version_installed="$(cat $conf_dir/version/version_installed)"
-
-                        if [ "$prev_version_installed" = "$prev_version_initiated" ]
-                        then
-
-                                ### Versions match, therefore previous install was completed successfully
-                                ### Proceed to ensure that, if we're not installing a bleeding_edge version, there's no more recent version already installed
-                                ### If instead we're installing a bleeding_edge version, skip any checks as we're certainly intalling a newer version.
-
-                                if [ ! -f $conf_dir/beta ]
-                                then
-
-                        		prev_version_installed="$(cat $conf_dir/version/version_installed)"
-
-                                        if grep -q "bleeding_edge" "$prev_version_installed"
-                                        then
-                                                echo "${b-}You're now installing stable version | $latest_vers | over a previously bleeding_edge version of $short_name.${x-}"
-                                                echo
-                                                echo "${b-}This is normal if you've opted out of beta versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
-                                                echo
-                                                read -rp "${b-}[press enter to continue reading...]${x-}"
-                                        	clear
-                                        else
-                                		if (( $(echo "$latest_vers < $prev_version_installed" | bc -l) ))
-                                		then
-                                	        	echo "${r}${b}You have previously installed a newer version of $short_name.${x}"
-                                			echo
-                                			echo "${b}This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check.${x}"
-                                			echo
-                                			os-exit_function
-                                		fi
-                                        fi
-
-                                        ### In any event, alert about the re-install
-
-                                        echo "${b}You're now re-running the $short_name installer.${x}"
-                                	echo
-                                	echo "${g}${b}This is perfectly fine as $short_name is meant to be re-installed as many times as you'd like [also to update your current installation].${x}"
-                                	echo
-                                	echo "${r}${b}Keep in mind though that all customizations external to $short_name you might have made will be permanently deleted.${x}"
-                                	echo
-                                	echo "${b}This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds.${x}"
-                                	echo
-                                	echo "${r}${b}If you want to save any customizations you have made, exit this script and do so now.${x}"
-                                	echo
-                                	read -rp "${b}[press enter to continue reading...]${x}"
-                                	clear
-
-                                fi
-
-                        else
-
-                                ### It appears the previous install was not completed successfully, as version_initiated is different from version_installed.
-
-                                prev_install_incomplete=y
-
-                        fi
-
-                else
-
-                        ### It appears the previous install was not completed successfully, as there is no version_installed file, only the version_initiated one.
-
-                        prev_install_incomplete=y
-
-                fi
-
-                if [ ${prev_install_incomplete-null} = "y" ]
-                then
-                	clear
-                	echo "${r}${b}It appears you have a previous incomplete installation of $short_name.${x}"
-                	echo
-                	echo "${b}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x}"
-                	echo
-                	echo "${b}In either case, if you're having any issues, simply file an issue report at:${x}"
-                	echo
-                	echo "${b} | https://github.com/$author_name/$short_name/issues | ${x}"
-                	echo
-                	echo "${b}Thank you in advance!${x}"
-                	echo
-                	read -rp "${b}[press enter to continue reading...]${x}"
-                	clear
-                fi
-
-            ### In any event, since there is a previous installation, at least partial, prompt for a backup.
-
-            if [ ! ${skip_backup-null} = "y" ]
+            if [ "$prev_version_installed" = "$prev_version_initiated" ]
             then
 
-            	echo "${b}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x}"
-            	echo
-            	read -rp "${b}Do you want to run the backup now [without exiting this script] (Y/n): ${x}" -n 1
-            	echo
-            	if [[ ! $REPLY =~ ^[Nn]$ ]]
-            	then
-            		echo "${b}Ok, proceeding with backup...${x}"
-            		bash $source_dir/tools/$short_name-backup
-            		echo
-            		echo "${b}Backup complete. Continuing installation...${x}"
-            		echo
-            	else
-            		echo
-            		echo "${b}Ok, skipping backup...${x}"
-            		echo
-            	fi
+                ### Versions match, therefore previous install was completed successfully
+                ### Proceed to ensure that, if we're not installing a bleeding_edge version, there's no more recent version already installed
+                ### If instead we're installing a bleeding_edge version, skip any checks as we're certainly intalling a newer version.
+
+                if [ ! -f $conf_dir/beta ]
+                then
+
+                    prev_version_installed="$(cat $conf_dir/version/version_installed)"
+
+                    if grep -q "bleeding_edge" "$prev_version_installed"
+                    then
+                        echo "${b-}You're now installing stable version | $latest_vers | over a previously bleeding_edge version of $short_name.${x-}"
+                        echo
+                        echo "${b-}This is normal if you've opted out of beta versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
+                        echo
+                        read -rp "${b-}[press enter to continue reading...]${x-}"
+                        clear
+                    else
+                        if (( $(echo "$latest_vers < $prev_version_installed" | bc -l) ))
+                        then
+                            echo "${r}${b}You have previously installed a newer version of $short_name.${x}"
+                            echo
+                            echo "${b}This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check.${x}"
+                            echo
+                            os-exit_function
+                        fi
+                    fi
+
+                    ### In any event, alert about the re-install
+
+                    echo "${b}You're now re-running the $short_name installer.${x}"
+                    echo
+                    echo "${g}${b}This is perfectly fine as $short_name is meant to be re-installed as many times as you'd like [also to update your current installation].${x}"
+                    echo
+                    echo "${r}${b}Keep in mind though that all customizations external to $short_name you might have made will be permanently deleted.${x}"
+                    echo
+                    echo "${b}This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds.${x}"
+                    echo
+                    echo "${r}${b}If you want to save any customizations you have made, exit this script and do so now.${x}"
+                    echo
+                    read -rp "${b}[press enter to continue reading...]${x}"
+                    clear
+
+                fi
+
+            else
+
+                ### It appears the previous install was not completed successfully, as version_initiated is different from version_installed.
+
+                prev_install_incomplete=y
 
             fi
 
+        else
+
+            ### It appears the previous install was not completed successfully, as there is no version_installed file, only the version_initiated one.
+
+            prev_install_incomplete=y
+
         fi
+
+        if [ ${prev_install_incomplete-null} = "y" ]
+        then
+            clear
+            echo "${r}${b}It appears you have a previous incomplete installation of $short_name.${x}"
+            echo
+            echo "${b}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x}"
+            echo
+            echo "${b}In either case, if you're having any issues, simply file an issue report at:${x}"
+            echo
+            echo "${b} | https://github.com/$author_name/$short_name/issues | ${x}"
+            echo
+            echo "${b}Thank you in advance!${x}"
+            echo
+            read -rp "${b}[press enter to continue reading...]${x}"
+            clear
+        fi
+
+        ### In any event, since there is a previous installation, at least partial, prompt for a backup.
+
+        if [ ! ${skip_backup-null} = "y" ]
+        then
+
+            echo "${b}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x}"
+            echo
+            read -rp "${b}Do you want to run the backup now [without exiting this script] (Y/n): ${x}" -n 1
+            echo
+            if [[ ! $REPLY =~ ^[Nn]$ ]]
+            then
+                echo "${b}Ok, proceeding with backup...${x}"
+                bash $source_dir/tools/$short_name-backup
+                echo
+                echo "${b}Backup complete. Continuing installation...${x}"
+                echo
+            else
+                echo
+                echo "${b}Ok, skipping backup...${x}"
+                echo
+            fi
+
+        fi
+
+    fi
 
 }

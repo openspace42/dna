@@ -2,40 +2,40 @@
 
 os-generate_project_specific_dhparam() {
 
-        if [ -f $tls_dir/dh.pem ]
+    if [ -f $tls_dir/dh.pem ]
+    then
+        echo "${g}${b}DHparam file found. Skipping generation...${x}"
+        echo
+    else
+        echo "${b}One last thing: to make your TLS connections even more secure, you can generate a file called DH parameters file.${x}"
+        echo
+        echo "${b}To do so, simply answer yes, but be aware that this is a very time consuming cryptographic operation, although it must only be performed once.${x}"
+        echo
+        read -rp "${b}Generate openssl DHparams file? (Y/n): ${x}" -n 1
+        echo
+        if [[ ! $REPLY =~ ^[Nn]$ ]]
         then
-        	echo "${g}${b}DHparam file found. Skipping generation...${x}"
-        	echo
+            echo "${b}Ok, proceeding with DHparams file generation...${x}"
+            echo
+            openssl dhparam -out $tls_dir/dh.pem.incomplete 4096
+            mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem
+            echo
         else
-        	echo "${b}One last thing: to make your TLS connections even more secure, you can generate a file called DH parameters file.${x}"
-        	echo
-        	echo "${b}To do so, simply answer yes, but be aware that this is a very time consuming cryptographic operation, although it must only be performed once.${x}"
-        	echo
-        	read -rp "${b}Generate openssl DHparams file? (Y/n): ${x}" -n 1
-        	echo
-        	if [[ ! $REPLY =~ ^[Nn]$ ]]
-        	then
-        		echo "${b}Ok, proceeding with DHparams file generation...${x}"
-        		echo
-        		openssl dhparam -out $tls_dir/dh.pem.incomplete 4096
-        		mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem
-        		echo
-        	else
-        		echo
-        		echo "${b}Skipping DHparams generation.${x}"
-        		echo
-        		echo "${b}You can always generate them at a later time by executing:${x}"
-        		echo
-        		echo "${b}openssl dhparam -out $tls_dir/dh.pem.incomplete 4096${x}"
-        		echo
-        		echo "${b}[and making sure you let the command run until it exits]. Once it's done, execute:${x}"
-        		echo
-        		echo "${b}mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem${x}"
-        		echo
-        		/usr/sbin/service ejabberd restart
-        	fi
-        	echo "${b}Finished generating DHparams.${x}"
-        	echo
+            echo
+            echo "${b}Skipping DHparams generation.${x}"
+            echo
+            echo "${b}You can always generate them at a later time by executing:${x}"
+            echo
+            echo "${b}openssl dhparam -out $tls_dir/dh.pem.incomplete 4096${x}"
+            echo
+            echo "${b}[and making sure you let the command run until it exits]. Once it's done, execute:${x}"
+            echo
+            echo "${b}mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem${x}"
+            echo
+            /usr/sbin/service ejabberd restart
         fi
+        echo "${b}Finished generating DHparams.${x}"
+        echo
+    fi
 
 }

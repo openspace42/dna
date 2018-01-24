@@ -2,66 +2,66 @@
 
 os-add_cron_job() {
 
-        os-install_dependencies -p cronic
+    os-install_dependencies -p cronic
 
-        ########################################################################
+    ########################################################################
 
-        if [ $# -eq 0 ]
-        then
-                echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
-                echo
-                os-exit_function
-        fi
-
-        while getopts ":n:t:c:" arguments; do
-		case $arguments in
-			n)	name="$OPTARG"
-				;;
-                        t)	time="$OPTARG"
-                                ;;
-			c)	content="$OPTARG"
-				;;
-			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
-				echo
-				os-exit_function
-				;;
-		esac
-	done
-
-	if [ -z "${name-}" ]
-	then
-		echo "${r}${b}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
-		echo
-		os-exit_function
-	fi
-
-        if [ -z "${time-}" ]
-        then
-                echo "${r}${b}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
-                echo
-                os-exit_function
-        fi
-
-        if [ -z "${content-}" ]
-        then
-                echo "${r}${b}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
-                echo
-                os-exit_function
-        fi
-
-        ########################################################################
-
-        echo "${b}Now adding job to crontab...${x}"
+    if [ $# -eq 0 ]
+    then
+        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
         echo
-        job_path="/etc/cron.d/$name"
-        touch "$job_path"
-        chmod 755 "$job_path"
-        echo "SHELL=/bin/bash" > "$job_path"
-        echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "$job_path"
-        echo "MAILTO=$admin_mail" >> "$job_path"
-        echo >> "$job_path"
-        echo "$time root cronic $content" >> "$job_path"
-        echo "${b}Finished adding backup script to daily crontab...${x}"
+        os-exit_function
+    fi
+
+    while getopts ":n:t:c:" arguments; do
+        case $arguments in
+            n)	name="$OPTARG"
+            ;;
+            t)	time="$OPTARG"
+            ;;
+            c)	content="$OPTARG"
+            ;;
+            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            echo
+            os-exit_function
+            ;;
+        esac
+    done
+
+    if [ -z "${name-}" ]
+    then
+        echo "${r}${b}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
         echo
+        os-exit_function
+    fi
+
+    if [ -z "${time-}" ]
+    then
+        echo "${r}${b}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+    if [ -z "${content-}" ]
+    then
+        echo "${r}${b}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+    ########################################################################
+
+    echo "${b}Now adding job to crontab...${x}"
+    echo
+    job_path="/etc/cron.d/$name"
+    touch "$job_path"
+    chmod 755 "$job_path"
+    echo "SHELL=/bin/bash" > "$job_path"
+    echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "$job_path"
+    echo "MAILTO=$admin_mail" >> "$job_path"
+    echo >> "$job_path"
+    echo "$time root cronic $content" >> "$job_path"
+    echo "${b}Finished adding backup script to daily crontab...${x}"
+    echo
 
 }

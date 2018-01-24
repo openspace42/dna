@@ -54,15 +54,15 @@ os-setup_backup_restore() {
 
 		case $input in
 			local)	backup_location=local
-				valid=y
-				;;
+			valid=y
+			;;
 			s3)	backup_location=s3
-				valid=y
-				;;
+			valid=y
+			;;
 			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
-				echo
-				valid=n
-				;;
+			echo
+			valid=n
+			;;
 		esac
 
 	}
@@ -200,10 +200,10 @@ os-setup_backup_restore() {
 			do
 
 				declare -A s3_options_array=(
-					[s3_access_key_id]="AWS Access Key ID"
-					[s3_secret_access_key]="AWS Secret Access Key"
-					[s3_endpoint]="S3 Endpoint URL"
-					[s3_bucket_name]="S3 Bucket Name"
+				[s3_access_key_id]="AWS Access Key ID"
+				[s3_secret_access_key]="AWS Secret Access Key"
+				[s3_endpoint]="S3 Endpoint URL"
+				[s3_bucket_name]="S3 Bucket Name"
 				)
 
 				for i in "${!s3_options_array[@]}"
@@ -266,9 +266,9 @@ os-setup_backup_restore() {
 						echo "${r}${b}S3 connection details do NOT appear to be valid.${x}"
 						echo
 						read -rp "${b}Would you like to try setting it up again? (Y/n): ${x}" -n 1
-					    	echo
-					    	if [[ ! $REPLY =~ ^[Nn]$ ]]
-					    	then
+						echo
+						if [[ ! $REPLY =~ ^[Nn]$ ]]
+						then
 							s3_setup_accepted=n
 							echo "${b}Ok, repeating S3 setup...${x}"
 							echo
@@ -317,15 +317,15 @@ os-setup_backup_restore() {
 
 				case $input in
 					y)	s3_monthly_uploads=y
-						valid=y
-						;;
+					valid=y
+					;;
 					n)	s3_monthly_uploads=s3
-						valid=y
-						;;
+					valid=y
+					;;
 					*)	echo "${r}${b}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x}"
-						echo
-						valid=n
-						;;
+					echo
+					valid=n
+					;;
 				esac
 
 			}

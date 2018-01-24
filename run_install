@@ -2,73 +2,73 @@
 
 os-run_install() {
 
-        ### Set bash environment error management
+    ### Set bash environment error management
 
-        set -e
-        set -u
+    set -e
+    set -u
 
+    echo
+
+    now="$(date +"%Y-%m-%d_%H-%M-%S")"
+
+    ### Define latest version
+    export latest_vers="$(grep 'refs/tags/' $source_dir/.git/packed-refs | tail -1 | awk '{print $2}' | sed "s|refs/tags/v||g")"
+
+    base_dir=/root/$author_name
+    install_dir=$base_dir/$short_name
+    conf_dir=$install_dir/conf
+
+    ### Launch the installer
+
+    if [ -f $conf_dir/beta ]
+    then
+        echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
+        echo
+        echo "Installing bleeding-edge version of $short_name up to latest git commit."
+        echo
+        echo "[delete the | $conf_dir/beta | file to cancel your opt-in to bleeding-edge versions]"
+        echo
+        echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
+        ( cd $source_dir && bash ./install --return-check )
+    else
+        echo "Installing $short_name v$latest_vers"
+        echo
+        ( cd $source_dir && git checkout tags/v$latest_vers && bash ./install --return-check )
+    fi
+
+    ### Read the installer exit code and exit the script
+
+    if [ -f $source_dir/install_complete ]
+    then
+
+        echo "${g-}${b-}Installation complete.${x-}"
         echo
 
-        now="$(date +"%Y-%m-%d_%H-%M-%S")"
+        ### Set installation complete checkfile with installed version
 
-        ### Define latest version
-        export latest_vers="$(grep 'refs/tags/' $source_dir/.git/packed-refs | tail -1 | awk '{print $2}' | sed "s|refs/tags/v||g")"
+        cp $conf_dir/version/version_initiated $conf_dir/version/version_installed
 
-        base_dir=/root/$author_name
-        install_dir=$base_dir/$short_name
-        conf_dir=$install_dir/conf
+        ### Remove installer directory
 
-        ### Launch the installer
+        echo "${b-}Now removing installer directory...${x-}"
+        echo
+        echo "${b-}Run | ${g-}git clone https://github.com/$author_name/$proj_name${x-}${b-} | once again to download the latest installer."
+        echo
 
-        if [ -f $conf_dir/beta ]
-        then
-                echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
-        	echo
-                echo "Installing bleeding-edge version of $short_name up to latest git commit."
-                echo
-                echo "[delete the | $conf_dir/beta | file to cancel your opt-in to bleeding-edge versions]"
-                echo
-                echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
-                ( cd $source_dir && bash ./install --return-check )
-        else
-                echo "Installing $short_name v$latest_vers"
-                echo
-        	( cd $source_dir && git checkout tags/v$latest_vers && bash ./install --return-check )
-        fi
+        rm -r $source_dir
 
-        ### Read the installer exit code and exit the script
+        echo "${b-}Exiting installer.${x-}"
+        echo
 
-        if [ -f $source_dir/install_complete ]
-        then
+    else
 
-                echo "${g-}${b-}Installation complete.${x-}"
-                echo
+        echo "${r-}${b-}The installation has encountered an error.${x-}"
+        echo
+        echo "${b-}Please inspect the any error messages above and try the installation again or open an issue on GitHub. Thank you.${x-}"
+        echo
 
-                ### Set installation complete checkfile with installed version
+        os-exit_function
 
-                cp $conf_dir/version/version_initiated $conf_dir/version/version_installed
-
-                ### Remove installer directory
-
-                echo "${b-}Now removing installer directory...${x-}"
-                echo
-                echo "${b-}Run | ${g-}git clone https://github.com/$author_name/$proj_name${x-}${b-} | once again to download the latest installer."
-                echo
-
-                rm -r $source_dir
-
-                echo "${b-}Exiting installer.${x-}"
-                echo
-
-        else
-
-                echo "${r-}${b-}The installation has encountered an error.${x-}"
-                echo
-                echo "${b-}Please inspect the any error messages above and try the installation again or open an issue on GitHub. Thank you.${x-}"
-                echo
-
-                os-exit_function
-
-        fi
+    fi
 
 }
