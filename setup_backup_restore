@@ -148,17 +148,19 @@ os-setup_backup_restore() {
 
 					}
 
+					mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase.old"
 					os-set_option -o backups_passphrase -v n -d y -p backups/s3
 
 				else
 
+					echo
 					echo "${b}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x}"
 					echo
 					echo "${b} | $conf_backups_s3_dir/backups_passphrase | ${x}"
 					echo
 					echo "${b}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x}"
 					echo
-					touch $conf_dir/block_s3_restores
+					touch $conf_backups_s3_dir/block_s3_restores
 
 				fi
 
