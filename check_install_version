@@ -140,24 +140,29 @@ os-check_install_version() {
                 	clear
                 fi
 
-                ### In any event, since there is a previous installation, at least partial, prompt for a backup.
+            ### In any event, since there is a previous installation, at least partial, prompt for a backup.
 
-        	echo "${b}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x}"
-        	echo
-        	read -rp "${b}Do you want to run the backup now [without exiting this script] (Y/n): ${x}" -n 1
-        	echo
-        	if [[ ! $REPLY =~ ^[Nn]$ ]]
-        	then
-        		echo "${b}Ok, proceeding with backup...${x}"
-        		bash $source_dir/tools/$short_name-backup
-        		echo
-        		echo "${b}Backup complete. Continuing installation...${x}"
-        		echo
-        	else
-        		echo
-        		echo "${b}Ok, skipping backup...${x}"
-        		echo
-        	fi
+            if [ ! ${skip_backup-null} = "y" ]
+            then
+
+            	echo "${b}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x}"
+            	echo
+            	read -rp "${b}Do you want to run the backup now [without exiting this script] (Y/n): ${x}" -n 1
+            	echo
+            	if [[ ! $REPLY =~ ^[Nn]$ ]]
+            	then
+            		echo "${b}Ok, proceeding with backup...${x}"
+            		bash $source_dir/tools/$short_name-backup
+            		echo
+            		echo "${b}Backup complete. Continuing installation...${x}"
+            		echo
+            	else
+            		echo
+            		echo "${b}Ok, skipping backup...${x}"
+            		echo
+            	fi
+
+            fi
 
         fi
 
