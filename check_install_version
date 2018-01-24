@@ -171,6 +171,7 @@ os-check_install_version() {
                         echo
                         os-exit_function
                     fi
+                fi
             else
                 echo
                 echo "${b}Ok, skipping backup...${x}"
