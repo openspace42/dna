@@ -152,16 +152,16 @@ os-check_install_version() {
             if [[ ! $REPLY =~ ^[Nn]$ ]]
             then
                 echo "${b}Ok, proceeding with backup...${x}"
-                echo
                 if bash $source_dir/tools/$short_name-backup
                 then
                     backup_output=ok
                 else
                     backup_output=failed
                 fi
+                sleep 1
                 if [ $backup_output = "ok" ]
                 then
-                    echo "${b}Backup complete. Continuing installation...${x}"
+                    echo "${g}${b}Backup complete. Continuing installation...${x}"
                     echo
                 else
                     echo "${r}${b}Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk.${x}"
@@ -173,6 +173,7 @@ os-check_install_version() {
                         echo "${b}Ok, continuing...${x}"
                         echo
                     else
+                        echo
                         echo "${b}Ok, aborting...${x}"
                         echo
                         os-exit_function
