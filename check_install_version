@@ -69,9 +69,7 @@ os-check_install_version() {
                 if [ ! -f $conf_dir/beta ]
                 then
 
-                    prev_version_installed="$(cat $conf_dir/version/version_installed)"
-
-                    if grep -q "bleeding_edge" "$prev_version_installed"
+                    if grep -q "bleeding_edge" "$conf_dir/version/version_installed"
                     then
                         echo "${b-}You're now installing stable version | $latest_vers | over a previously bleeding_edge version of $short_name.${x-}"
                         echo
