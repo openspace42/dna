@@ -71,7 +71,7 @@ os-check_install_version() {
 
                     if grep -q "bleeding_edge" "$conf_dir/version/version_installed"
                     then
-                        echo "${b-}You're now installing stable version | $latest_vers | over a previously bleeding_edge version of $short_name.${x-}"
+                        echo "${b-}You're now installing stable version | ${g-}v$latest_vers${x-}${b-} | over a previously | ${r-}bleeding_edge${x-}${b-} | version of $short_name.${x-}"
                         echo
                         echo "${b-}This is normal if you've opted out of beta versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
                         echo
