@@ -28,7 +28,7 @@ os-check_install_version() {
 
         ### If instead this is the first install...
 
-        mkdir -p $conf_dir/version
+        mkdir -p $conf_dir/version/
         skip_intro=n
 
     fi

@@ -34,11 +34,11 @@ os-br_purge_loop () {
 
 		if [ $local_archive_items -gt $counter ]
 		then
-			tailnumber=$(( $counter + 1 ))
-			( cd $backups_archive_dir && ls -t | tail -n +"$tailnumber" | xargs -d '\n' rm )
+			tail_number=$(( $counter + 1 ))
+			( cd $backups_archive_dir && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
 		fi
 
-		os-br_os-br_update_storage_info
+		os-br_update_storage_info
 
 	else
 
@@ -72,8 +72,8 @@ os-br_purge_backups() {
 	local_archive_items="$(ls -1q $backups_archive_dir | wc -l)"
 	if [ $local_archive_items -gt $max_local_backups ]
 	then
-		tailnumber=$(( $max_local_backups + 1 ))
-		( cd $backups_archive_dir && ls -t | tail -n +"$tailnumber" | xargs -d '\n' rm )
+		tail_number=$(( $max_local_backups + 1 ))
+		( cd $backups_archive_dir && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
 		os-br_update_storage_info
 	fi
 
@@ -176,6 +176,50 @@ os-br_purge_incomplete_archives() {
 	then
 		find $backups_archive_dir -type f -name '*.incomplete' -delete
 	fi
+
+}
+
+os-br_backup_locally() {
+
+    ### backup_locally_loop is project-specific and must be defined before calling this function
+
+    echo "${b}Now backing up locally...${x}"
+	echo
+
+	### Abort if the current installation was never completed
+
+	os-check_install_complete
+
+	if [ $install_complete = "n" ]
+	then
+		echo "${r-}${b-}It appears $short_name is not currently installed or there is an incomplete installation on this machine.${x-}"
+        echo
+        echo "${b-}This backup script only works on a fully installed $short_name instance.${x-}"
+        echo
+        echo "${b-}Please finish installing $short_name before running this script.${x-}"
+        echo
+		os-exit_function
+	fi
+
+    backup_locally_loop
+
+    echo "${b}Now compressing backup...${x}"
+	echo
+
+	cd $tmp_dir
+
+	### Tar.bz2 this backup archive.
+
+	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > $backups_archive_dir/$backup_name.tar.bz2.incomplete
+
+	mv $backups_archive_dir/$backup_name.tar.bz2.incomplete $backups_archive_dir/$backup_name.tar.bz2
+
+	echo
+	echo "${g}${b}Finished compressing backup and stored in | $backups_archive_dir/ | ${x}"
+	echo
+
+	echo "${g}${b}Finished local backup.${x}"
+	echo
 
 }
 
@@ -541,6 +585,18 @@ os-br_backup_to_S3() {
 
 	echo "${b}Now backing up to S3...${x}"
 	echo
+
+    if [ -f "$conf_backups_s3_dir/block_s3_backups" ]
+    then
+        echo "${r}${b}NOT performing backup as | $conf_backups_s3_dir/block_s3_backups | file found.${x}"
+        echo
+        echo "${b}This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of $short_name backed up on S3.${x}"
+        echo
+        echo "${b}If this is the case, simply run the restore script right away. If it is not, and you want to use this machine for a new installation and OVERWRITE all backups currently on S3, erase this file.${x}"
+        echo
+        echo "${r}${b}NO backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation.${x}"
+        echo
+    fi
 
 	os-br_duplicity_loop backup
 
