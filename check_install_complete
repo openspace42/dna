@@ -1,7 +1,7 @@
 #!/bin/bash
 
 os-check_install_complete() {
-    
+
     if [ -f $conf_dir/version/version_initiated ]
     then
         prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
@@ -16,6 +16,7 @@ os-check_install_complete() {
             fi
         else
             install_complete=n
+        fi
     else
         install_complete=n
     fi
