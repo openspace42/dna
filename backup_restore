@@ -181,6 +181,18 @@ os-br_purge_incomplete_archives() {
 
 os-br_backup_locally() {
 
+    while getopts ":l" arguments; do
+		case $arguments in
+			l)	last="y"
+			;;
+			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			echo
+			os-exit_function
+			;;
+		esac
+	done
+    OPTIND=1
+
     ### backup_locally_loop is project-specific and must be defined before calling this function
 
     echo "${b}Now backing up locally...${x}"
@@ -208,15 +220,28 @@ os-br_backup_locally() {
 
 	cd $tmp_dir
 
-	### Tar.bz2 this backup archive.
+    if [ ! ${last-null} = "y" ]
+	then
 
-	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > $backups_archive_dir/$backup_name.tar.bz2.incomplete
+    	### Tar.bz2 this backup archive.
 
-	mv $backups_archive_dir/$backup_name.tar.bz2.incomplete $backups_archive_dir/$backup_name.tar.bz2
+    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > $backups_archive_dir/$backup_name.tar.bz2.incomplete
 
-	echo
-	echo "${g}${b}Finished compressing backup and stored in | $backups_archive_dir/ | ${x}"
-	echo
+    	mv $backups_archive_dir/$backup_name.tar.bz2.incomplete $backups_archive_dir/$backup_name.tar.bz2
+
+    	echo
+    	echo "${g}${b}Finished compressing backup and stored in | $backups_archive_dir/ | ${x}"
+    	echo
+
+    else
+
+        ### Tar.bz2 this backup archive. Give local backup a custom name so that it's clear it's the last one before a restore
+
+    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > $backups_archive_dir/$backup_name-last-backup-before-"$now"-restore.tar.bz2.incomplete
+
+    	mv $backups_archive_dir/$backup_name-last-backup-before-"$now"-restore.tar.bz2.incomplete $backups_archive_dir/$backup_name-last-backup-before-"$now"-restore.tar.bz2
+
+    fi
 
 	echo "${g}${b}Finished local backup.${x}"
 	echo
@@ -734,5 +759,106 @@ os-br_restore_from_S3() {
 		fi
 
 	fi
+
+}
+
+os-br_launch_restore() {
+
+    choice="${b}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $short_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x}"
+    echo "$choice"
+    echo
+    options=("backup file stored locally" "backup file stored elsewhere" "exit")
+    select opt in "${options[@]}"
+    do
+    	echo
+    	case $opt in
+    		"backup file stored locally")
+    		export restore_source=here
+    		break
+    		;;
+    		"backup file stored elsewhere")
+    		export restore_source=elsewhere
+    		break
+    		;;
+    		"exit")
+    		echo "${b}Exiting...${x}"
+    		echo
+    		exit
+    		;;
+    		*)
+    		echo "${r}${b}Invalid option. Retry...${x}"
+    		echo
+    		;;
+    	esac
+    done
+
+    if [ $restore_source = "here" ]
+    then
+
+    	os-br_restore_from_here
+
+    else
+
+    	if [ "$backup_location" = "s3" ]
+    	then
+    		echo "${b}You've previously set up an S3 file storage server connection on this machine.${x}"
+    		echo
+    		choice="${b}Do you want to restore from S3 or from a standalone $short_name backup file you have stored individually? ${x}"
+    		echo "$choice"
+    		echo
+    		options=("S3" "standalone" "exit")
+    		select opt in "${options[@]}"
+    		do
+    			echo
+    			case $opt in
+    				"S3")
+    				export restore_type=s3
+    				break
+    				;;
+    				"standalone")
+    				export restore_type=standalone
+    				break
+    				;;
+    				"exit")
+    				echo "${b}Exiting...${x}"
+    				echo
+    				exit
+    				;;
+    				*)  echo "${r}${b}Invalid option. Retry...${x}"
+    				echo
+    				;;
+    			esac
+    		done
+    	else
+    		export restore_type=standalone
+    	fi
+
+    	if [ $restore_type = "s3" ]
+    	then
+
+    		os-br_restore_from_S3
+
+    	else
+
+    		os-br_restore_from_standalone
+
+    		echo
+
+    	fi
+
+    fi
+
+    if [ $restore_source = "here" ]
+    then
+    	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar.bz2//g')"
+    	export restore_file_path=$restores_dir/local/$restore_file_name
+    else
+    	if [ $restore_type = "s3" ]
+    	then
+    		export restore_file_path=$restores_dir/s3
+    	else
+    		export restore_file_path="/root/$short_name-restore"
+    	fi
+    fi
 
 }
