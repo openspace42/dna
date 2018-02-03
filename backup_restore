@@ -425,13 +425,13 @@ os-br_restore_from_standalone() {
 			exists=n
 			until [ $exists = "y" ]
 			do
-				standalonebackupfile=""
-				until [ ! $standalonebackupfile = "" ]
+				standalone_backup_file=""
+				until [ ! $standalone_backup_file = "" ]
 				do
-					read -rp "${b}Ok, specify the path to that file now: ${x}" standalonebackupfile
+					read -rp "${b}Ok, specify the path to that file now: ${x}" standalone_backup_file
 					echo
 				done
-				if [ -f "$standalonebackupfile" ]
+				if [ -f "$standalone_backup_file" ]
 				then
 					exists=y
 				else
@@ -443,7 +443,7 @@ os-br_restore_from_standalone() {
 			valid=n
 			until [ $valid = "y" ]
 			do
-				read -n 1 -rp "${b}Is | $standalonebackupfile | correct? (Y/n/e[xit]) ${x}" answer;
+				read -n 1 -rp "${b}Is | $standalone_backup_file | correct? (Y/n/e[xit]) ${x}" answer;
 				case $answer in
 					"")
 					echo
@@ -478,18 +478,18 @@ os-br_restore_from_standalone() {
 				esac
 			done
 		done
-		echo "${b}Backup file $standalonebackupfile selected.${x}"
+		echo "${b}Backup file $standalone_backup_file selected.${x}"
 		echo
-		tar -xvjf "$standalonebackupfile" -C "/root/$short_name-restore/"
+		tar -xvjf "$standalone_backup_file" -C "/root/$short_name-restore/"
 		subdir=("/root/$short_name-restore/"*/)
 		restoresubdir="$(echo "$subdir" | sed "s|/root/${short_name}-restore/||" | tr -d '/')"
 		mv "/root/$short_name-restore/$restoresubdir"/* "/root/$short_name-restore/"
 		rm -r "/root/$short_name-restore/$restoresubdir"
 	else
 		echo
-		echo "${b}Ok, no problem. Make sure you populate the | /root/$short_name-restore/ | directory with these 4 files/directories from your standalone backup:${x}"
+		echo "${b}Ok, no problem. Make sure you populate the | /root/$short_name-restore/ | directory with the following files/directories from your standalone backup:${x}"
 		echo
-		os-br_restore_from_standalone_content_description
+		restore_from_standalone_content_description
 		echo
 		echo "${r}${b}If you don't correctly place all the above files/directories, the restore will not work correctly [you will be alerted if something is wrong further along this script]${x}"
 		echo
@@ -497,6 +497,10 @@ os-br_restore_from_standalone() {
 		echo
 		read -rp "${b}[press enter to continue...]${x}"
 		clear
+		if [ $validate_standalone_restore_content = "y" ]
+		then
+			restore_from_standalone_content_validation
+		fi
 	fi
 
 }
@@ -802,74 +806,93 @@ os-br_restore_from_S3() {
 
 os-br_launch_restore() {
 
-    choice="${b}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $short_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x}"
-    echo "$choice"
-    echo
-    options=("backup file stored locally" "backup file stored elsewhere" "exit")
-    select opt in "${options[@]}"
-    do
-    	echo
-    	case $opt in
-    		"backup file stored locally")
-    		export restore_source=here
-    		break
-    		;;
-    		"backup file stored elsewhere")
-    		export restore_source=elsewhere
-    		break
-    		;;
-    		"exit")
-    		echo "${b}Exiting...${x}"
-    		echo
-    		exit
-    		;;
-    		*)
-    		echo "${r}${b}Invalid option. Retry...${x}"
-    		echo
-    		;;
-    	esac
-    done
+	while getopts ":s" arguments; do
+		case $arguments in
+			s)	restore_type=s3
+				skip_questions=y
+				restore_source=elsewhere
+			;;
+			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			echo
+			os-exit_function
+			;;
+		esac
+	done
+    OPTIND=1
 
-    if [ $restore_source = "here" ]
-    then
+	if [ ! ${skip_questions-null} = "y" ]
+	then
 
-    	os-br_restore_from_here
+	    choice="${b}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $short_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x}"
+	    echo "$choice"
+	    echo
+	    options=("backup file stored locally" "backup file stored elsewhere" "exit")
+	    select opt in "${options[@]}"
+	    do
+	    	echo
+	    	case $opt in
+	    		"backup file stored locally")
+	    		export restore_source=here
+	    		break
+	    		;;
+	    		"backup file stored elsewhere")
+	    		export restore_source=elsewhere
+	    		break
+	    		;;
+	    		"exit")
+	    		echo "${b}Exiting...${x}"
+	    		echo
+	    		exit
+	    		;;
+	    		*)
+	    		echo "${r}${b}Invalid option. Retry...${x}"
+	    		echo
+	    		;;
+	    	esac
+	    done
 
-    else
+	    if [ $restore_source = "here" ]
+	    then
 
-    	if [ "$backup_location" = "s3" ]
-    	then
-    		echo "${b}You've previously set up an S3 file storage server connection on this machine.${x}"
-    		echo
-    		choice="${b}Do you want to restore from S3 or from a standalone $short_name backup file you have stored individually? ${x}"
-    		echo "$choice"
-    		echo
-    		options=("S3" "standalone" "exit")
-    		select opt in "${options[@]}"
-    		do
-    			echo
-    			case $opt in
-    				"S3")
-    				export restore_type=s3
-    				break
-    				;;
-    				"standalone")
-    				export restore_type=standalone
-    				break
-    				;;
-    				"exit")
-    				echo "${b}Exiting...${x}"
-    				echo
-    				exit
-    				;;
-    				*)  echo "${r}${b}Invalid option. Retry...${x}"
-    				echo
-    				;;
-    			esac
-    		done
-    	else
-    		export restore_type=standalone
-    	fi
+	    	os-br_restore_from_here
+
+	    else
+
+	    	if [ "$backup_location" = "s3" ]
+	    	then
+	    		echo "${b}You've previously set up an S3 file storage server connection on this machine.${x}"
+	    		echo
+	    		choice="${b}Do you want to restore from S3 or from a standalone $short_name backup file you have stored individually? ${x}"
+	    		echo "$choice"
+	    		echo
+	    		options=("S3" "standalone" "exit")
+	    		select opt in "${options[@]}"
+	    		do
+	    			echo
+	    			case $opt in
+	    				"S3")
+	    				export restore_type=s3
+	    				break
+	    				;;
+	    				"standalone")
+	    				export restore_type=standalone
+	    				break
+	    				;;
+	    				"exit")
+	    				echo "${b}Exiting...${x}"
+	    				echo
+	    				exit
+	    				;;
+	    				*)  echo "${r}${b}Invalid option. Retry...${x}"
+	    				echo
+	    				;;
+	    			esac
+	    		done
+	    	else
+	    		export restore_type=standalone
+	    	fi
+
+		fi
 
     	if [ $restore_type = "s3" ]
     	then

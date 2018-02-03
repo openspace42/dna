@@ -1,5 +1,195 @@
 #!/bin/bash
 
+os-setup_backup_restore_s3() {
+
+	os-install_dependencies -p s3cmd
+
+	mkdir -p "$conf_backups_s3_dir"
+
+	echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
+	echo
+	echo "${b}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x}"
+	echo
+	echo "${r}${b}If you choose yes, make sure NOT to use this instance as it is [as it will NOT be backed up on S3] but rather remember to perform the restore right after you're finished running this install script.${x}"
+	echo
+	read -rp "${b}Are you setting up this machine to restore a previous $short_name installation from another machine? (y/N): ${x}" -n 1
+	echo
+
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+
+		echo "${r}${b}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x}"
+		echo
+
+		restore_intent=y
+		touch "$conf_backups_s3_dir/block_s3_backups"
+
+		echo "${b}If you intend to restore from S3 you must have your encryption passphrase handy now as you were reminded upon initial installation on your old machine.${x}"
+		echo
+		read -rp "${b}Do you have your S3 encryption passphrase ready to specify now? (Y/n): ${x}" -n 1
+		echo
+
+		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		then
+
+			describe_setting() {
+
+				echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
+				echo
+
+			}
+
+			mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase.old"
+			os-set_option -o backups_passphrase -v n -d y -p backups/s3
+
+		else
+
+			echo
+			echo "${b}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x}"
+			echo
+			echo "${b} | $conf_backups_s3_dir/backups_passphrase | ${x}"
+			echo
+			echo "${b}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x}"
+			echo
+			touch $conf_backups_s3_dir/block_s3_restores
+
+		fi
+
+	else
+
+		echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
+		echo
+
+		backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
+
+		if [ ! -f "$backups_passphrase_conf_path" ]
+		then
+			touch "$backups_passphrase_conf_path"
+			chmod 700 "$backups_passphrase_conf_path"
+			generated_passphrase="$(pwgen 42 1)"
+			echo "$generated_passphrase" > "$backups_passphrase_conf_path"
+		else
+			chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
+		fi
+
+		backups_passphrase="$(cat $backups_passphrase_conf_path)"
+
+		echo "${b}Your S3 backups encryption passphrase is:${x}"
+		echo
+		echo "${g}${b} | $backups_passphrase | ${x}"
+		echo
+		echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
+		echo
+		echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
+		echo
+		echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
+		echo
+		read -rp "${b}[press enter to continue reading...]${x}"
+		clear
+
+	fi
+
+	until [ ${s3_setup_accepted-null} = "y" ]
+	do
+
+		declare -A s3_options_array=(
+		[s3_access_key_id]="AWS Access Key ID"
+		[s3_secret_access_key]="AWS Secret Access Key"
+		[s3_endpoint]="S3 Endpoint URL"
+		[s3_bucket_name]="S3 Bucket Name"
+		)
+
+		for i in "${!s3_options_array[@]}"
+		do
+
+			describe_setting() {
+
+				echo "${b}Now set your ${s3_options_array[$i]}.${x}"
+				echo
+
+			}
+
+			os-set_option -o "$i" -v n -d y -p backups/s3
+
+		done
+
+		echo "----------------"
+		echo
+		echo "${b}To make sure everything is correct:${x}"
+		echo
+		echo "1] Your ${b}AWS Access Key ID${x} will be:"
+		echo
+		echo "${b} | ${g}$s3_access_key_id${x}${b} | ${x}"
+		echo
+		echo "2] Your ${b}AWS Secret Access Key${x} will be:"
+		echo
+		echo "${b} | ${g}$s3_secret_access_key${x}${b} | ${x}"
+		echo
+		echo "3] Your ${b}S3 Endpoint URL${x} will be:"
+		echo
+		echo "${b} | ${g}$s3_endpoint${x}${b} | ${x}"
+		echo
+		echo "4] Your ${b}S3 Bucket Name${x} will be:"
+		echo
+		echo "${b} | ${g}$s3_bucket_name${x}${b} | ${x}"
+		echo
+		echo "----------------"
+		echo
+
+		read -rp "${b}Does everything look all right? (Y/n): ${x}" -n 1
+		echo
+		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		then
+
+			echo "${b}Ok, proceeding to check S3 connection details${x}."
+			echo
+
+			### Check S3 connection
+
+			s3cmd --configure --access_key="$s3_access_key_id" --secret_key="$s3_secret_access_key" --host="$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
+			set +e
+			s3cmd info s3://"$s3_bucket_name" >/dev/null 2>&1
+
+			if [[ $? -eq 0 ]]; then
+				echo "${g}${b}S3 connection details appear to be valid.${x}"
+				echo
+				s3_setup_accepted=y
+				sleep 1
+			else
+				echo "${r}${b}S3 connection details do NOT appear to be valid.${x}"
+				echo
+				read -rp "${b}Would you like to try setting it up again? (Y/n): ${x}" -n 1
+				echo
+				if [[ ! $REPLY =~ ^[Nn]$ ]]
+				then
+					s3_setup_accepted=n
+					echo "${b}Ok, repeating S3 setup...${x}"
+					echo
+				else
+					s3_setup_accepted=y
+					echo
+					echo "${b}Ok, skipping S3 setup and REMOVING s3 setting from $short_name...${x}"
+					echo
+					backup_location=local
+					echo "local" > $conf_backups_dir/backup_location
+					read -rp "${b}[press enter to continue reading...]${x}"
+					clear
+				fi
+			fi
+			set -e
+
+		else
+			s3_setup_accepted=n
+			echo
+			echo "${b}Ok, repeating S3 setup...${x}"
+			echo
+		fi
+
+	done
+	clear
+
+}
+
 os-setup_backup_restore() {
 
 	mkdir -p $conf_backups_local_dir
@@ -111,191 +301,7 @@ os-setup_backup_restore() {
 		if [ "${s3_continue_setup-null}" = "y" ]
 		then
 
-			os-install_dependencies -p s3cmd
-
-			mkdir -p "$conf_backups_s3_dir"
-
-			echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
-			echo
-			echo "${b}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x}"
-			echo
-			echo "${r}${b}If you choose yes, make sure NOT to use this instance as it is [as it will NOT be backed up on S3] but rather remember to perform the restore right after you're finished running this install script.${x}"
-			echo
-			read -rp "${b}Are you setting up this machine to restore a previous $short_name installation from another machine? (y/N): ${x}" -n 1
-			echo
-
-			if [[ $REPLY =~ ^[Yy]$ ]]
-			then
-
-				echo "${r}${b}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x}"
-				echo
-
-				restore_intent=y
-				touch "$conf_backups_s3_dir/block_s3_backups"
-
-				echo "${b}If you intend to restore from S3 you must have your encryption passphrase handy now as you were reminded upon initial installation on your old machine.${x}"
-				echo
-				read -rp "${b}Do you have your S3 encryption passphrase ready to specify now? (Y/n): ${x}" -n 1
-				echo
-
-				if [[ ! $REPLY =~ ^[Nn]$ ]]
-				then
-
-					describe_setting() {
-
-						echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
-						echo
-
-					}
-
-					mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase.old"
-					os-set_option -o backups_passphrase -v n -d y -p backups/s3
-
-				else
-
-					echo
-					echo "${b}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x}"
-					echo
-					echo "${b} | $conf_backups_s3_dir/backups_passphrase | ${x}"
-					echo
-					echo "${b}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x}"
-					echo
-					touch $conf_backups_s3_dir/block_s3_restores
-
-				fi
-
-			else
-
-				echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
-				echo
-
-				backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
-
-				if [ ! -f "$backups_passphrase_conf_path" ]
-				then
-					touch "$backups_passphrase_conf_path"
-					chmod 700 "$backups_passphrase_conf_path"
-					generated_passphrase="$(pwgen 42 1)"
-					echo "$generated_passphrase" > "$backups_passphrase_conf_path"
-				else
-					chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
-				fi
-
-				backups_passphrase="$(cat $backups_passphrase_conf_path)"
-
-				echo "${b}Your S3 backups encryption passphrase is:${x}"
-				echo
-				echo "${g}${b} | $backups_passphrase | ${x}"
-				echo
-				echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
-				echo
-				echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
-				echo
-				echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
-				echo
-				read -rp "${b}[press enter to continue reading...]${x}"
-				clear
-
-			fi
-
-			until [ ${s3_setup_accepted-null} = "y" ]
-			do
-
-				declare -A s3_options_array=(
-				[s3_access_key_id]="AWS Access Key ID"
-				[s3_secret_access_key]="AWS Secret Access Key"
-				[s3_endpoint]="S3 Endpoint URL"
-				[s3_bucket_name]="S3 Bucket Name"
-				)
-
-				for i in "${!s3_options_array[@]}"
-				do
-
-					describe_setting() {
-
-						echo "${b}Now set your ${s3_options_array[$i]}.${x}"
-						echo
-
-					}
-
-					os-set_option -o "$i" -v n -d y -p backups/s3
-
-				done
-
-				echo "----------------"
-				echo
-				echo "${b}To make sure everything is correct:${x}"
-				echo
-				echo "1] Your ${b}AWS Access Key ID${x} will be:"
-				echo
-				echo "${b} | ${g}$s3_access_key_id${x}${b} | ${x}"
-				echo
-				echo "2] Your ${b}AWS Secret Access Key${x} will be:"
-				echo
-				echo "${b} | ${g}$s3_secret_access_key${x}${b} | ${x}"
-				echo
-				echo "3] Your ${b}S3 Endpoint URL${x} will be:"
-				echo
-				echo "${b} | ${g}$s3_endpoint${x}${b} | ${x}"
-				echo
-				echo "4] Your ${b}S3 Bucket Name${x} will be:"
-				echo
-				echo "${b} | ${g}$s3_bucket_name${x}${b} | ${x}"
-				echo
-				echo "----------------"
-				echo
-
-				read -rp "${b}Does everything look all right? (Y/n): ${x}" -n 1
-				echo
-				if [[ ! $REPLY =~ ^[Nn]$ ]]
-				then
-
-					echo "${b}Ok, proceeding to check S3 connection details${x}."
-					echo
-
-					### Check S3 connection
-
-					s3cmd --configure --access_key="$s3_access_key_id" --secret_key="$s3_secret_access_key" --host="$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
-					set +e
-					s3cmd info s3://"$s3_bucket_name" >/dev/null 2>&1
-
-					if [[ $? -eq 0 ]]; then
-						echo "${g}${b}S3 connection details appear to be valid.${x}"
-						echo
-						s3_setup_accepted=y
-						sleep 1
-					else
-						echo "${r}${b}S3 connection details do NOT appear to be valid.${x}"
-						echo
-						read -rp "${b}Would you like to try setting it up again? (Y/n): ${x}" -n 1
-						echo
-						if [[ ! $REPLY =~ ^[Nn]$ ]]
-						then
-							s3_setup_accepted=n
-							echo "${b}Ok, repeating S3 setup...${x}"
-							echo
-						else
-							s3_setup_accepted=y
-							echo
-							echo "${b}Ok, skipping S3 setup and REMOVING s3 setting from $short_name...${x}"
-							echo
-							backup_location=local
-							echo "local" > $conf_backups_dir/backup_location
-							read -rp "${b}[press enter to continue reading...]${x}"
-							clear
-						fi
-					fi
-					set -e
-
-				else
-					s3_setup_accepted=n
-					echo
-					echo "${b}Ok, repeating S3 setup...${x}"
-					echo
-				fi
-
-			done
-			clear
+			os-setup_backup_restore_s3
 
 			describe_setting() {
 
