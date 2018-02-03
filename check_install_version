@@ -78,7 +78,7 @@ os-check_install_version() {
                         read -rp "${b-}[press enter to continue reading...]${x-}"
                         clear
                     else
-                        if (( $(echo "$latest_vers < $prev_version_installed" | bc -l) ))
+                        if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))
                         then
                             echo "${r}${b}You have previously installed a newer version of $short_name.${x}"
                             echo
