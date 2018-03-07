@@ -663,6 +663,7 @@ os-br_backup_to_S3() {
         echo
         echo "${r}${b}NO backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation.${x}"
         echo
+		os-exit_function
     fi
 
 	os-br_duplicity_loop backup
