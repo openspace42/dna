@@ -4,9 +4,11 @@ os-check_distro_ubuntu16() {
 
     # Check distro
 
-    if [ "$(lsb_release -d | sed 's/.*:\s*//' | sed 's/16\.04\.[0-9]/16.04/')" != "Ubuntu 16.04 LTS" ]
+    current_ubuntu_version="$(lsb_release -rs)"
+
+    if [ "$current_ubuntu_version" != "16.04" ]
     then
-        if [ "$(lsb_release -d | sed 's/.*:\s*//' | sed 's/17\.04\.[0-9]/17.10/')" = "Ubuntu 17.10" ] || [ "$(lsb_release -d | sed 's/.*:\s*//' | sed 's/17\.04\.[0-9]/18.04/')" = "Ubuntu 18.04" ]
+        if [ "$current_ubuntu_version" = "17.10" ] || [ "$current_ubuntu_version" = "18.04" ]
         then
             read -p "${b}Ubuntu 17.10 / 18.04 detected. Proceed in testing mode? [things could break] (Y/n): ${x}" -n 1 -r
             echo
