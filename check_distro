@@ -10,7 +10,7 @@ os-check_distro_ubuntu16() {
     then
         if [ "$current_ubuntu_version" = "17.10" ] || [ "$current_ubuntu_version" = "18.04" ]
         then
-            read -p "${b}Ubuntu 17.10 / 18.04 detected. Proceed in testing mode? [things could break] (Y/n): ${x}" -n 1 -r
+            read -p "${r}${b}Ubuntu 17.10 / 18.04 detected. Proceed in testing mode? [things could break] (Y/n): ${x}" -n 1 -r
             echo
             if [[ ! $REPLY =~ ^[Nn]$ ]]
             then
