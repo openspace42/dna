@@ -42,9 +42,9 @@ os-setup_backup_restore_s3() {
 
 			if [ -f "$conf_backups_s3_dir/backups_passphrase" ]
 			then
-				mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase.old"
+				mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase_old"
 			fi
-			
+
 			os-set_option -o backups_passphrase -v n -d y -p backups/s3
 
 		else
