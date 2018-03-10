@@ -23,10 +23,10 @@ os-ask_for_boolean_def_no() {
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
-        ask_for_boolean_output=n
+        ask_for_boolean_output=y
     else
         echo
-        ask_for_boolean_output=y
+        ask_for_boolean_output=n
     fi
     unset ask_for_boolean_question
 
