@@ -33,12 +33,12 @@ os-check_install_version() {
 
     fi
 
-    ### Log current version being installed to version_initiated
+    ### Log current version being initiated to version_initiated
 
-    if [ -f "$conf_dir/beta" ]
+    if [ ${bleeding_edge_rc-null} = "-e" ]
     then
         latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
-        echo "bleeding_edge-$latest_commit" > "$conf_dir/version/version_initiated"
+        echo "bleeding-edge-$latest_commit" > "$conf_dir/version/version_initiated"
     else
         echo "$latest_vers" > "$conf_dir/version/version_initiated"
     fi
@@ -63,19 +63,19 @@ os-check_install_version() {
             then
 
                 ### Versions match, therefore previous install was completed successfully
-                ### Proceed to ensure that, if we're not installing a bleeding_edge version, there's no more recent version already installed
-                ### If instead we're installing a bleeding_edge version, skip any checks as we're certainly intalling a newer version.
+                ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed
+                ### If instead we're installing a bleeding-edge version, skip any checks as we're certainly intalling a newer version.
 
-                if [ ! -f $conf_dir/beta ]
+                if [ ! ${bleeding_edge_rc-null} = "-e" ]
                 then
 
-                    if grep -q "bleeding_edge" "$conf_dir/version/version_installed"
+                    if grep -q "bleeding-edge" "$conf_dir/version/version_installed"
                     then
-                        echo "${b-}You're now installing stable version | ${g-}v$latest_vers${x-}${b-} | over a previously | ${r-}bleeding_edge${x-}${b-} | version of $short_name.${x-}"
+                        echo "${b-}You're now installing stable version | ${g-}v$latest_vers${x-}${b-} | over a previously | ${r-}bleeding-edge${x-}${b-} | version of $short_name.${x-}"
                         echo
-                        echo "${b-}This is normal if you've opted out of beta versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
+                        echo "${b-}This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
                         echo
-                        read -rp "${b-}[press enter to continue reading...]${x-}"
+                        read -rp "${b-}[press enter to continue...]${x-}"
                         clear
                     else
                         if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))

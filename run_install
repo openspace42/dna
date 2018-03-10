@@ -20,13 +20,11 @@ os-run_install() {
 
     ### Launch the installer
 
-    if [ -f $conf_dir/beta ]
+    if [ ${bleeding_edge_rc-null} = "-e" ]
     then
         echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
         echo
-        echo "Installing bleeding-edge version of $short_name up to latest git commit."
-        echo
-        echo "[delete the | $conf_dir/beta | file to cancel your opt-in to bleeding-edge versions]"
+        echo "Installing bleeding-edge version of $short_name up to latest git commit as per | -e |."
         echo
         echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
         ( cd $source_dir && bash ./install --return-check )
