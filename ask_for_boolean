@@ -3,7 +3,7 @@
 os-ask_for_boolean_def_yes() {
 
     unset ask_for_boolean_output
-    read -p "${b-}${ask_for_boolean_question}  (Y/n): ${x-}" -n 1 -r
+    read -p "${b-}${ask_for_boolean_question} (Y/n): ${x-}" -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Nn]$ ]]
     then
@@ -19,7 +19,7 @@ os-ask_for_boolean_def_yes() {
 os-ask_for_boolean_def_no() {
 
     unset ask_for_boolean_output
-    read -p "${b-}${ask_for_boolean_question}  (y/N): ${x-}" -n 1 -r
+    read -p "${b-}${ask_for_boolean_question} (y/N): ${x-}" -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
