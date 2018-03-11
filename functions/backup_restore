@@ -895,20 +895,20 @@ os-br_launch_restore() {
 
 		fi
 
-    	if [ $restore_type = "s3" ]
-    	then
+	fi
 
-    		os-br_restore_from_S3
+	if [ $restore_type = "s3" ]
+	then
 
-    	else
+		os-br_restore_from_S3
 
-    		os-br_restore_from_standalone
+	else
 
-    		echo
+		os-br_restore_from_standalone
 
-    	fi
+		echo
 
-    fi
+	fi
 
     if [ $restore_source = "here" ]
     then
