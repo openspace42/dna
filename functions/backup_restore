@@ -520,7 +520,7 @@ os-br_duplicity_loop() {
 
 	HOST=$(hostname)
 	DATE=$(date +%Y-%m-%d)
-	MAILADDR="$admin_mail"
+	MAILADDR="${admin_mail-null}"
 	TODAY=$(date +%d%m%Y)
 
 	if [ "${1:-null}" = "backup" ]
