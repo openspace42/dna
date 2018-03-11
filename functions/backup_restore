@@ -923,4 +923,6 @@ os-br_launch_restore() {
     	fi
     fi
 
+	unset skip_questions
+
 }

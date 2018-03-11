@@ -2,95 +2,128 @@
 
 os-setup_backup_restore_s3() {
 
+	while getopts ":s" arguments; do
+		case $arguments in
+			s)	skip_questions=y
+			;;
+			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			echo
+			os-exit_function
+			;;
+		esac
+	done
+    OPTIND=1
+
 	os-install_dependencies -p s3cmd
 
 	mkdir -p "$conf_backups_s3_dir"
 
-	echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
-	echo
-	echo "${b}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x}"
-	echo
-	echo "${r}${b}If you choose yes, make sure NOT to use this instance as it is [as it will NOT be backed up on S3] but rather remember to perform the restore right after you're finished running this install script.${x}"
-	echo
-	read -rp "${b}Are you setting up this machine to restore a previous $short_name installation from another machine? (y/N): ${x}" -n 1
-	echo
-
-	if [[ $REPLY =~ ^[Yy]$ ]]
+	if [ ! ${skip_questions-null} = "y" ]
 	then
 
+		echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
 		echo
-		echo "${r}${b}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x}"
+		echo "${b}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x}"
 		echo
-
-		restore_intent=y
-		touch "$conf_backups_s3_dir/block_s3_backups"
-
-		echo "${b}If you intend to restore from S3 you must have your encryption passphrase handy now as you were reminded upon initial installation on your old machine.${x}"
+		echo "${r}${b}If you choose yes, make sure NOT to use this instance as it is [as it will NOT be backed up on S3] but rather remember to perform the restore right after you're finished running this install script.${x}"
 		echo
-		read -rp "${b}Do you have your S3 encryption passphrase ready to specify now? (Y/n): ${x}" -n 1
+		read -rp "${b}Are you setting up this machine to restore a previous $short_name installation from another machine? (y/N): ${x}" -n 1
 		echo
 
-		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		if [[ $REPLY =~ ^[Yy]$ ]]
 		then
 
-			describe_setting() {
+			echo
+			echo "${r}${b}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x}"
+			echo
 
-				echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
-				echo
+			restore_intent=y
+			touch "$conf_backups_s3_dir/block_s3_backups"
 
-			}
+			echo "${b}If you intend to restore from S3 you must have your encryption passphrase handy now as you were reminded upon initial installation on your old machine.${x}"
+			echo
+			read -rp "${b}Do you have your S3 encryption passphrase ready to specify now? (Y/n): ${x}" -n 1
+			echo
 
-			if [ -f "$conf_backups_s3_dir/backups_passphrase" ]
+			if [[ ! $REPLY =~ ^[Nn]$ ]]
 			then
-				mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase_old"
-			fi
 
-			os-set_option -o backups_passphrase -v n -d y -p backups/s3
+				describe_setting() {
+
+					echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
+					echo
+
+				}
+
+				if [ -f "$conf_backups_s3_dir/backups_passphrase" ]
+				then
+					mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase_old"
+				fi
+
+				os-set_option -o backups_passphrase -v n -d y -p backups/s3
+
+			else
+
+				echo
+				echo "${b}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x}"
+				echo
+				echo "${b} | $conf_backups_s3_dir/backups_passphrase | ${x}"
+				echo
+				echo "${b}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x}"
+				echo
+				touch $conf_backups_s3_dir/block_s3_restores
+
+			fi
 
 		else
 
+			echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
 			echo
-			echo "${b}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x}"
+
+			backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
+
+			if [ ! -f "$backups_passphrase_conf_path" ]
+			then
+				touch "$backups_passphrase_conf_path"
+				chmod 700 "$backups_passphrase_conf_path"
+				generated_passphrase="$(pwgen 42 1)"
+				echo "$generated_passphrase" > "$backups_passphrase_conf_path"
+			else
+				chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
+			fi
+
+			backups_passphrase="$(cat $backups_passphrase_conf_path)"
+
+			echo "${b}Your S3 backups encryption passphrase is:${x}"
 			echo
-			echo "${b} | $conf_backups_s3_dir/backups_passphrase | ${x}"
+			echo "${g}${b} | $backups_passphrase | ${x}"
 			echo
-			echo "${b}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x}"
+			echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
 			echo
-			touch $conf_backups_s3_dir/block_s3_restores
+			echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
+			echo
+			echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
+			echo
+			read -rp "${b}[press enter to continue reading...]${x}"
+			clear
 
 		fi
 
 	else
 
-		echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
-		echo
+		describe_setting() {
 
-		backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
+			echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
+			echo
 
-		if [ ! -f "$backups_passphrase_conf_path" ]
+		}
+
+		if [ -f "$conf_backups_s3_dir/backups_passphrase" ]
 		then
-			touch "$backups_passphrase_conf_path"
-			chmod 700 "$backups_passphrase_conf_path"
-			generated_passphrase="$(pwgen 42 1)"
-			echo "$generated_passphrase" > "$backups_passphrase_conf_path"
-		else
-			chmod 700 "$backups_passphrase_conf_path" # In case someone accidentally modified permissions on $conf_backups_s3_dir
+			mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase_old"
 		fi
 
-		backups_passphrase="$(cat $backups_passphrase_conf_path)"
-
-		echo "${b}Your S3 backups encryption passphrase is:${x}"
-		echo
-		echo "${g}${b} | $backups_passphrase | ${x}"
-		echo
-		echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
-		echo
-		echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
-		echo
-		echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
-		echo
-		read -rp "${b}[press enter to continue reading...]${x}"
-		clear
+		os-set_option -o backups_passphrase -v n -d y -p backups/s3
 
 	fi
 
@@ -192,6 +225,8 @@ os-setup_backup_restore_s3() {
 
 	done
 	clear
+
+	unset skip_questions
 
 }
 
