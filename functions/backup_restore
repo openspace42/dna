@@ -859,7 +859,7 @@ os-br_launch_restore() {
 
 	    else
 
-	    	if [ "$backup_location" = "s3" ]
+	    	if [ "${backup_location-null}" = "s3" ]
 	    	then
 	    		echo "${b}You've previously set up an S3 file storage server connection on this machine.${x}"
 	    		echo
