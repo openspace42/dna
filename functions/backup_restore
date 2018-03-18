@@ -207,17 +207,17 @@ os-br_backup_locally() {
 
 		os-check_install_complete
 
-	fi
+		if [ $install_complete = "n" ]
+		then
+			echo "${r-}${b-}It appears $short_name is not currently installed or there is an incomplete installation on this machine.${x-}"
+	        echo
+	        echo "${b-}This backup script only works on a fully installed $short_name instance.${x-}"
+	        echo
+	        echo "${b-}Please finish installing $short_name before running this script.${x-}"
+	        echo
+			os-exit_function
+		fi
 
-	if [ $install_complete = "n" ]
-	then
-		echo "${r-}${b-}It appears $short_name is not currently installed or there is an incomplete installation on this machine.${x-}"
-        echo
-        echo "${b-}This backup script only works on a fully installed $short_name instance.${x-}"
-        echo
-        echo "${b-}Please finish installing $short_name before running this script.${x-}"
-        echo
-		os-exit_function
 	fi
 
     backup_locally_loop
