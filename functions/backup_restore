@@ -181,9 +181,11 @@ os-br_purge_incomplete_archives() {
 
 os-br_backup_locally() {
 
-    while getopts ":l" arguments; do
+    while getopts ":ls" arguments; do
 		case $arguments in
 			l)	last="y"
+			;;
+			s)	skip_install_complete_check="y"
 			;;
 			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
 			echo
@@ -198,9 +200,14 @@ os-br_backup_locally() {
     echo "${b}Now backing up locally...${x}"
 	echo
 
-	### Abort if the current installation was never completed
+	if [ ! ${skip_install_complete_check-null} = "y" ]
+	then
 
-	os-check_install_complete
+		### Abort if the current installation was never completed
+
+		os-check_install_complete
+
+	fi
 
 	if [ $install_complete = "n" ]
 	then
