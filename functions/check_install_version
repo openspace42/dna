@@ -150,11 +150,11 @@ os-check_install_version() {
             if [[ ! $REPLY =~ ^[Nn]$ ]]
             then
                 echo "${b}Ok, proceeding with backup...${x}"
-                echo
                 if bash $source_dir/tools/$short_name-backup -s
                 then
                     backup_output=ok
                 else
+                    echo
                     backup_output=failed
                 fi
                 sleep 1
