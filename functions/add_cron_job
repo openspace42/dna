@@ -4,6 +4,7 @@ os-add_cron_job() {
 
     curl https://habilis.net/cronic/cronic > /usr/bin/cronic
     chmod +x /usr/bin/cronic
+    echo
 
     ########################################################################
 

@@ -140,7 +140,7 @@ os-check_install_version() {
 
         ### In any event, since there is a previous installation, at least partial, prompt for a backup.
 
-        if [ ! ${skip_backup-null} = "y" ]
+        if [ ! ${skip_install_time_backup-null} = "y" ]
         then
 
             echo "${b}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x}"
