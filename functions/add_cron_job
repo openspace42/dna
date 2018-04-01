@@ -29,6 +29,7 @@ os-add_cron_job() {
             ;;
         esac
     done
+    OPTIND=1
 
     if [ -z "${name-}" ]
     then

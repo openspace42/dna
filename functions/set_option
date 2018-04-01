@@ -20,6 +20,7 @@ os-set_option() {
 			;;
 		esac
 	done
+	OPTIND=1
 
 	if [ -z "${option-}" ]
 	then
@@ -229,8 +230,6 @@ os-set_option() {
 	clear
 
 	export "${option}"="$value"
-
-	OPTIND=1
 
 	unset arguments option validate describe path validate_input describe_setting valid value skip_descr defined new_val
 

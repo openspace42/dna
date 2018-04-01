@@ -12,6 +12,7 @@ os-apt_full_upgrade() {
             ;;
         esac
     done
+    OPTIND=1
 
     echo "${b}Now performing APT upgrade, dist-upgrade, and autoremove...${x}"
     echo
@@ -29,8 +30,6 @@ os-apt_full_upgrade() {
     echo
 
     set -e
-
-    OPTIND=1
 
     echo "${b}Finished performing APT upgrade, dist-upgrade, and autoremove.${x}"
     echo

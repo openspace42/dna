@@ -21,6 +21,7 @@ os-install_dependencies() {
             ;;
         esac
     done
+    OPTIND=1
 
     echo "${b}Now installing dependencies...${x}"
     echo
@@ -39,7 +40,5 @@ os-install_dependencies() {
 
     echo "${b}Finished installing dependencies.${x}"
     echo
-
-    OPTIND=1
 
 }

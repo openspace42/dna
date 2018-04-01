@@ -797,7 +797,7 @@ os-br_restore_from_S3() {
 
 			if [ "${1:-null}" = "test" ]
 			then
-				echo "${g}${b}Restore test succeded. Proceeding...${x}"
+				echo "${g}${b}S3 Restore test succeded. Proceeding with S3 backup...${x}"
 				echo
 			else
 				echo "${g}${b}Restore succeded.${x}"
