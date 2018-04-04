@@ -11,6 +11,7 @@ os-install_duplicity() {
 	then
 		os-install_dependencies software-properties-common
 		apt-add-repository ppa:duplicity-team/ppa -y
+		echo
 	fi
 
 	os-install_dependencies duplicity python-pip pwgen pv python-boto ufw pwgen curl #review

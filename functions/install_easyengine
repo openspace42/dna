@@ -13,6 +13,7 @@ os-install_easyengine() {
 	rm /tmp/eeupdate* || true
 	mkdir -p /var/www/
 	chown -R www-data:www-data /var/www/
+	echo
 	ufw allow 80 || true
 	ufw allow 443 || true
 	echo
@@ -29,7 +30,9 @@ os-install_easyengine() {
 			echo
 			os-install_dependencies composer
 			ufw allow 22222 || true
+			echo
 			ee stack install --all || true
+			echo
 			( cd /var/www/22222/htdocs/db/pma && composer install && sudo chown www-data: * -R )
 			echo
 		else

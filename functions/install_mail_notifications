@@ -8,7 +8,7 @@ os-install_mail_notifications() {
 	then
         echo "${g}${b}Detected Ubuntu distro. Proceeding with full install...${x}"
 		echo
-        read -p "${b}[purge and re-]install the local mailserver for task notifications? (Y/n): ${x}" -n 1 -r
+        read -p "${b}[Purge and re-]install the local mailserver for task notifications? (Y/n): ${x}" -n 1 -r
 		echo
 		if [[ ! $REPLY =~ ^[Nn]$ ]]
 		then
