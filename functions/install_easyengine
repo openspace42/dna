@@ -1,0 +1,44 @@
+#!/bin/bash
+
+os-install_easyengine() {
+
+	echo "${b}Now [re-]installing and updating EasyEngine...${x}"
+	echo
+
+	wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
+	bash ee || true
+	rm ee
+	source /etc/bash_completion.d/ee_auto.rc
+	ee update || true
+	rm /tmp/eeupdate*
+	mkdir -p /var/www/
+	chown -R www-data:www-data /var/www/
+	ufw allow 80 || true
+	ufw allow 443 || true
+	echo
+
+	os-get_distro_name
+
+	if [ $distro_name = "Ubuntu" ]
+	then
+		read -p "${b}Also install full EasyEngine stack and PhpMyAdmin? (Y/n): ${x}" -n 1 -r
+		echo
+		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		then
+			echo "${b}Ok, installing full EE stack...${x}"
+			echo
+			os-install_dependencies composer
+			ufw allow 22222 || true
+			ee stack install --all || true
+			( cd /var/www/22222/htdocs/db/pma && composer install && sudo chown www-data: * -R )
+			echo
+		else
+			echo "${b}Ok, skipping full EE stack installation...${x}"
+			echo
+		fi
+	fi
+
+	echo "${b}Finished installing EasyEngine.${x}"
+	echo
+
+}

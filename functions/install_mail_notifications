@@ -1,0 +1,35 @@
+#!/bin/bash
+
+os-install_mail_notifications() {
+
+    hostname="$(cat /etc/hostname)"
+
+    if [ $distro_name = "Ubuntu" ]
+	then
+        echo "${g}${b}Detected Ubuntu distro. Proceeding with full install...${x}"
+		echo
+        read -p "${b}[purge and re-]install the local mailserver for task notifications? (Y/n): ${x}" -n 1 -r
+		echo
+		if [[ ! $REPLY =~ ^[Nn]$ ]]
+		then
+            echo "${b}Ok, [purging and re-]installing the local mailserver...${x}"
+            echo
+			apt-get -y purge mailutils postfix || true
+			debconf-set-selections <<< "postfix postfix/mailname string $hostname"
+			debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+			apt-get install -y mailutils
+			/etc/init.d/postfix reload
+            echo
+        else
+            echo "${b}Skipping local mailserver [purge and re-]installation.${x}"
+            echo
+		fi
+    else
+        echo "${r}${b}Detected NON-Ubuntu distro [mail notifications might not work]. Proceeding...${x}"
+		echo
+        debconf-set-selections <<< "postfix postfix/mailname string $hostname"
+		debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+		apt-get install -y mailutils
+    fi
+
+}

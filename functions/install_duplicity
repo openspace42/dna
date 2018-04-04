@@ -1,0 +1,24 @@
+#!/bin/bash
+
+os-install_duplicity() {
+
+	echo "${b}Now installing the duplicity backup utility...${x}"
+	echo
+
+	os-get_distro_name
+
+	if [ $distro_name = "Ubuntu" ]
+	then
+		os-install_dependencies software-properties-common
+		apt-add-repository ppa:duplicity-team/ppa -y
+	fi
+
+	os-install_dependencies duplicity python-pip pwgen pv python-boto ufw pwgen curl #review
+	pip install --upgrade pip
+	pip install boto
+	echo
+
+	echo "${b}Finished installing duplicity.${x}"
+	echo
+
+}
