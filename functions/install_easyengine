@@ -10,7 +10,7 @@ os-install_easyengine() {
 	rm ee
 	source /etc/bash_completion.d/ee_auto.rc
 	ee update || true
-	rm /tmp/eeupdate*
+	rm /tmp/eeupdate* || true
 	mkdir -p /var/www/
 	chown -R www-data:www-data /var/www/
 	ufw allow 80 || true
