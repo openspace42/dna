@@ -1,6 +1,6 @@
 #!/bin/bash
 
-os-br_update_storage_info () {
+os-br_update_storage_info() {
 
 	free_disk_space="$(df -m --output=avail / | xargs | sed -e 's/Avail //g')"
 	ref_dir_size="$(du -sm "$backup_ref_dir" | xargs | sed -e "s|"${backup_ref_dir}"||g" | xargs)"
@@ -13,11 +13,11 @@ os-br_update_storage_info () {
 	fi
 
 	local_archive_items="$(ls -1q $backup_local_storage_path/archive | wc -l)"
-	local_archive_size="$(du -sm $backup_local_storage_path/archive | xargs | sed "s|${backup_local_storage_path/archive}||g" | xargs)"
+	local_archive_size="$(du -sm $backup_local_storage_path/archive | xargs | sed "s|${backup_local_storage_path}/archive||g" | xargs)"
 
 }
 
-os-br_purge_loop () {
+os-br_purge_loop() {
 
 	if [ $local_archive_items -gt $min_local_backups ]
 	then
@@ -564,7 +564,7 @@ os-br_duplicity_loop() {
 		cat /dev/null > ${DAILYLOGFILE}
 
 		# Trace function for logging, don't change this
-		trace () {
+		trace() {
 			stamp=$(date +%Y-%m-%d_%H:%M:%S)
 			echo "$stamp: $*" >> ${DAILYLOGFILE}
 		}
@@ -692,7 +692,7 @@ os-br_backup_to_S3() {
 			gpg $@
 		}
 
-		putS3 () {
+		putS3() {
 			path=$1
 			file=$2
 			aws_path=$3

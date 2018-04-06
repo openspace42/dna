@@ -9,7 +9,9 @@ os-install_easyengine() {
 	bash ee || true
 	rm ee
 	source /etc/bash_completion.d/ee_auto.rc
+	echo
 	ee update || true
+	echo
 	rm /tmp/eeupdate* || true
 	mkdir -p /var/www/
 	chown -R www-data:www-data /var/www/
