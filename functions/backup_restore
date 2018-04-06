@@ -12,8 +12,8 @@ os-br_update_storage_info () {
 		est_backup_size=$(($ref_dir_size * 3))
 	fi
 
-	local_archive_items="$(ls -1q $backups_archive_dir | wc -l)"
-	local_archive_size="$(du -sm $backups_archive_dir | xargs | sed "s|${backups_archive_dir}||g" | xargs)"
+	local_archive_items="$(ls -1q $backup_local_storage_path/archive | wc -l)"
+	local_archive_size="$(du -sm $backup_local_storage_path/archive | xargs | sed "s|${backup_local_storage_path/archive}||g" | xargs)"
 
 }
 
@@ -35,7 +35,7 @@ os-br_purge_loop () {
 		if [ $local_archive_items -gt $counter ]
 		then
 			tail_number=$(( $counter + 1 ))
-			( cd $backups_archive_dir && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
+			( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
 		fi
 
 		os-br_update_storage_info
@@ -47,12 +47,12 @@ os-br_purge_loop () {
 		echo "${b}Lower this figure by re-running the install and lowering this figure during configuration or make more space available on this machine.${x}"
 		echo
 
-		if [ -d "$backups_archive_dir"/old ]
+		if [ -d "$backup_local_storage_path/archive/old" ]
 		then
 
-			old_dir_size="$(du -sm "$backups_archive_dir"/old | xargs | sed -e "s|"${backups_archive_dir}/old"||g" | xargs)"
+			old_dir_size="$(du -sm "$backup_local_storage_path/archive/old" | xargs | sed -e "s|"${backup_local_storage_path}/archive/old"||g" | xargs)"
 
-			echo "${b}Found | $backups_archive_dir/old | directory weighing | $old_dir_size |.${x}"
+			echo "${b}Found | $backup_local_storage_path/archive/old | directory weighing | $old_dir_size |.${x}"
 			echo
 			echo "${b}Consider freeing up space by removing these old backups if unneeded.${x}"
 			echo
@@ -69,11 +69,11 @@ os-br_purge_backups() {
 
 	### Purge backups older than the latest $max_local_backups
 
-	local_archive_items="$(ls -1q $backups_archive_dir | wc -l)"
+	local_archive_items="$(ls -1q $backup_local_storage_path/archive | wc -l)"
 	if [ $local_archive_items -gt $max_local_backups ]
 	then
 		tail_number=$(( $max_local_backups + 1 ))
-		( cd $backups_archive_dir && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
+		( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
 		os-br_update_storage_info
 	fi
 
@@ -136,14 +136,14 @@ os-br_purge_dirs() {
 
 	### Purge temp and create directories
 
-	if [ -d $backups_temp_dir ]
+	if [ -d $backup_local_storage_path/temp ]
 	then
-		rm -r ${backups_temp_dir:?}
+		rm -r "${backup_local_storage_path/temp:?}"
 	fi
 
-	if [ -d "$backups_latest_dir" ]
+	if [ -d "$backup_local_storage_path/latest" ]
 	then
-		rm -r ${backups_latest_dir:?}
+		rm -r "${backup_local_storage_path/latest:?}"
 	fi
 
 	if [ -d "$restores_dir/s3" ]
@@ -158,23 +158,23 @@ os-br_create_dirs() {
 	if [ "${1:-null}" = "backup" ]
 	then
 
-		mkdir -p $backups_archive_dir
-		mkdir -p $backups_latest_dir
+		mkdir -p "$backup_local_storage_path/archive"
+		mkdir -p "$backup_local_storage_path/latest"
 		backup_name=$scriptname-$now
-		tmp_backup_dir=$backups_temp_dir/$backup_name
+		tmp_backup_dir="$backup_local_storage_path/temp/$backup_name"
 		mkdir -p "$tmp_backup_dir"
 
 	fi
 
-	mkdir -p $backups_temp_dir
+	mkdir -p "$backup_local_storage_path/temp"
 
 }
 
 os-br_purge_incomplete_archives() {
 
-	if [ -d $backups_archive_dir ]
+	if [ -d "$backup_local_storage_path/archive" ]
 	then
-		find $backups_archive_dir -type f -name '*.incomplete' -delete
+		find "$backup_local_storage_path/archive" -type f -name '*.incomplete' -delete
 	fi
 
 }
@@ -225,28 +225,28 @@ os-br_backup_locally() {
     echo "${b}Now compressing backup...${x}"
 	echo
 
-	cd $backups_temp_dir
+	cd "$backup_local_storage_path/temp"
 
     if [ ! ${last-null} = "y" ]
 	then
 
     	### Tar.bz2 this backup archive.
 
-    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > $backups_archive_dir/$backup_name.tar.bz2.incomplete
+    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete"
 
-    	mv $backups_archive_dir/$backup_name.tar.bz2.incomplete $backups_archive_dir/$backup_name.tar.bz2
+    	mv "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name.tar.bz2"
 
     	echo
-    	echo "${g}${b}Finished compressing backup and stored in | $backups_archive_dir/ | ${x}"
+    	echo "${g}${b}Finished compressing backup and stored in | $backup_local_storage_path/archive/ | ${x}"
     	echo
 
     else
 
         ### Tar.bz2 this backup archive. Give local backup a custom name so that it's clear it's the last one before a restore
 
-    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > $backups_archive_dir/$backup_name-last-backup-before-"$now"-restore.tar.bz2.incomplete
+    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete"
 
-    	mv $backups_archive_dir/$backup_name-last-backup-before-"$now"-restore.tar.bz2.incomplete $backups_archive_dir/$backup_name-last-backup-before-"$now"-restore.tar.bz2
+    	mv "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2"
 
     fi
 
@@ -273,13 +273,13 @@ os-br_last_local_backup() {
 	if [ $restore_source = "here" ]
 	then
 
-		echo "${b}Backed up current installation to $backups_archive_dir.${x}"
+		echo "${b}Backed up current installation to | $backup_local_storage_path/archive |.${x}"
 		echo
 
 	else
 
 		mkdir -p "$backup_local_storage_path"/old
-		mv "$backups_archive_dir" "$backup_local_storage_path"/old/archive-old-before-"$now"-restore
+		mv "$backup_local_storage_path/archive" "$backup_local_storage_path/old/archive-old-before-$now-restore"
 
 		if [ ! -z "${duplicity_log_dir-}" ]
 		then
@@ -295,9 +295,9 @@ os-br_last_local_backup() {
 
 os-br_restore_from_here() {
 
-	if [ ! -d $backups_archive_dir ]
+	if [ ! -d "$backup_local_storage_path/archive" ]
 	then
-		echo "${r}${b}Local backups directory [$backups_archive_dir] not found.${x}"
+		echo "${r}${b}Local backups directory [$backup_local_storage_path/archive] not found.${x}"
 		echo
 		echo "${b}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x}"
 		echo
@@ -308,10 +308,10 @@ os-br_restore_from_here() {
 		exit 1
 	fi
 
-	count="$(ls -1 $backups_archive_dir/*.tar.bz2 2>/dev/null | wc -l)"
+	count="$(ls -1 $backup_local_storage_path/archive/*.tar.bz2 2>/dev/null | wc -l)"
 	if [ $count = 0 ]
 	then
-		echo "${r}${b}No backup archives found in local backups directory [$backups_archive_dir].${x}"
+		echo "${r}${b}No backup archives found in local backups directory [$backup_local_storage_path/archive].${x}"
 		echo
 		echo "${b}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x}"
 		echo
@@ -324,7 +324,7 @@ os-br_restore_from_here() {
 
 	echo "${b}These are the backup dates available for restore:${x}"
 	echo
-	ls -1 "$backups_archive_dir" | sed -e 's/ee-br-backup-//g' | sed -e 's/.tar.bz2//g'
+	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${short_name}-backup-//g" | sed -e 's/.tar.bz2//g'
 	echo
 	read -rp "${b}[press enter to continue...]${x}"
 	clear
@@ -335,7 +335,7 @@ os-br_restore_from_here() {
 
 	set +u
 
-	cd $backups_archive_dir
+	cd "$backup_local_storage_path/archive"
 	unset options i
 	while IFS= read -r -d $'\n' f; do
 		options[i++]="$f"
@@ -573,7 +573,7 @@ os-br_duplicity_loop() {
 		then
 
 			# The source of your backup
-			SOURCE=$backups_latest_dir/ # Use / for full system backup [not the case for $scriptname]
+			SOURCE="$backup_local_storage_path/latest/" # Use / for full system backup [not the case here]
 
 		fi
 
@@ -616,7 +616,7 @@ os-br_duplicity_loop() {
 		then
 			duplicity ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
 		else
-			duplicity "${DEST}" "$restores_dir"/s3/ >$backups_temp_dir/duplicity-log 2>&1
+			duplicity "${DEST}" "$restores_dir"/s3/ >"$backup_local_storage_path/temp/duplicity-log" 2>&1
 		fi
 
 		set -e
@@ -681,11 +681,11 @@ os-br_backup_to_S3() {
 
 	if [ $today_day_of_month = "1" ] && [ $interactive = "n" ]
 	then
-		echo "${b}Now copying $backups_archive_dir/$backup_name.tar.bz2 to S3 as well."
+		echo "${b}Now copying | $backup_local_storage_path/archive/$backup_name.tar.bz2 | to S3 as well."
 		echo
 
 		encrypt() {
-			gpg --output  /$backups_temp_dir/$@ --passphrase "$backups_passphrase" --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
+			gpg --output  "$backup_local_storage_path/temp/$@" --passphrase "$backups_passphrase" --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
 		}
 
 		decrypt() {
@@ -711,8 +711,8 @@ os-br_backup_to_S3() {
 			"https://$bucket.s3.amazonaws.com$aws_path$file"
 		}
 
-		( cd $backups_archive_dir && encrypt $backup_name.tar.bz2 )
-		putS3 /$backups_temp_dir/ $backup_name.tar.bz2 /ee-br/archive/
+		( cd "$backup_local_storage_path/archive" && encrypt $backup_name.tar.bz2 )
+		putS3 "$backup_local_storage_path/temp/" "$backup_name.tar.bz2" "/$short_name/archive/"
 
 	fi
 
@@ -736,7 +736,7 @@ os-br_restore_from_S3() {
 
 	os-br_duplicity_loop restore
 
-	if grep -q "No backup chains found" $backups_temp_dir/duplicity-log
+	if grep -q "No backup chains found" "$backup_local_storage_path/temp/duplicity-log"
 	then
 
 		if [ "${1:-null}" = "test" ]
@@ -748,7 +748,7 @@ os-br_restore_from_S3() {
 			# No backups found on server, something's wrong.
 			echo "${r}${b}Restore from S3 failed.${x}"
 			echo
-			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check | $backups_temp_dir/duplicity-log | for messages like: | ${r}No backup chains found${x}${b} |].${x}"
+			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check | $backup_local_storage_path/temp/duplicity-log | for messages like: | ${r}No backup chains found${x}${b} |].${x}"
 			echo
 			echo "${b}Exiting...${x}"
 			echo
@@ -757,14 +757,14 @@ os-br_restore_from_S3() {
 
 	else
 
-		if grep -q "gpg: decryption failed: bad key" $backups_temp_dir/duplicity-log || [ ! -d "$restores_dir"/s3/ ]
+		if grep -q "gpg: decryption failed: bad key" "$backup_local_storage_path/temp/duplicity-log" || [ ! -d "$restores_dir"/s3/ ]
 		then
 
 			if [ "${1:-null}" = "test" ]
 			then
 				echo "${r}${b}Testing restore from S3 failed.${x}"
 				echo
-				echo "${b}This is likely due to an incorrect passphrase [check | $backups_temp_dir/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b}This is likely due to an incorrect passphrase [check | $backup_local_storage_path/temp/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
 				echo
 				echo "${b}If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one.${x}"
 				echo
@@ -782,7 +782,7 @@ os-br_restore_from_S3() {
 			else
 				echo "${r}${b}Restore from S3 failed.${x}"
 				echo
-				echo "${b}This is likely due to an incorrect passphrase [check | $backups_temp_dir/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b}This is likely due to an incorrect passphrase [check | $backup_local_storage_path/temp/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
 				echo
 				echo "${b}Edit the file | $install_dir/config | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script.${x}"
 				echo

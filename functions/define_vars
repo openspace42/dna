@@ -5,8 +5,8 @@ os-define_vars() {
 	### Define variables. Don't change these! | No trailing slash!
 
 	### Define these in the project itself
-	### proj_name="EasyEngine-Backup-Restore"
-	### short_name="ee-br"
+	### proj_name="Lorem Ipsum Dolor"
+	### short_name="lid"
 	### author_name="nikksno"
 
 	### Projects will be installed in this location: | /root/$proj_author/$short_name |.
@@ -21,15 +21,6 @@ os-define_vars() {
 	conf_backups_dir=$conf_dir/backups
 	conf_backups_local_dir=$conf_backups_dir/local
 	conf_backups_s3_dir=$conf_backups_dir/s3
-
-	if [ ! -z "${backup_local_storage_path-}" ]
-	then
-
-		backups_archive_dir=$backup_local_storage_path/archive
-		backups_latest_dir=$backup_local_storage_path/latest
-		backups_temp_dir=$backup_local_storage_path/temp
-
-	fi
 
 	restores_dir=$install_dir/restores
 
