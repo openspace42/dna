@@ -22,9 +22,14 @@ os-define_vars() {
 	conf_backups_local_dir=$conf_backups_dir/local
 	conf_backups_s3_dir=$conf_backups_dir/s3
 
-	backups_archive_dir=$backups_dir/archive
-	backups_latest_dir=$backups_dir/latest
-	backups_temp_dir=$backups_dir/temp
+	if [ ! -z "${backup_local_storage_path-}" ]
+	then
+
+		backups_archive_dir=$backup_local_storage_path/archive
+		backups_latest_dir=$backup_local_storage_path/latest
+		backups_temp_dir=$backup_local_storage_path/temp
+
+	fi
 
 	restores_dir=$install_dir/restores
 
