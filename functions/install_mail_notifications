@@ -21,6 +21,7 @@ os-install_mail_notifications() {
 			/etc/init.d/postfix reload
             echo
         else
+            echo
             echo "${b}Skipping local mailserver [purge and re-]installation.${x}"
             echo
 		fi

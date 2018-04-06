@@ -28,7 +28,7 @@ os-install_easyengine() {
 		then
 			echo "${b}Ok, installing full EE stack...${x}"
 			echo
-			os-install_dependencies composer
+			os-install_dependencies -p composer
 			ufw allow 22222 || true
 			echo
 			ee stack install --all || true
@@ -36,6 +36,7 @@ os-install_easyengine() {
 			( cd /var/www/22222/htdocs/db/pma && composer install && sudo chown www-data: * -R )
 			echo
 		else
+			echo
 			echo "${b}Ok, skipping full EE stack installation...${x}"
 			echo
 		fi

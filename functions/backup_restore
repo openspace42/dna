@@ -5,7 +5,7 @@ os-br_update_storage_info () {
 	free_disk_space="$(df -m --output=avail / | xargs | sed -e 's/Avail //g')"
 	ref_dir_size="$(du -sm "$backup_ref_dir" | xargs | sed -e "s|"${backup_ref_dir}"||g" | xargs)"
 
-	if [ "${1:-null}" = "noS3" ] || [ "$backup_location" = "local" ]
+	if [ "${1:-null}" = "noS3" ] || [ "$backup_archival_location" = "local" ]
 	then
 		est_backup_size=$(($ref_dir_size * 2))
 	else
@@ -136,9 +136,9 @@ os-br_purge_dirs() {
 
 	### Purge temp and create directories
 
-	if [ -d $tmp_dir ]
+	if [ -d $backups_temp_dir ]
 	then
-		rm -r ${tmp_dir:?}
+		rm -r ${backups_temp_dir:?}
 	fi
 
 	if [ -d "$backups_latest_dir" ]
@@ -161,12 +161,12 @@ os-br_create_dirs() {
 		mkdir -p $backups_archive_dir
 		mkdir -p $backups_latest_dir
 		backup_name=$scriptname-$now
-		tmp_backup_dir=$tmp_dir/$backup_name
+		tmp_backup_dir=$backups_temp_dir/$backup_name
 		mkdir -p "$tmp_backup_dir"
 
 	fi
 
-	mkdir -p $tmp_dir
+	mkdir -p $backups_temp_dir
 
 }
 
@@ -225,7 +225,7 @@ os-br_backup_locally() {
     echo "${b}Now compressing backup...${x}"
 	echo
 
-	cd $tmp_dir
+	cd $backups_temp_dir
 
     if [ ! ${last-null} = "y" ]
 	then
@@ -278,8 +278,8 @@ os-br_last_local_backup() {
 
 	else
 
-		mkdir -p "$backups_dir"/old
-		mv "$backups_archive_dir" "$backups_dir"/old/archive-old-before-"$now"-restore
+		mkdir -p "$backup_local_storage_path"/old
+		mv "$backups_archive_dir" "$backup_local_storage_path"/old/archive-old-before-"$now"-restore
 
 		if [ ! -z "${duplicity_log_dir-}" ]
 		then
@@ -287,7 +287,7 @@ os-br_last_local_backup() {
 			mv "$duplicity_log_dir"/backup/ "$duplicity_log_dir"/old/backup-old-before-"$now"-restore 2> /dev/null || true
 		fi
 
-		echo "${b}Backed up current installation to local backups directory and moved the latter to $backups_dir/old/archive-old-before-$now-restore.${x}"
+		echo "${b}Backed up current installation to local backups directory and moved the latter to $backup_local_storage_path/old/archive-old-before-$now-restore.${x}"
 		echo
 	fi
 
@@ -616,7 +616,7 @@ os-br_duplicity_loop() {
 		then
 			duplicity ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
 		else
-			duplicity "${DEST}" "$restores_dir"/s3/ >$tmp_dir/duplicity-log 2>&1
+			duplicity "${DEST}" "$restores_dir"/s3/ >$backups_temp_dir/duplicity-log 2>&1
 		fi
 
 		set -e
@@ -685,7 +685,7 @@ os-br_backup_to_S3() {
 		echo
 
 		encrypt() {
-			gpg --output  /$tmp_dir/$@ --passphrase "$backups_passphrase" --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
+			gpg --output  /$backups_temp_dir/$@ --passphrase "$backups_passphrase" --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
 		}
 
 		decrypt() {
@@ -712,7 +712,7 @@ os-br_backup_to_S3() {
 		}
 
 		( cd $backups_archive_dir && encrypt $backup_name.tar.bz2 )
-		putS3 /$tmp_dir/ $backup_name.tar.bz2 /ee-br/archive/
+		putS3 /$backups_temp_dir/ $backup_name.tar.bz2 /ee-br/archive/
 
 	fi
 
@@ -736,7 +736,7 @@ os-br_restore_from_S3() {
 
 	os-br_duplicity_loop restore
 
-	if grep -q "No backup chains found" $tmp_dir/duplicity-log
+	if grep -q "No backup chains found" $backups_temp_dir/duplicity-log
 	then
 
 		if [ "${1:-null}" = "test" ]
@@ -748,7 +748,7 @@ os-br_restore_from_S3() {
 			# No backups found on server, something's wrong.
 			echo "${r}${b}Restore from S3 failed.${x}"
 			echo
-			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check | $tmp_dir/duplicity-log | for messages like: | ${r}No backup chains found${x}${b} |].${x}"
+			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check | $backups_temp_dir/duplicity-log | for messages like: | ${r}No backup chains found${x}${b} |].${x}"
 			echo
 			echo "${b}Exiting...${x}"
 			echo
@@ -757,14 +757,14 @@ os-br_restore_from_S3() {
 
 	else
 
-		if grep -q "gpg: decryption failed: bad key" $tmp_dir/duplicity-log || [ ! -d "$restores_dir"/s3/ ]
+		if grep -q "gpg: decryption failed: bad key" $backups_temp_dir/duplicity-log || [ ! -d "$restores_dir"/s3/ ]
 		then
 
 			if [ "${1:-null}" = "test" ]
 			then
 				echo "${r}${b}Testing restore from S3 failed.${x}"
 				echo
-				echo "${b}This is likely due to an incorrect passphrase [check | $tmp_dir/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b}This is likely due to an incorrect passphrase [check | $backups_temp_dir/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
 				echo
 				echo "${b}If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one.${x}"
 				echo
@@ -782,7 +782,7 @@ os-br_restore_from_S3() {
 			else
 				echo "${r}${b}Restore from S3 failed.${x}"
 				echo
-				echo "${b}This is likely due to an incorrect passphrase [check | $tmp_dir/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b}This is likely due to an incorrect passphrase [check | $backups_temp_dir/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
 				echo
 				echo "${b}Edit the file | $install_dir/config | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script.${x}"
 				echo
@@ -864,7 +864,7 @@ os-br_launch_restore() {
 
 	    else
 
-	    	if [ "${backup_location-null}" = "s3" ]
+	    	if [ "${backup_archival_location-null}" = "s3" ]
 	    	then
 	    		echo "${b}You've previously set up an S3 file storage server connection on this machine.${x}"
 	    		echo

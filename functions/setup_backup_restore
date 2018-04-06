@@ -208,8 +208,8 @@ os-setup_backup_restore_s3() {
 					echo
 					echo "${b}Ok, skipping S3 setup and REMOVING s3 setting from $short_name...${x}"
 					echo
-					backup_location=local
-					echo "local" > $conf_backups_dir/backup_location
+					backup_archival_location=local
+					echo "local" > $conf_backups_dir/backup_archival_location
 					read -rp "${b}[press enter to continue reading...]${x}"
 					clear
 				fi
@@ -240,6 +240,82 @@ os-setup_backup_restore() {
 	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
 	echo
 
+
+	echo "${b}By default $short_name stores local backups in the | ${g}$install_dir/backups${x}${b} | directory.${x}"
+	echo
+	echo "${b}If and only if your machine doesn't have sufficient local storage space available, you may specify another location.${x}"
+	echo
+	echo "${b}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $short_name at the filesystem level.${x}"
+	echo
+	echo "${b}If you decide not to use the default location, be sure so specify a highly available and high performance location.${x}"
+	echo
+	echo "${b}Do not use a custom location for backup security / resilience purposes, but rather only if your machine has storage space limitations.${x}"
+	echo
+	echo "${b}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x}"
+	echo
+
+	describe_setting() {
+
+		echo "${b}Please set your local backup storage location [default/custom]:${x}"
+		echo
+
+	}
+
+	validate_input() {
+
+		case $input in
+			default)	backup_local_storage_location=default
+			valid=y
+			;;
+			custom)		backup_local_storage_location=custom
+			valid=y
+			;;
+			*)	echo "${r}${b}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x}"
+			echo
+			valid=n
+			;;
+		esac
+
+	}
+
+	os-set_option -o backup_local_storage_location -v y -d y -p backups/local
+
+	if [ $backup_local_storage_location = "default" ]
+    then
+
+		backup_local_storage_path="$install_dir/backups"
+		touch "$conf_backups_local_dir/backup_local_storage_path"
+		echo "$install_dir/backups" > "$conf_backups_local_dir/backup_local_storage_path"
+
+	else
+
+		describe_setting() {
+
+			echo "${b}Please specify your custom backup local storage location [i.e. /mnt/network-volume/raptor-backups/]:${x}"
+			echo
+
+		}
+
+		validate_input() {
+
+			if [ -d $input ]
+			then
+				echo "${g-}${b-}Location valid and found.${x-}"
+				echo
+				valid=y
+			else
+				echo "${r-}${b-}Location not found.${x-}"
+				echo
+				echo "${b-}Ensure the path is valid and try again.${x-}"
+				echo
+				valid=n
+			fi
+
+		}
+
+		os-set_option -o backup_local_storage_path -v y -d y -p backups/local
+
+    fi
 
 	describe_setting() {
 
@@ -283,10 +359,10 @@ os-setup_backup_restore() {
 	validate_input() {
 
 		case $input in
-			local)	backup_location=local
+			local)	backup_archival_location=local
 			valid=y
 			;;
-			s3)	backup_location=s3
+			s3)		backup_archival_location=s3
 			valid=y
 			;;
 			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
@@ -297,10 +373,10 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_location -v y -d y -p backups
+	os-set_option -o backup_archival_location -v y -d y -p backups
 
 
-	if [ $backup_location = "s3" ]
+	if [ $backup_archival_location = "s3" ]
 	then
 
 		if [ ! "${prev_val_outcome-null}" = "kept" ]
@@ -324,8 +400,8 @@ os-setup_backup_restore() {
 				echo "${b}Keeping backups local for now [simply re-run this installation when you're ready to upgrade your backups to S3 enabled].${x}"
 				echo
 
-				backup_location=local
-				echo "local" > $conf_dir/backup_location
+				backup_archival_location=local
+				echo "local" > $conf_dir/backup_archival_location
 
 				read -rp "${b}[press enter to continue reading...]${x}"
 				clear

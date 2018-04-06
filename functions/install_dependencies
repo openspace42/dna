@@ -41,4 +41,7 @@ os-install_dependencies() {
     echo "${b}Finished installing dependencies.${x}"
     echo
 
+    unset allow_errors
+    unset packages
+
 }

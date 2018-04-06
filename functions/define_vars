@@ -22,16 +22,16 @@ os-define_vars() {
 	conf_backups_local_dir=$conf_backups_dir/local
 	conf_backups_s3_dir=$conf_backups_dir/s3
 
-	backups_dir=$install_dir/backups
 	backups_archive_dir=$backups_dir/archive
 	backups_latest_dir=$backups_dir/latest
+	backups_temp_dir=$backups_dir/temp
 
 	restores_dir=$install_dir/restores
 
 	tools_dir=$install_dir/tools
 
 	tls_dir=/etc/ssl/$short_name
-	tmp_dir=/tmp/$short_name
+	temp_dir=/tmp/$short_name
 
 	www_dir=/var/www
 
