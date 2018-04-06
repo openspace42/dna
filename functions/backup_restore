@@ -138,12 +138,12 @@ os-br_purge_dirs() {
 
 	if [ -d $backup_local_storage_path/temp ]
 	then
-		rm -r "${backup_local_storage_path/temp:?}"
+		rm -r "${backup_local_storage_path:?}/temp"
 	fi
 
 	if [ -d "$backup_local_storage_path/latest" ]
 	then
-		rm -r "${backup_local_storage_path/latest:?}"
+		rm -r "${backup_local_storage_path:?}/latest"
 	fi
 
 	if [ -d "$restores_dir/s3" ]
@@ -614,7 +614,7 @@ os-br_duplicity_loop() {
 
 		if [ "${1:-null}" = "backup" ]
 		then
-			duplicity ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
+			duplicity --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
 		else
 			duplicity "${DEST}" "$restores_dir"/s3/ >"$backup_local_storage_path/temp/duplicity-log" 2>&1
 		fi
