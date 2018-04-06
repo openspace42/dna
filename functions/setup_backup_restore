@@ -289,6 +289,11 @@ os-setup_backup_restore() {
 
 	else
 
+		if [ -f "$conf_backups_local_dir/backup_local_storage_path" ]
+		then
+			rm "$conf_backups_local_dir/backup_local_storage_path"
+		fi
+
 		describe_setting() {
 
 			echo "${b}Please specify your custom backup local storage location [i.e. /mnt/network-volume/raptor-backups/]:${x}"
@@ -300,7 +305,7 @@ os-setup_backup_restore() {
 
 			if [ -d $input ]
 			then
-				echo "${g-}${b-}Location valid and found.${x-}"
+				echo "${g-}${b-}Location found and valid.${x-}"
 				echo
 				valid=y
 			else
