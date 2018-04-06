@@ -254,6 +254,19 @@ os-setup_backup_restore() {
 	echo "${b}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x}"
 	echo
 
+	### If option "backup_local_storage_location" is set and is currently "default", delete the "backup_local_storage_path" option to start fresh
+
+	if [ -f "$conf_backups_local_dir/backup_local_storage_location" ]
+	then
+		if [[ $(< "$conf_backups_local_dir/backup_local_storage_location") = "default" ]]
+		then
+			if [ -f "$conf_backups_local_dir/backup_local_storage_path" ]
+			then
+				rm "$conf_backups_local_dir/backup_local_storage_path"
+			fi
+		fi
+	fi
+
 	describe_setting() {
 
 		echo "${b}Please set your local backup storage location [default/custom]:${x}"
@@ -288,11 +301,6 @@ os-setup_backup_restore() {
 		echo "$install_dir/backups" > "$conf_backups_local_dir/backup_local_storage_path"
 
 	else
-
-		if [ -f "$conf_backups_local_dir/backup_local_storage_path" ]
-		then
-			rm "$conf_backups_local_dir/backup_local_storage_path"
-		fi
 
 		describe_setting() {
 
