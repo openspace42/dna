@@ -2,7 +2,7 @@
 
 os-br_update_storage_info() {
 
-	free_disk_space="$(df -m --output=avail "$backup_archival_location" | xargs | sed -e 's/Avail //g')"
+	free_disk_space="$(df -m --output=avail "$backup_local_storage_path" | xargs | sed -e 's/Avail //g')"
 	ref_dir_size="$(du -sm "$backup_ref_dir" | xargs | sed -e "s|"${backup_ref_dir}"||g" | xargs)"
 
 	if [ "${1:-null}" = "noS3" ] || [ "$backup_archival_location" = "local" ]
