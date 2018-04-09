@@ -146,9 +146,9 @@ os-br_purge_dirs() {
 		rm -r "${backup_local_storage_path:?}/latest"
 	fi
 
-	if [ -d "$restores_dir/s3" ]
+	if [ -d "$backup_local_storage_path/restores/s3" ]
 	then
-		rm -r ${restores_dir:?}/s3
+		rm -r ${backup_local_storage_path:?}/restores/s3
 	fi
 
 }
@@ -408,8 +408,8 @@ os-br_restore_from_here() {
 
 	done
 
-	mkdir -p $restores_dir/local/
-	tar -xvjf "$sel_backup_file" -C "$restores_dir"/local/
+	mkdir -p "$backup_local_storage_path/restores/local/"
+	tar -xvjf "$sel_backup_file" -C "$backup_local_storage_path/restores/local/"
 
 }
 
@@ -616,7 +616,7 @@ os-br_duplicity_loop() {
 		then
 			duplicity --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
 		else
-			duplicity "${DEST}" "$restores_dir"/s3/ >"$backup_local_storage_path/temp/duplicity-log" 2>&1
+			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" >"$backup_local_storage_path/temp/duplicity-log" 2>&1
 		fi
 
 		set -e
@@ -724,10 +724,10 @@ os-br_restore_from_S3() {
 
 	if [ "${1:-null}" = "test" ]
 	then
-		echo "${b}Now testing restore from S3 to $restores_dir/s3/ to ensure existing backups integrity and passphrase match...${x}"
+		echo "${b}Now testing restore from S3 to $backup_local_storage_path/restores/s3/ to ensure existing backups integrity and passphrase match...${x}"
 		echo
 	else
-		echo "${b}Now restoring from S3 to $restores_dir/s3/...${x}"
+		echo "${b}Now restoring from S3 to $backup_local_storage_path/restores/s3/...${x}"
 		echo
 	fi
 
@@ -757,7 +757,7 @@ os-br_restore_from_S3() {
 
 	else
 
-		if grep -q "gpg: decryption failed: bad key" "$backup_local_storage_path/temp/duplicity-log" || [ ! -d "$restores_dir"/s3/ ]
+		if grep -q "gpg: decryption failed: bad key" "$backup_local_storage_path/temp/duplicity-log" || [ ! -d "$backup_local_storage_path/restores/s3/" ]
 		then
 
 			if [ "${1:-null}" = "test" ]
@@ -898,31 +898,35 @@ os-br_launch_restore() {
 	    		export restore_type=standalone
 	    	fi
 
+			if [ $restore_type = "s3" ]
+			then
+
+				os-br_restore_from_S3
+
+			else
+
+				os-br_restore_from_standalone
+
+				echo
+
+			fi
+
 		fi
-
-	fi
-
-	if [ $restore_type = "s3" ]
-	then
-
-		os-br_restore_from_S3
 
 	else
 
-		os-br_restore_from_standalone
-
-		echo
+		os-br_restore_from_S3
 
 	fi
 
     if [ $restore_source = "here" ]
     then
     	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar.bz2//g')"
-    	export restore_file_path=$restores_dir/local/$restore_file_name
+    	export restore_file_path="$backup_local_storage_path/restores/local/$restore_file_name"
     else
     	if [ $restore_type = "s3" ]
     	then
-    		export restore_file_path=$restores_dir/s3
+    		export restore_file_path="$backup_local_storage_path/restores/s3"
     	else
     		export restore_file_path="/root/$short_name-restore"
     	fi
