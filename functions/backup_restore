@@ -26,7 +26,7 @@ os-br_purge_loop() {
 
 		### Prevent infinite loops in case of rm failure
 
-		if [ $counter = 0 ]
+		if [ $counter = -1 ]
 		then
 			echo "${r}${b}Infinite loop error caught. Exiting...${b}"
 			exit 1
@@ -42,10 +42,22 @@ os-br_purge_loop() {
 
 	else
 
-		echo "${r}${b}The specified number of minimum backups to keep [$min_local_backups] is too high $error_description.${x}"
-		echo
-		echo "${b}Lower this figure by re-running the install and lowering this figure during configuration or make more space available on this machine.${x}"
-		echo
+		if [ $counter = 0 ]
+		then
+
+			echo "${r}${b}Even though there are no backups currently archived in local storage, meeting your setting of minimum backups to keep at | 0 |, there still isn't enough storage on the local storage's [$backup_local_storage_path] underlying volume.${x}"
+			echo
+			echo "${b}Please inspect your disk for any files you don't need, or consider using an[other] external location by re-running the installer and choosing | custom | for the | backup_local_storage_location | setting.${x}"
+			echo
+
+		else
+
+			echo "${r}${b}The specified number of minimum backups to keep [$min_local_backups] is too high $error_description.${x}"
+			echo
+			echo "${b}Lower this figure by re-running the install and lowering this figure during configuration or make more space available on this machine.${x}"
+			echo
+
+		fi
 
 		if [ -d "$backup_local_storage_path/archive/old" ]
 		then
