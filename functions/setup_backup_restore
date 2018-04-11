@@ -332,6 +332,32 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
+		echo "${b}Please choose your backup compression type [bz2/none]:${x}"
+		echo
+
+	}
+
+	validate_input() {
+
+		case $input in
+			bz2)	backup_compression_type=bz2
+			valid=y
+			;;
+			none)	backup_compression_type=none
+			valid=y
+			;;
+			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
+			echo
+			valid=n
+			;;
+		esac
+
+	}
+
+	os-set_option -o backup_compression_type -v y -d y -p backups/local
+
+	describe_setting() {
+
 		echo "${b}Please set how many backups should be kept locally at the very minimum [suggested between 3 and 7].${x}"
 		echo
 

@@ -242,11 +242,16 @@ os-br_backup_locally() {
     if [ ! ${last-null} = "y" ]
 	then
 
-    	### Tar.bz2 this backup archive.
+    	### Tar [and - if chosen - bzip2] this backup archive.
 
-    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete"
-
-    	mv "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name.tar.bz2"
+		if [ "$backup_compression_type" = "bzip2" ]
+		then
+	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete"
+			mv "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name.tar.bz2"
+		else
+			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') > "$backup_local_storage_path/archive/$backup_name.tar.incomplete"
+			mv "$backup_local_storage_path/archive/$backup_name.tar.incomplete" "$backup_local_storage_path/archive/$backup_name.tar"
+		fi
 
     	echo
     	echo "${g}${b}Finished compressing backup and stored in | $backup_local_storage_path/archive/ | ${x}"
@@ -254,11 +259,16 @@ os-br_backup_locally() {
 
     else
 
-        ### Tar.bz2 this backup archive. Give local backup a custom name so that it's clear it's the last one before a restore
+        ### Tar [and - if chosen - bzip2] this backup archive. Give local backup a custom name so that it's clear it's the last one before a restore
 
-    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete"
-
-    	mv "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2"
+		if [ "$backup_compression_type" = "bzip2" ]
+		then
+	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete"
+			mv "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2"
+		else
+			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}')> "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.incomplete"
+			mv "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.incomplete" "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar"
+		fi
 
     fi
 
@@ -421,7 +431,15 @@ os-br_restore_from_here() {
 	done
 
 	mkdir -p "$backup_local_storage_path/restores/local/"
-	tar -xvjf "$sel_backup_file" -C "$backup_local_storage_path/restores/local/"
+
+	if [ ${sel_backup_file: -4} == ".bz2" ]
+	then
+		tar -xvjf "$sel_backup_file" -C "$backup_local_storage_path/restores/local/"
+	else
+		tar -xvf "$sel_backup_file" -C "$backup_local_storage_path/restores/local/"
+	fi
+
+	echo
 
 }
 
@@ -499,7 +517,12 @@ os-br_restore_from_standalone() {
 		done
 		echo "${b}Backup file $standalone_backup_file selected.${x}"
 		echo
-		tar -xvjf "$standalone_backup_file" -C "/root/$short_name-restore/"
+		if [ ${sel_backup_file: -4} == ".bz2" ]
+		then
+			tar -xvjf "$standalone_backup_file" -C "/root/$short_name-restore/"
+		else
+			tar -xvf "$standalone_backup_file" -C "/root/$short_name-restore/"
+		fi
 		subdir=("/root/$short_name-restore/"*/)
 		restoresubdir="$(echo "$subdir" | sed "s|/root/${short_name}-restore/||" | tr -d '/')"
 		mv "/root/$short_name-restore/$restoresubdir"/* "/root/$short_name-restore/"
