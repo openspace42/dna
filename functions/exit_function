@@ -4,6 +4,7 @@ os-exit_function() {
 
     echo "${r}${b}Exiting...${x}"
     echo
+    sleep 1
     exit 1
 
 }
