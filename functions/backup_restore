@@ -746,8 +746,8 @@ os-br_backup_to_S3() {
 			"https://$bucket.s3.amazonaws.com$aws_path$file"
 		}
 
-		( cd "$backup_local_storage_path/archive" && encrypt $backup_name.tar.bz2 )
-		putS3 "$backup_local_storage_path/temp/" "$backup_name.tar.bz2" "/$short_name/archive/"
+		( cd "$backup_local_storage_path/archive" && if [ ${backup_name: -4} == ".bz2" ]; then encrypt $backup_name.tar.bz2 && puts3_file="$backup_name.tar.bz2"; else encrypt $backup_name.tar && && puts3_file="$backup_name.tar"; fi )
+		putS3 "$backup_local_storage_path/temp/" "$puts3_file" "/$short_name/archive/"
 
 	fi
 
