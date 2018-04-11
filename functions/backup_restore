@@ -956,7 +956,7 @@ os-br_launch_restore() {
 
     if [ $restore_source = "here" ]
     then
-    	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar//g') | sed 's/.bz2//g')"
+    	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar//g' | sed 's/.bz2//g')"
     	export restore_file_path="$backup_local_storage_path/restores/local/$restore_file_name"
     else
     	if [ $restore_type = "s3" ]
