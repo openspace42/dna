@@ -330,7 +330,7 @@ os-br_restore_from_here() {
 		exit 1
 	fi
 
-	count="$(ls -1 $backup_local_storage_path/archive/*.tar.bz2 2>/dev/null | wc -l)"
+	count="$(ls -1 $backup_local_storage_path/archive/*.tar* 2>/dev/null | wc -l)"
 	if [ $count = 0 ]
 	then
 		echo "${r}${b}No backup archives found in local backups directory [$backup_local_storage_path/archive].${x}"
@@ -346,7 +346,7 @@ os-br_restore_from_here() {
 
 	echo "${b}These are the backup dates available for restore:${x}"
 	echo
-	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${short_name}-backup-//g" | sed -e 's/.tar.bz2//g'
+	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${short_name}-backup-//g" | sed -e 's/.tar//g' | sed -e 's/.bz2//g'
 	echo
 	read -rp "${b}[press enter to continue...]${x}"
 	clear
@@ -361,7 +361,7 @@ os-br_restore_from_here() {
 	unset options i
 	while IFS= read -r -d $'\n' f; do
 		options[i++]="$f"
-	done < <(find ./ -maxdepth 1 -type f -name "*.tar.bz2" | sort -r )
+	done < <(find ./ -maxdepth 1 -type f -name "*.tar*" | sort -r )
 
 	set -u
 
@@ -373,7 +373,7 @@ os-br_restore_from_here() {
 		do
 			echo
 			case $sel_backup_file in
-				*.tar.bz2)
+				*.tar)
 				echo "${b}Backup file $sel_backup_file selected.${x}"
 				break
 				;;
@@ -452,7 +452,7 @@ os-br_restore_from_standalone() {
 		rm -r "/root/$short_name-restore/"
 	fi
 	mkdir -p "/root/$short_name-restore/"
-	read -p "${b}Do you have a file called | $short_name-backup-[date].tar.bz2 | [or similar]? (Y/n): ${x}" -n 1 -r
+	read -p "${b}Do you have a file called | $short_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x}" -n 1 -r
 	echo
 	if [[ ! $REPLY =~ ^[Nn]$ ]]
 	then
@@ -716,7 +716,7 @@ os-br_backup_to_S3() {
 
 	if [ $today_day_of_month = "1" ] && [ $interactive = "n" ]
 	then
-		echo "${b}Now copying | $backup_local_storage_path/archive/$backup_name.tar.bz2 | to S3 as well."
+		echo "${b}Now copying | $backup_local_storage_path/archive/$backup_name.tar[.bz2] | to S3 as well."
 		echo
 
 		encrypt() {
@@ -956,7 +956,7 @@ os-br_launch_restore() {
 
     if [ $restore_source = "here" ]
     then
-    	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar.bz2//g')"
+    	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar//g')" | sed 's/.bz2//g')"
     	export restore_file_path="$backup_local_storage_path/restores/local/$restore_file_name"
     else
     	if [ $restore_type = "s3" ]
