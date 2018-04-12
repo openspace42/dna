@@ -738,12 +738,12 @@ os-br_backup_to_S3() {
 			string="PUT\n\n$content_type\n$date\n$acl\n/$bucket$aws_path$file"
 			signature=$(echo -en "${string}" | openssl sha1 -hmac "${awssak}" -binary | base64)
 			curl -X PUT -T "$path/$file" \
-			-H "Host: $bucket.s3.amazonaws.com" \
+			-H "Host: $bucket.$s3_endpoint" \
 			-H "Date: $date" \
 			-H "Content-Type: $content_type" \
 			-H "$acl" \
 			-H "Authorization: AWS ${awsaki}:$signature" \
-			"https://$bucket.s3.amazonaws.com$aws_path$file"
+			"https://${bucket}.${s3_endpoint}${aws_path}${file}"
 		}
 
 		( cd "$backup_local_storage_path/archive" && if [ ${backup_name: -4} == ".bz2" ]; then backup_fullname="$backup_name.tar.bz2"; else backup_fullname="$backup_name.tar"; fi && encrypt "$backup_fullname" )
