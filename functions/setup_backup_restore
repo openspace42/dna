@@ -184,7 +184,7 @@ os-setup_backup_restore_s3() {
 
 			### Check S3 connection
 
-			s3cmd --configure --access_key="$s3_access_key_id" --secret_key="$s3_secret_access_key" --host="$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
+			s3cmd --configure --access_key="$s3_access_key_id" --secret_key="$s3_secret_access_key" --host="$s3_endpoint" --host-bucket="%(bucket).$s3_endpoint" -s --no-encrypt --dump-config 2>&1 | tee /root/.s3cfg &> /dev/null
 			set +e
 			s3cmd info s3://"$s3_bucket_name" >/dev/null 2>&1
 
