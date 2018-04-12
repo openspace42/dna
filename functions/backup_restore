@@ -133,7 +133,7 @@ os-br_purge_backups() {
 			os-br_purge_loop
 		done
 
-		echo "${g}${b}Enoguh free space [$free_disk_space MB] now available for new backup.${x}"
+		echo "${g}${b}Enough free space [$free_disk_space MB] now available for new backup.${x}"
 		echo
 		echo "${b}Purged all backups older than the most recent | $counter |.${x}"
 		echo
