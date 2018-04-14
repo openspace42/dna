@@ -153,9 +153,9 @@ os-br_purge_dirs() {
 		rm -r "${backup_local_storage_path:?}/latest"
 	fi
 
-	if [ -d "$backup_local_storage_path/restores/s3" ]
+	if [ -d "$backup_local_storage_path/restores" ]
 	then
-		rm -r ${backup_local_storage_path:?}/restores/s3
+		rm -r ${backup_local_storage_path:?}/restores
 	fi
 
 }
