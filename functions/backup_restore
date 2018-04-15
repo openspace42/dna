@@ -806,7 +806,7 @@ os-br_restore_from_S3() {
 				echo
 				echo "${b}If you have lost your previous encryption passphrase, delete all your S3 backups and re-run this script to make an entirely new backup set encrypted solely with the currently specified passphrase.${x}"
 				echo
-				echo "${b}Would you like to continue with a local backup anyway?${x}"
+				read -rp "${b}Would you like to continue with a local backup anyway? (Y/n): ${x}" -n 1
 				echo
 				if [[ ! $REPLY =~ ^[Nn]$ ]]
 				then
