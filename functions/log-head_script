@@ -14,8 +14,11 @@ os-log_script() {
 	if [ -f "$logdir"/latest-log ]; then rm "$logdir"/latest-log; fi            # Remove the old latest-log symlink
 	ln -s "$logfile" "$logdir"/latest-log                                       # Recreate the symlink
 	( cd "$logdir" && rm "$(ls -t | awk 'NR>43')" ) 2> /dev/null || true        # Delete all logs older than the newest 42
-	exec >  >(tee -ia "$logfile")                                               # Log stdout to logfile
-	if [ $interactive = "n" ]; then exec 2> >(tee -ia "$logfile" >&2); fi       # Log stderr to logfile if non-interactive
+	if [ $interactive = "n" ]                                                   # If non-interactive, then...
+	then
+		exec >  >(tee -ia "$logfile")                                           # Log stdout to logfile
+		exec 2> >(tee -ia "$logfile" >&2)										# Log stderr to logfile
+	fi
 	echo "Starting $scriptname script on $now..." && echo                       # Write heading to logfile
 	chmod -R 700 "$logdir"                                                      # Secure logs directory
 
