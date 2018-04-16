@@ -206,7 +206,7 @@ os-setup_backup_restore_s3() {
 				else
 					s3_setup_accepted=y
 					echo
-					echo "${b}Ok, skipping S3 setup and REMOVING s3 setting from $short_name...${x}"
+					echo "${b}Ok, skipping S3 setup and REMOVING S3 setting from $short_name...${x}"
 					echo
 					backup_archival_location=local
 					echo "local" > $conf_backups_dir/backup_archival_location
@@ -458,42 +458,49 @@ os-setup_backup_restore() {
 
 			os-setup_backup_restore_s3
 
-			describe_setting() {
+			### Check that the user has actually completed and confirmed S3 connection
 
-				echo "${b}Please set your desired minimum backup history interval to keep on S3.${x}"
-				echo
-				echo "${b}Indicate an interval, which is a number followed by one of the characters D, W, M, or Y (indicating days, weeks, months, or years respectively).${x}"
-				echo
+			if [ "${backup_archival_location}" = "s3" ]
+			then
 
-			}
+				describe_setting() {
 
-			os-set_option -o duplicity_min_history -v n -d y -p backups/s3
-
-			describe_setting() {
-
-				echo "${b}Also upload a full backup archive file to S3 on the first of the month? [y/n]${x}"
-				echo
-
-			}
-
-			validate_input() {
-
-				case $input in
-					y)	s3_monthly_uploads=y
-					valid=y
-					;;
-					n)	s3_monthly_uploads=s3
-					valid=y
-					;;
-					*)	echo "${r}${b}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x}"
+					echo "${b}Please set your desired minimum backup history interval to keep on S3.${x}"
 					echo
-					valid=n
-					;;
-				esac
+					echo "${b}Indicate an interval, which is a number followed by one of the characters D, W, M, or Y (indicating days, weeks, months, or years respectively).${x}"
+					echo
 
-			}
+				}
 
-			os-set_option -o s3_monthly_uploads -v y -d y -p backups/s3
+				os-set_option -o duplicity_min_history -v n -d y -p backups/s3
+
+				describe_setting() {
+
+					echo "${b}Also upload a full backup archive file to S3 on the first of the month? [y/n]${x}"
+					echo
+
+				}
+
+				validate_input() {
+
+					case $input in
+						y)	s3_monthly_uploads=y
+						valid=y
+						;;
+						n)	s3_monthly_uploads=s3
+						valid=y
+						;;
+						*)	echo "${r}${b}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x}"
+						echo
+						valid=n
+						;;
+					esac
+
+				}
+
+				os-set_option -o s3_monthly_uploads -v y -d y -p backups/s3
+
+			fi
 
 		fi
 
