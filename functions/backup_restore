@@ -816,6 +816,7 @@ os-br_restore_from_S3() {
 						echo
 						export s3_restore_test_failed=y
 					else
+						echo
 						echo "${b}Ok, aborting.${x}"
 						echo
 						os-exit_function
