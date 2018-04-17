@@ -772,7 +772,7 @@ os-br_restore_from_S3() {
 		if [ "${1:-null}" = "test" ]
 		then
 			# This is the first backup, all is good.
-			echo "${b}First S3 backup detected. Skipping restore test...${x}"
+			echo "${g}${b}First S3 backup detected. Skipping restore test...${x}"
 			echo
 		else
 			# No backups found on server, something's wrong.
