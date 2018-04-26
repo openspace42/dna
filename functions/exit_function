@@ -2,8 +2,18 @@
 
 os-exit_function() {
 
-    echo "${r}${b}Exiting...${x}"
-    echo
+    if [ ! -z "${lockfile_set-}" ]
+    then
+        if [ -f "${lockfile_set}" ]
+        then
+            echo "${r}${b}Exiting and clearing lockfile...${x}"
+            echo
+            rm "${lockfile_set}"
+        fi
+    else
+        echo "${r}${b}Exiting...${x}"
+        echo
+    fi
     sleep 1
     exit 1
 
