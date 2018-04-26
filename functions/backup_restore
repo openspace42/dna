@@ -644,9 +644,9 @@ os-br_duplicity_loop() {
 
 		if [ "${1:-null}" = "backup" ]
 		then
-			duplicity --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
+			duplicity --progress --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
 		else
-			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" >"$backup_local_storage_path/temp/duplicity-log" 2>&1
+			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" 2>&1 | tee "$backup_local_storage_path/temp/duplicity-log"
 		fi
 
 		set -e
@@ -778,7 +778,7 @@ os-br_restore_from_S3() {
 			# No backups found on server, something's wrong.
 			echo "${r}${b}Restore from S3 failed.${x}"
 			echo
-			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check | $backup_local_storage_path/temp/duplicity-log | for messages like: | ${r}No backup chains found${x}${b} |].${x}"
+			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check the above output for messages like: | ${r}No backup chains found${x}${b} |].${x}"
 			echo
 			echo "${b}Exiting...${x}"
 			echo
@@ -794,7 +794,7 @@ os-br_restore_from_S3() {
 			then
 				echo "${r}${b}Testing restore from S3 failed.${x}"
 				echo
-				echo "${b}This is likely due to an incorrect passphrase [check | $backup_local_storage_path/temp/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b}This is likely due to an incorrect passphrase [check the above output for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
 				echo
 				echo "${b}If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one.${x}"
 				echo
@@ -829,7 +829,7 @@ os-br_restore_from_S3() {
 			else
 				echo "${r}${b}Restore from S3 failed.${x}"
 				echo
-				echo "${b}This is likely due to an incorrect passphrase [check | $backup_local_storage_path/temp/duplicity-log | for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b}This is likely due to an incorrect passphrase [check the above output for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
 				echo
 				echo "${b}Edit the file | $conf_backups_s3_dir/backups_passphrase | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script.${x}"
 				echo
