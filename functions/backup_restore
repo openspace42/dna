@@ -442,10 +442,6 @@ os-br_restore_from_standalone() {
 
 	echo "${b}Ok, restoring from a standalone $short_name backup file.${x}"
 	echo
-	if [ -d "/root/$short_name-restore/" ]
-	then
-		rm -r "/root/$short_name-restore/"
-	fi
 	mkdir -p "/root/$short_name-restore/"
 	read -p "${b}Do you have a file called | $short_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x}" -n 1 -r
 	echo
