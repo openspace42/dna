@@ -761,7 +761,7 @@ os-br_restore_from_S3() {
 		echo
 	fi
 
-	echo "${b}This is going to take some time. Please let the process run, it won't print any output until its done.${x}"
+	echo "${b}This is going to take some time and will NOT output any progress information until it's done.${x}"
 	echo
 
 	os-br_duplicity_loop restore
