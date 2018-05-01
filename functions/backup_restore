@@ -241,16 +241,14 @@ os-br_backup_locally() {
 
 		if [ "$backup_compression_type" = "bz2" ]
 		then
-	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete"
-			mv "$backup_local_storage_path/archive/$backup_name.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name.tar.bz2"
+			output_file_name="$backup_name.tar.bz2"
+			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
+	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
 		else
-			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') > "$backup_local_storage_path/archive/$backup_name.tar.incomplete"
-			mv "$backup_local_storage_path/archive/$backup_name.tar.incomplete" "$backup_local_storage_path/archive/$backup_name.tar"
+			output_file_name="$backup_name.tar"
+			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
+			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') > "${output_file_path}.incomplete"
 		fi
-
-    	echo
-    	echo "${g}${b}Finished compressing backup and stored in | $backup_local_storage_path/archive/ | ${x}"
-    	echo
 
     else
 
@@ -258,14 +256,21 @@ os-br_backup_locally() {
 
 		if [ "$backup_compression_type" = "bz2" ]
 		then
-	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete"
-			mv "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2.incomplete" "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.bz2"
+			output_file_name="$backup_name-last-backup-before-$now-restore.tar.bz2"
+			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
+	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
 		else
-			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}')> "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.incomplete"
-			mv "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar.incomplete" "$backup_local_storage_path/archive/$backup_name-last-backup-before-$now-restore.tar"
+			output_file_name="$backup_name-last-backup-before-$now-restore.tar"
+			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
+			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}')> "${output_file_path}.incomplete"
 		fi
 
     fi
+
+	mv "${output_file_path}.incomplete" "${output_file_path}"
+
+	echo "${g}${b}Finished compressing backup and stored in | $backup_local_storage_path/archive/ | ${x}"
+	echo
 
 	echo "${g}${b}Finished local backup.${x}"
 	echo
@@ -711,7 +716,7 @@ os-br_backup_to_S3() {
 		echo
 
 		encrypt() {
-			gpg --output  "$backup_local_storage_path/temp/$@" --passphrase "$backups_passphrase" --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
+			echo "$backups_passphrase" | gpg --output  "$backup_local_storage_path/temp/$@.gpg" --passphrase-fd 0 --batch --yes --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
 		}
 
 		decrypt() {
@@ -727,18 +732,18 @@ os-br_backup_to_S3() {
 			acl="x-amz-acl:public-read"
 			content_type='application/x-compressed-tar'
 			string="PUT\n\n$content_type\n$date\n$acl\n/$bucket$aws_path$file"
-			signature=$(echo -en "${string}" | openssl sha1 -hmac "${awssak}" -binary | base64)
+			signature=$(echo -en "${string}" | openssl sha1 -hmac "${s3_secret_access_key}" -binary | base64)
 			curl -X PUT -T "$path/$file" \
 			-H "Host: $bucket.$s3_endpoint" \
 			-H "Date: $date" \
 			-H "Content-Type: $content_type" \
 			-H "$acl" \
-			-H "Authorization: AWS ${awsaki}:$signature" \
+			-H "Authorization: AWS ${s3_access_key_id}:$signature" \
 			"https://${bucket}.${s3_endpoint}${aws_path}${file}"
 		}
 
-		( cd "$backup_local_storage_path/archive" && if [ ${backup_name: -4} == ".bz2" ]; then backup_fullname="$backup_name.tar.bz2"; else backup_fullname="$backup_name.tar"; fi && encrypt "$backup_fullname" )
-		putS3 "$backup_local_storage_path/temp/" "$backup_fullname" "/$short_name/archive/"
+		( cd "$backup_local_storage_path/archive/" && encrypt "$output_file_name" )
+		putS3 "$backup_local_storage_path/temp/" "$output_file_name.gpg" "/$short_name/archive/"
 
 	fi
 
