@@ -4,7 +4,7 @@ os-log_script() {
 
 	### All in One Bash Logger | v0.6.0 | 2017-10-18 | 2018-05-25 | Nz
 
-	script_name=$(base_name "$0")												### The name of this script
+	script_name=$(basename "$0")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
 	log_dir="$HOME/logs/$script_name"											### Don't store anything else than logs in here!
 	log_file="$log_dir/$now"													### The new log_file
@@ -26,7 +26,7 @@ os-log_script() {
 
 os-head_script() {
 
-	script_name=$(base_name "$0")												### The name of this script
+	script_name=$(basename "$0")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
 	echo "Starting $script_name script on $now..." && echo						### Write heading to log_file
 
