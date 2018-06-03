@@ -1,32 +1,35 @@
 #!/bin/bash
 
-os-check_distro_ubuntu16() {
+os-check_distro_ubuntu() {
 
-    # Check distro
+    ### Check that the running distro is Ubuntu
 
-    current_ubuntu_version="$(lsb_release -rs)"
-
-    if [ "$current_ubuntu_version" != "16.04" ]
+    if ! lsb_release -i | awk '{print $3}' | grep Ubuntu >/dev/null
     then
-        if [ "$current_ubuntu_version" = "17.10" ] || [ "$current_ubuntu_version" = "18.04" ]
-        then
-            read -p "${r}${b}Ubuntu 17.10 / 18.04 detected. Proceed in testing mode? [things could break] (Y/n): ${x}" -n 1 -r
-            echo
-            if [[ ! $REPLY =~ ^[Nn]$ ]]
-            then
-                echo "${b}Ok, continuing anyway...${x}"
-                echo
-            else
-                echo
-                os-exit_function
-            fi
-        else
-            echo "${r}${b}$short_name only runs on Ubuntu 16.04. You are running:${x}"
-            echo
-            lsb_release -d | sed 's/.*:\s*//'
-            echo
-            os-exit_function
-        fi
+        echo "${b}Detected distro is NOT Ubuntu. It appears instead to be:${x}"
+        echo
+        lsb_release -i
+        echo "${b}$short_name only runs on Ubuntu.${x}"
+        echo
+        os-exit_function
+    fi
+
+}
+
+os-check_distro_ubuntu_lts() {
+
+    ### Check that the running distro is Ubuntu on an LTS version
+
+    os-check_distro_ubuntu()
+
+    if ! lsb_release -d | grep -q LTS
+    then
+        echo "${b}Detected Ubuntu version is NOT an LTS version. It appears instead to be:${x}"
+        echo
+        lsb_release -d
+        echo "${b}$short_name only runs on Ubuntu LTS versions.${x}"
+        echo
+        os-exit_function
     fi
 
 }
