@@ -167,7 +167,7 @@ os-br_create_dirs() {
 
 		mkdir -p "$backup_local_storage_path/archive"
 		mkdir -p "$backup_local_storage_path/latest"
-		backup_name=$scriptname-$now
+		backup_name=$script_name-$now
 		tmp_backup_dir="$backup_local_storage_path/temp/$backup_name"
 		mkdir -p "$tmp_backup_dir"
 
@@ -664,7 +664,7 @@ os-br_duplicity_loop() {
 			BACKUPSTATUS=$(cat "$DAILYLOGFILE" | grep -i error | wc -l)
 			if [ "$BACKUPSTATUS" != "0" ]
 			then
-				cat "$DAILYLOGFILE" | mail -aFrom:"$scriptname@$HOST" -s "ERROR in $scriptname backup for $HOST on $DATE" $MAILADDR
+				cat "$DAILYLOGFILE" | mail -aFrom:"$script_name@$HOST" -s "ERROR in $script_name backup for $HOST on $DATE" $MAILADDR
 			elif [ "$FULL" = "full" ]
 			then
 				echo "$(date +%d%m%Y_%T) Full Back Done" >> $FULLBACKLOGFILE

@@ -213,7 +213,6 @@ os-check_install_version() {
                     echo "${g}${b}Backup complete. Continuing installation...${x}"
                     echo
                 else
-                    echo
                     echo "${r}${b}Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk.${x}"
                     echo
                     read -rp "${b}Continue anyway even without a backup? (Y/n): ${x}" -n 1
