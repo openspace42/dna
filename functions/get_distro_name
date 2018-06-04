@@ -1,7 +1,0 @@
-#!/bin/bash
-
-os-get_distro_name() {
-
-    distro_name="$(lsb_release --id | cut -f2)"
-
-}

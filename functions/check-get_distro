@@ -1,10 +1,16 @@
 #!/bin/bash
 
+os-get_distro_name() {
+
+    distro_name="$(lsb_release --id | cut -f2)"
+
+}
+
 os-check_distro_ubuntu() {
 
     ### Check that the running distro is Ubuntu
 
-    if ! lsb_release -i | awk '{print $3}' | grep Ubuntu >/dev/null
+    if ! lsb_release --id | cut -f2 | grep Ubuntu >/dev/null
     then
         echo "${b}Detected distro is NOT Ubuntu. It appears instead to be:${x}"
         echo

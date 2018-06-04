@@ -269,7 +269,7 @@ os-br_backup_locally() {
 
 	mv "${output_file_path}.incomplete" "${output_file_path}"
 
-	echo "${g}${b}Finished archiving backup and stored in | $backup_local_storage_path/archive/ | ${x}"
+	echo "${g}${b}Finished archiving backup and storing it in: | $backup_local_storage_path/archive/ | ${x}"
 	echo
 
 	echo "${g}${b}Finished local backup.${x}"

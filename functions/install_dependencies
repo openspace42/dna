@@ -32,7 +32,22 @@ os-install_dependencies() {
     fi
 
     apt-get update
-    apt-get -y install "$packages"
+    if ! apt-get -y install "$packages"
+    then
+        echo "${r}${b}An error occured performing APT operations.${x}"
+        echo
+        echo "${b}It is possible that by continuing the installation this and any other errors collected along the way will correct themselves automatically.${x}"
+        echo
+        ask_for_boolean_question="Would you like to continue the installation anyway?"
+        os-ask_for_boolean_def_no
+        if [ "$ask_for_boolean_output" = "n" ]
+        then
+            os-exit_function
+        else
+            echo "${b}Ok, continuing installation anyway...${x}"
+            echo
+        fi
+    fi
 
     echo
 
