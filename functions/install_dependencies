@@ -26,26 +26,28 @@ os-install_dependencies() {
     echo "${b}Now installing dependencies...${x}"
     echo
 
-    if [ "${allow_errors-null}" = "y" ]
-    then
-        set +e
-    fi
-
     apt-get update
     if ! apt-get -y install "$packages"
     then
-        echo
-        echo "${r}${b}An error occured performing APT operations.${x}"
-        echo
-        echo "${b}It is possible that by continuing the installation this and any other errors collected along the way will correct themselves automatically.${x}"
-        echo
-        ask_for_boolean_question="Would you like to continue the installation anyway?"
-        os-ask_for_boolean_def_no
-        if [ "$ask_for_boolean_output" = "n" ]
+        if [ "${allow_errors-null}" = "y" ]
         then
-            os-exit_function
+            echo
+            echo "${r}${b}An error occured performing APT operations.${x}"
+            echo
+            echo "${b}If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will correct themselves automatically.${x}"
+            echo
+            ask_for_boolean_question="Would you like to continue the installation anyway?"
+            os-ask_for_boolean_def_no
+            if [ "$ask_for_boolean_output" = "n" ]
+            then
+                os-exit_function
+            else
+                echo "${b}Ok, continuing installation anyway...${x}"
+            fi
         else
-            echo "${b}Ok, continuing installation anyway...${x}"
+            echo "${r}${b}An error occured performing APT operations.${x}"
+            echo
+            os-exit_function
         fi
     fi
 
