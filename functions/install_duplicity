@@ -14,7 +14,7 @@ os-install_duplicity() {
 		echo
 	fi
 
-	os-install_dependencies -p duplicity -p python-pip -p pwgen -p pv -p ufw -p pwgen -p curl #review
+	os-install_dependencies -p "duplicity python-pip pwgen pv ufw pwgen curl" #review
 	pip install --upgrade pip
 	pip install --upgrade boto
 	echo
