@@ -27,7 +27,7 @@ os-install_dependencies() {
     echo
 
     apt-get update
-    if ! apt-get -y install "$packages"
+    if ! apt-get -y install $packages
     then
         if [ "${allow_errors-null}" = "y" ]
         then
