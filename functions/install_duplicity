@@ -9,12 +9,12 @@ os-install_duplicity() {
 
 	if [ $distro_name = "Ubuntu" ]
 	then
-		os-install_dependencies -p software-properties-common
+		os-install_dependencies -p "software-properties-common"
 		apt-add-repository ppa:duplicity-team/ppa -y
 		echo
 	fi
 
-	os-install_dependencies -p duplicity python-pip pwgen pv ufw pwgen curl #review
+	os-install_dependencies -p "duplicity python-pip pwgen pv ufw pwgen curl" #review
 	pip install --upgrade pip
 	pip install --upgrade boto
 	echo

@@ -34,7 +34,7 @@ os-install_dependencies() {
             echo
             echo "${r}${b}An error occured performing APT operations.${x}"
             echo
-            echo "${b}If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will correct themselves automatically.${x}"
+            echo "${b}If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be fixed automatically.${x}"
             echo
             ask_for_boolean_question="Would you like to continue the installation anyway?"
             os-ask_for_boolean_def_no
@@ -45,6 +45,7 @@ os-install_dependencies() {
                 echo "${b}Ok, continuing installation anyway...${x}"
             fi
         else
+            echo
             echo "${r}${b}An error occured performing APT operations.${x}"
             echo
             os-exit_function

@@ -14,7 +14,7 @@ os-setup_backup_restore_s3() {
 	done
     OPTIND=1
 
-	os-install_dependencies -p s3cmd
+	os-install_dependencies -p "s3cmd"
 
 	mkdir -p "$conf_backups_s3_dir"
 

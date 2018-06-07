@@ -30,7 +30,7 @@ os-install_easyengine() {
 		then
 			echo "${b}Ok, installing full EE stack...${x}"
 			echo
-			os-install_dependencies -p composer
+			os-install_dependencies -p "composer"
 			ufw allow 22222 || true
 			echo
 			ee stack install --all || true
