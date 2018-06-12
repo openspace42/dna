@@ -14,13 +14,17 @@ os-define_vars() {
 	source_dir=/root/$proj_name
 	base_dir=/root/$author_name
 	install_dir=$base_dir/$short_name
+	modules_dir=$install_dir/modules
 
 	os_base_dir=/root/openspace42
 
 	conf_dir=$install_dir/conf
+
 	conf_backups_dir=$conf_dir/backups
 	conf_backups_local_dir=$conf_backups_dir/local
 	conf_backups_s3_dir=$conf_backups_dir/s3
+
+	conf_dns_dir=$conf_dir/dns
 
 	tools_dir=$install_dir/tools
 
