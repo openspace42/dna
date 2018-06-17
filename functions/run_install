@@ -20,7 +20,7 @@ os-run_install() {
 
     ### Launch the installer
 
-    if [ ${bleeding_edge_rc-null} = "-e" ]
+    if [ ${custom_rc-null} = "e" ]
     then
         echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
         echo
