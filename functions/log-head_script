@@ -1,8 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 os-log_script() {
-
-	### All in One Bash Logger | v0.6.0 | 2017-10-18 | 2018-05-25 | Nz
 
 	script_name=$(basename "$0")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
