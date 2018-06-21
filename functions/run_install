@@ -12,7 +12,7 @@ os-run_install() {
     now="$(date +"%Y-%m-%d_%H-%M-%S")"
 
     ### Define latest version
-    export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags)"
+    export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags | cut -f1 -d"-")"
 
     base_dir=/root/$author_name
     install_dir=$base_dir/$short_name

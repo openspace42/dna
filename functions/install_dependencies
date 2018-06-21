@@ -23,6 +23,13 @@ os-install_dependencies() {
     done
     OPTIND=1
 
+    if [ -z "${packages-}" ]
+    then
+        echo "${r}${b}Packages [option | -p |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
     echo "${b}Now installing dependencies...${x}"
     echo
 
