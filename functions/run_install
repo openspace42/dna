@@ -20,7 +20,7 @@ os-run_install() {
 
     ### Launch the installer
 
-    if [ ${custom_rc-null} = "e" ]
+    if [ ${custom_project_version-null} = "b" ]
     then
         echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
         echo

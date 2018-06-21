@@ -85,7 +85,7 @@ os-check_install_version() {
 
     ### Log current version being initiated to version_initiated
 
-    if [ ${custom_rc-null} = "e" ]
+    if [ ${custom_project_version-null} = "b" ]
     then
         latest_commit="$(cd $source_dir && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
         echo "bleeding-edge-$latest_commit" > "$conf_dir/version/version_initiated"
@@ -114,7 +114,7 @@ os-check_install_version() {
                 ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed
                 ### If instead we're installing a bleeding-edge version, skip any checks as we're certainly intalling a newer version.
 
-                if [ ! ${custom_rc-null} = "e" ]
+                if [ ! ${custom_project_version-null} = "b" ]
                 then
 
                     if grep -q "bleeding-edge" "$conf_dir/version/version_installed"
