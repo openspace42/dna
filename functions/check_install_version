@@ -128,7 +128,7 @@ os-check_install_version() {
                     else
 
                         ### if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))
-                        if testvercomp "$latest_vers" "$prev_version_installed" '<'
+                        if testvercomp "${latest_vers//v}" "${prev_version_installed//v}" '<'
                         then
                             echo "${r}${b}You have previously installed a newer version of $short_name.${x}"
                             echo
