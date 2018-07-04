@@ -743,7 +743,7 @@ os-br_backup_to_S3() {
 		}
 
 		( cd "$backup_local_storage_path/archive/" && encrypt "$output_file_name" )
-		putS3 "$backup_local_storage_path/temp/" "$output_file_name.gpg" "/$short_name/archive/"
+		putS3 "$backup_local_storage_path/temp/" "$output_file_name.gpg" "/$short_name/archive/" 2> /dev/null
 
 	fi
 
