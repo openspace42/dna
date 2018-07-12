@@ -513,7 +513,7 @@ os-br_restore_from_standalone() {
 		done
 		echo "${b}Backup file $standalone_backup_file selected.${x}"
 		echo
-		if [ ${sel_backup_file: -4} == ".bz2" ]
+		if [ ${standalone_backup_file: -4} == ".bz2" ]
 		then
 			tar -xvjf "$standalone_backup_file" -C "/root/$short_name-restore/"
 		else

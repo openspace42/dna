@@ -28,6 +28,7 @@ os-check_inception_run() {
             bash inception/setup
             exit
         else
+            echo
             echo "${b}No problem, you can run it [make sure you reboot this machine at the end] by executing the following commands:${x}"
             echo
             echo "${b} | git clone https://github.com/openspace42/inception |${x}"
