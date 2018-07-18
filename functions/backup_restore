@@ -680,6 +680,16 @@ os-br_duplicity_loop() {
 		unset AWS_SECRET_ACCESS_KEY
 		unset PASSPHRASE
 
+	else
+
+		echo "${r}${b}It appears duplicity is already running on this server.${x}"
+		echo
+		echo "${b}If you've manually overridden a lockfile check at the beginning of this script's execution, you should consider that it's likely another backup is occurring.${x}"
+		echo
+		echo "${b}If you're sure this is not the case, execute this command: | pkill duplicity | and run this script again or see what happens at the next automated run.${x}"
+		echo
+		os-exit_function
+
 	fi
 
 }
