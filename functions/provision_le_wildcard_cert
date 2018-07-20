@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+os-provision_le_wildcard_cert() {
+
+    if [ $# -eq 0 ]
+    then
+        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+    while getopts ":d:" arguments; do
+        case $arguments in
+            d)	domain="$OPTARG"
+            ;;
+            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            echo
+            os-exit_function
+            ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${domain-}" ]
+    then
+        echo "${r}${b}Domain [option | -d |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+    os-install_dependencies -p certbot
+
+    certbot certonly --manual -d "$domain, *.$domain" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory

@@ -14,7 +14,7 @@ os-install_duplicity() {
 		echo
 	fi
 
-	os-install_dependencies -p "duplicity python-pip pwgen pv ufw pwgen curl" #review
+	os-install_dependencies -p "libpcre3-dev duplicity python-pip python-boto s3cmd pwgen pv ufw curl" #review
 	pip install --upgrade pip
 	pip install --upgrade boto
 	echo
