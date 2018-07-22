@@ -4,8 +4,7 @@ os-run_install() {
 
     ### Set bash environment error management
 
-    set -e
-    set -u
+    set -eu
 
     echo
 
