@@ -33,7 +33,7 @@ os-install_dependencies() {
     echo "${b}Now installing dependencies...${x}"
     echo
 
-    apt-get update
+    os-apt_update
     if ! apt-get -y install $packages
     then
         if [ "${allow_errors-null}" = "y" ]
