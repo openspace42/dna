@@ -63,7 +63,7 @@ os-install_dependencies() {
 
     set -e
 
-    echo "${b}Finished installing dependencies.${x}"
+    echo "${g}${b}Finished installing dependencies.${x}"
     echo
 
     unset allow_errors
