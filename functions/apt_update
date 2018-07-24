@@ -2,7 +2,7 @@
 
 set -eu
 
-os-apt_update {
+os-apt_update() {
 
     apt_update_stamp_path="/var/lib/apt/periodic/update-success-stamp"
 
