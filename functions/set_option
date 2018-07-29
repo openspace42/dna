@@ -4,7 +4,7 @@ os-set_option() {
 
 	########################################################################
 
-	while getopts ":o:v:d:p:" arguments; do
+	while getopts ":o:v:d:p:s:" arguments; do
 		case $arguments in
 			o)	option="$OPTARG"
 			;;
