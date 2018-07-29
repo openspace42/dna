@@ -32,10 +32,12 @@ os-generate_ssh_keypair() {
 
     echo "${b}Now generating SSH keypair for | ${y}${ssh_keypair_name}${x}${b} |...${x}"
     echo
-    ssh-keygen -t rsa -b 8192 -N "" -f ~/.ssh/${name}
-    echo "${b}Finished generating SSH keypair and stored it in | ${y}~/.ssh/${name}[.pub]${x}${b} |.${x}"
+    ssh-keygen -t rsa -b 8192 -N "" -f "~/.ssh/${name}"
     echo
+    chmod 600 "~/.ssh/${name}"
     ssk_keypair_privkey_path="~/.ssh/${name}"
     ssk_keypair_pubkey_path="~/.ssh/${name}.pub"
+    echo "${b}Finished generating SSH keypair and stored it in | ${y}~/.ssh/${name}[.pub]${x}${b} |.${x}"
+    echo
 
 }
