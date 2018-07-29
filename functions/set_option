@@ -14,6 +14,8 @@ os-set_option() {
 			;;
 			p)	path="$OPTARG"
 			;;
+			s)	setting="$OPTARG"
+			;;
 			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
 			echo
 			os-exit_function
@@ -89,148 +91,161 @@ os-set_option() {
 
 	fi
 
-	if [ -f "$opt_path" ]
+	if [ -z "${setting-}" ]
 	then
-		prev_val="$(cat $opt_path)"
 
-		if [ "${validate_input-null}" = "y" ]
+		if [ -f "$opt_path" ]
 		then
+			prev_val="$(cat $opt_path)"
 
-			input="$prev_val"
+			if [ "${validate_input-null}" = "y" ]
+			then
 
-			### validate_input must be defined immediately prior to calling this function.
+				input="$prev_val"
 
-			validate_input
+				### validate_input must be defined immediately prior to calling this function.
+
+				validate_input
+
+			else
+
+				valid=y
+
+			fi
 
 		else
 
-			valid=y
+			touch $opt_path
+			valid=n
 
+		fi
+
+		if [ $valid = "y" ]
+		then
+			echo "${b}Your previous value for option | ${g}$option${x}${b} | was: | ${g}$prev_val${x}${b} |. ${x}"
+			echo
+			read -rp "${b}Is this still correct? (Y/n): ${x}" -n 1
+			echo
+			if [[ ! $REPLY =~ ^[Nn]$ ]]
+			then
+				echo "${b}Ok, keeping | $prev_val | as your value for option | $option |.${x}"
+				echo
+				value="$prev_val"
+				prev_val_outcome=kept
+			else
+				echo
+				skip_descr=y
+				unset valid
+				prev_val_outcome=not-kept
+			fi
+			unset valid
+
+		else
+
+			prev_val_outcome=not-applicable
+
+		fi
+
+		if [ -z "${value-}" ]
+		then
+			unset defined
+			until [ "${defined-null}" = "y" ]
+			do
+				unset valid
+				until [ "${valid-null}" = "y" ]
+				do
+					unset new_val
+					until [ ! -z "${new_val-}" ]
+					do
+						if [ "${skip_descr-null}" = "y" ]
+						then
+							read -rp "${b}Now specify your new value for option | $option |: ${x}" new_val
+							echo
+						else
+							if [ "${describe_setting-null}" = "y" ]
+							then
+
+								### describe_setting must be defined immediately prior to calling this function.
+
+								describe_setting
+
+							fi
+							read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
+							echo
+						fi
+					done
+					if [ "${validate_input-null}" = "y" ]
+					then
+
+						input="$new_val"
+
+						### validate_input must be defined immediately prior to calling this function.
+
+						validate_input
+
+					else
+
+						valid=y
+
+					fi
+				done
+				acceptable=n
+				until [ $acceptable = "y" ]
+				do
+					read -n 1 -rp "${b}Is | $new_val | correct? (Y/n/e[xit]) ${x}" answer;
+					case $answer in
+						"")
+						echo
+						acceptable=y
+						defined=y
+						;;
+						y)
+						echo -e "\\n"
+						acceptable=y
+						defined=y
+						;;
+						n)
+						echo -e "\\n"
+						echo "${b}Ok, then please try again...${x}"
+						echo
+						acceptable=y
+						defined=n
+						;;
+						e)
+						echo -e "\\n"
+						echo "${b}Exiting...${x}"
+						echo
+						exit
+						;;
+						*)
+						echo -e "\\n"
+						echo "${r}${b}Invalid option. Retry...${x}"
+						echo
+						acceptable=n
+						defined=n
+						;;
+					esac
+				done
+			done
+			echo "$new_val" > "$opt_path"
+			echo "${b}Option | ${option} | set to value | ${new_val} |. ${x}"
+			echo
 		fi
 
 	else
 
 		touch $opt_path
-		valid=n
+		echo "${setting}" > "${opt_path}"
+		echo "${b}Option | ${option} | set to value | ${setting} |. ${x}"
+		echo
 
 	fi
 
-	if [ $valid = "y" ]
-	then
-		echo "${b}Your previous value for option | ${g}$option${x}${b} | was: | ${g}$prev_val${x}${b} |. ${x}"
-		echo
-		read -rp "${b}Is this still correct? (Y/n): ${x}" -n 1
-		echo
-		if [[ ! $REPLY =~ ^[Nn]$ ]]
-		then
-			echo "${b}Ok, keeping | $prev_val | as your value for option | $option |.${x}"
-			echo
-			value="$prev_val"
-			prev_val_outcome=kept
-		else
-			echo
-			skip_descr=y
-			unset valid
-			prev_val_outcome=not-kept
-		fi
-		unset valid
-
-	else
-
-		prev_val_outcome=not-applicable
-
-	fi
-
-	if [ -z "${value-}" ]
-	then
-		unset defined
-		until [ "${defined-null}" = "y" ]
-		do
-			unset valid
-			until [ "${valid-null}" = "y" ]
-			do
-				unset new_val
-				until [ ! -z "${new_val-}" ]
-				do
-					if [ "${skip_descr-null}" = "y" ]
-					then
-						read -rp "${b}Now specify your new value for option | $option |: ${x}" new_val
-						echo
-					else
-						if [ "${describe_setting-null}" = "y" ]
-						then
-
-							### describe_setting must be defined immediately prior to calling this function.
-
-							describe_setting
-
-						fi
-						read -rp "${b}Now specify your value for option | $option |: ${x}" new_val
-						echo
-					fi
-				done
-				if [ "${validate_input-null}" = "y" ]
-				then
-
-					input="$new_val"
-
-					### validate_input must be defined immediately prior to calling this function.
-
-					validate_input
-
-				else
-
-					valid=y
-
-				fi
-			done
-			acceptable=n
-			until [ $acceptable = "y" ]
-			do
-				read -n 1 -rp "${b}Is | $new_val | correct? (Y/n/e[xit]) ${x}" answer;
-				case $answer in
-					"")
-					echo
-					acceptable=y
-					defined=y
-					;;
-					y)
-					echo -e "\\n"
-					acceptable=y
-					defined=y
-					;;
-					n)
-					echo -e "\\n"
-					echo "${b}Ok, then please try again...${x}"
-					echo
-					acceptable=y
-					defined=n
-					;;
-					e)
-					echo -e "\\n"
-					echo "${b}Exiting...${x}"
-					echo
-					exit
-					;;
-					*)
-					echo -e "\\n"
-					echo "${r}${b}Invalid option. Retry...${x}"
-					echo
-					acceptable=n
-					defined=n
-					;;
-				esac
-			done
-		done
-		echo "$new_val" > "$opt_path"
-		echo "${b}Option | $option | set to value | $new_val |. ${x}"
-		echo
-		value="$(cat $opt_path)"
-	fi
 	clear
 
+	value="$(cat $opt_path)"
 	export "${option}"="$value"
 
-	unset arguments option validate describe path validate_input describe_setting valid value skip_descr defined new_val
+	unset arguments option validate describe path setting validate_input describe_setting valid value skip_descr defined new_val
 
 }
