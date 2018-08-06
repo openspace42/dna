@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+os-check_dns_record_address() {
+
+	### This function verifies DNS "address" records [A/AAAA]. For other types of checks see other functions below.
+
+	############################################################################
+
+	: '
+
+	Name:
+
+		Must be a DNS name [e.g. ae.os.vu]
+
+	Reference:
+
+		Must be either:
+
+			1] A string with a space-separated list of IPs
+			2] An absolute path to a file with a newline-separated list of IPs
+
+	Version:
+
+		Must be either:
+			1] 4 [for IPv4]
+			2] 6 [for IPv6]
+
+	# '
+
+	############################################################################
+
+	if [ $# -eq 0 ]
+    then
+        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+    while getopts ":n:r:v:" arguments; do
+        case $arguments in
+            n)	name="$OPTARG"
+	            ;;
+			r)	reference="$OPTARG"
+	            ;;
+			v)	version="$OPTARG"
+	            ;;
+            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+	            echo
+	            os-exit_function
+	            ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${name-}" ]
+    then
+        echo "${r}${b}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+	if [ -z "${reference-}" ]
+    then
+        echo "${r}${b}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+	if [ -z "${version-}" ]
+    then
+        echo "${r}${b}Version [option | -v |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo
+        os-exit_function
+    fi
+
+	############################################################################
+
+	dns_checks_dir="/tmp/dns_checks"
+	name_file_path="${dns_checks_dir}/${name}-${version}"
+
+	mkdir -p "${dns_checks_dir}"
+
+	############################################################################
+
+	### Check supplied reference type
+
+	reference_leading_char="$(echo ${reference} | cut -c1-1)"
+
+	if [ $reference_leading_char = "/" ]
+	then
+		reference_type=file
+	else
+		reference_type=array
+	fi
+
+	if [ $reference_type = "file" ]
+	then
+		reference_file_path="${reference}"
+	else
+		### Write specified array to a text file
+		reference_file_path="${dns_checks_dir}/reference"
+		echo "${reference}" | tr " " "\n" > "${reference_file_path}"
+	fi
+
+	opt_path="$opt_base_path/$option"
+
+	############################################################################
+
+	getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${dns_checks_dir}/${name}-${version}"
+
+	readarray reference_array < "${reference_file_path}"
+
+	readarray name_array < "${name_file_path}"
+
+	array_contains () {
+	    local array="$1[@]"
+	    local seeking=$2
+	    local in=1
+	    for element in "${!array}"; do
+	        if [[ $element == $seeking ]]; then
+	            in=0
+	            break
+	        fi
+	    done
+	    return $in
+	}
+
+	### Check that every item in reference_array is contained in name_array
+
+	for i in "${reference_array[@]}"
+	do
+        item_name="$(echo ${i} | xargs)"
+        result="$(array_contains name_array "${i}"  && echo y || echo n)"
+        if [ "${result}" = "y" ]
+        then
+            echo -e "${g}${b}The DNS record | ${x}${item_name}${g}${b} | \t for name | ${x}${name}${g}${b} | is registered correctly.${x}"
+			echo
+        else
+            echo -e "${r}${b}The DNS record | ${x}${item_name}${r}${b} | \t for name | ${x}${name}${r}${b} | is NOT registered.${x}"
+			echo
+        fi
+	done
+
+	### Check if name_array has additional values
+
+	diff_array=()
+	for i in "${name_array[@]}"; do
+	     skip=
+	     for j in "${reference_array[@]}"; do
+	         [[ $i == $j ]] && { skip=1; break; }
+	     done
+	     [[ -n $skip ]] || diff_array+=("$i")
+	done
+	declare  diff_array
+
+	for i in "${diff_array[@]}"
+	do
+		item_name="$(echo ${i} | xargs)"
+        echo "${r}${b}The DNS record | ${x}${item_name}${r}${b} | for name | ${x}${name}${r}${b} | was found but should NOT exist.${x}"
+		echo
+	done
+
+}
