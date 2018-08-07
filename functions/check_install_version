@@ -60,13 +60,13 @@ os-check_install_version() {
         prev_install_initiated=y
         prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
 
-        echo "${g}${b}Found a previous install of $short_name.${x}"
+        echo "${g-}${b-}Found a previous install of $short_name.${x-}"
         echo
-        read -rp "${b}Skip the introduction on how it works? (Y/n): ${x}" -n 1
+        read -rp "${b-}Skip the introduction on how it works? (Y/n): ${x-}" -n 1
         echo
         if [[ ! $REPLY =~ ^[Nn]$ ]]
         then
-            echo "${b}Ok, continuing...${x}"
+            echo "${b-}Ok, continuing...${x-}"
             echo
             skip_intro=y
         else
@@ -130,9 +130,9 @@ os-check_install_version() {
                         ### if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))
                         if testvercomp "${latest_vers//v}" "${prev_version_installed//v}" '<'
                         then
-                            echo "${r}${b}You have previously installed a newer version of $short_name.${x}"
+                            echo "${r-}${b-}You have previously installed a newer version of $short_name.${x-}"
                             echo
-                            echo "${b}This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check.${x}"
+                            echo "${b-}This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check.${x-}"
                             echo
                             os-exit_function
                         fi
@@ -140,17 +140,17 @@ os-check_install_version() {
 
                     ### In any event, alert about the re-install
 
-                    echo "${b}You're now re-running the $short_name installer.${x}"
+                    echo "${b-}You're now re-running the $short_name installer.${x-}"
                     echo
-                    echo "${g}${b}This is perfectly fine as $short_name is meant to be re-installed as many times as you'd like [also to update your current installation].${x}"
+                    echo "${g-}${b-}This is perfectly fine as $short_name is meant to be re-installed as many times as you'd like [also to update your current installation].${x-}"
                     echo
-                    echo "${r}${b}Keep in mind though that all customizations external to $short_name you might have made will be permanently deleted.${x}"
+                    echo "${r-}${b-}Keep in mind though that all customizations external to $short_name you might have made will be permanently deleted.${x-}"
                     echo
-                    echo "${b}This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds.${x}"
+                    echo "${b-}This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds.${x-}"
                     echo
-                    echo "${r}${b}If you want to save any customizations you have made, exit this script and do so now.${x}"
+                    echo "${r-}${b-}If you want to save any customizations you have made, exit this script and do so now.${x-}"
                     echo
-                    read -rp "${b}[press enter to continue reading...]${x}"
+                    read -rp "${b-}[press enter to continue reading...]${x-}"
                     clear
 
                 fi
@@ -174,17 +174,17 @@ os-check_install_version() {
         if [ ${prev_install_incomplete-null} = "y" ]
         then
             clear
-            echo "${r}${b}It appears you have a previous incomplete installation of $short_name.${x}"
+            echo "${r-}${b-}It appears you have a previous incomplete installation of $short_name.${x-}"
             echo
-            echo "${b}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x}"
+            echo "${b-}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x-}"
             echo
-            echo "${b}In either case, if you're having any issues, simply file an issue report at:${x}"
+            echo "${b-}In either case, if you're having any issues, simply file an issue report at:${x-}"
             echo
-            echo "${b} | https://github.com/$author_name/$short_name/issues | ${x}"
+            echo "${b-} | https://github.com/$author_name/$short_name/issues | ${x-}"
             echo
-            echo "${b}Thank you in advance!${x}"
+            echo "${b-}Thank you in advance!${x-}"
             echo
-            read -rp "${b}[press enter to continue reading...]${x}"
+            read -rp "${b-}[press enter to continue reading...]${x-}"
             clear
         fi
 
@@ -193,13 +193,13 @@ os-check_install_version() {
         if [ ! ${skip_install_time_backup-null} = "y" ]
         then
 
-            echo "${b}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x}"
+            echo "${b-}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x-}"
             echo
-            read -rp "${b}Do you want to run the backup now [without exiting this script] (Y/n): ${x}" -n 1
+            read -rp "${b-}Do you want to run the backup now [without exiting this script] (Y/n): ${x-}" -n 1
             echo
             if [[ ! $REPLY =~ ^[Nn]$ ]]
             then
-                echo "${b}Ok, proceeding with backup...${x}"
+                echo "${b-}Ok, proceeding with backup...${x-}"
                 if bash $source_dir/tools/$short_name-backup -s
                 then
                     backup_output=ok
@@ -210,27 +210,27 @@ os-check_install_version() {
                 sleep 1
                 if [ $backup_output = "ok" ]
                 then
-                    echo "${g}${b}Backup complete. Continuing installation...${x}"
+                    echo "${g-}${b-}Backup complete. Continuing installation...${x-}"
                     echo
                 else
-                    echo "${r}${b}Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk.${x}"
+                    echo "${r-}${b-}Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk.${x-}"
                     echo
-                    read -rp "${b}Continue anyway even without a backup? (Y/n): ${x}" -n 1
+                    read -rp "${b-}Continue anyway even without a backup? (Y/n): ${x-}" -n 1
                     echo
                     if [[ ! $REPLY =~ ^[Nn]$ ]]
                     then
-                        echo "${b}Ok, continuing...${x}"
+                        echo "${b-}Ok, continuing...${x-}"
                         echo
                     else
                         echo
-                        echo "${b}Ok, aborting...${x}"
+                        echo "${b-}Ok, aborting...${x-}"
                         echo
                         os-exit_function
                     fi
                 fi
             else
                 echo
-                echo "${b}Ok, skipping backup...${x}"
+                echo "${b-}Ok, skipping backup...${x-}"
                 echo
             fi
 

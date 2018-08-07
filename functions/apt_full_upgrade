@@ -6,7 +6,7 @@ os-apt_full_upgrade() {
         case $arguments in
             e)	allow_errors="y"
             ;;
-            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
             os-exit_function
             ;;
@@ -14,7 +14,7 @@ os-apt_full_upgrade() {
     done
     OPTIND=1
 
-    echo "${b}Now performing APT upgrade, dist-upgrade, and autoremove...${x}"
+    echo "${b-}Now performing APT upgrade, dist-upgrade, and autoremove...${x-}"
     echo
 
     if [ "${allow_errors-null}" = "y" ]
@@ -31,7 +31,7 @@ os-apt_full_upgrade() {
 
     set -e
 
-    echo "${b}Finished performing APT upgrade, dist-upgrade, and autoremove.${x}"
+    echo "${b-}Finished performing APT upgrade, dist-upgrade, and autoremove.${x-}"
     echo
 
 }

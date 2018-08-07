@@ -2,7 +2,7 @@
 
 os-check_dpkg_availability() {
 
-    echo "${b}Now ensuring DPKG is available...${x}"
+    echo "${b-}Now ensuring DPKG is available...${x-}"
     echo
     sleep 3
     i=0
@@ -15,12 +15,12 @@ os-check_dpkg_availability() {
             3 ) j="/" ;;
         esac
         tput rc
-        echo -en "\\r[$j] ${b}Waiting for other software managers to finish...${x}"
+        echo -en "\\r[$j] ${b-}Waiting for other software managers to finish...${x-}"
         echo
         sleep 0.5
         ((i=i+1))
     done
-    echo "${b}DPKG available. Continuing...${x}"
+    echo "${b-}DPKG available. Continuing...${x-}"
     echo
 
 }

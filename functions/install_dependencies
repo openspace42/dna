@@ -4,7 +4,7 @@ os-install_dependencies() {
 
     if [ $# -eq 0 ]
     then
-        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
@@ -15,7 +15,7 @@ os-install_dependencies() {
             ;;
             p)	packages="$OPTARG"
             ;;
-            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
             os-exit_function
             ;;
@@ -25,12 +25,12 @@ os-install_dependencies() {
 
     if [ -z "${packages-}" ]
     then
-        echo "${r}${b}Packages [option | -p |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Packages [option | -p |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
-    echo "${b}Now installing dependencies...${x}"
+    echo "${b-}Now installing dependencies...${x-}"
     echo
 
     os-apt_update
@@ -39,9 +39,9 @@ os-install_dependencies() {
         if [ "${allow_errors-null}" = "y" ]
         then
             echo
-            echo "${r}${b}An error occured performing APT operations.${x}"
+            echo "${r-}${b-}An error occured performing APT operations.${x-}"
             echo
-            echo "${b}If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be fixed automatically.${x}"
+            echo "${b-}If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be fixed automatically.${x-}"
             echo
             ask_for_boolean_question="Would you like to continue the installation anyway?"
             os-ask_for_boolean_def_no
@@ -49,11 +49,11 @@ os-install_dependencies() {
             then
                 os-exit_function
             else
-                echo "${b}Ok, continuing installation anyway...${x}"
+                echo "${b-}Ok, continuing installation anyway...${x-}"
             fi
         else
             echo
-            echo "${r}${b}An error occured performing APT operations.${x}"
+            echo "${r-}${b-}An error occured performing APT operations.${x-}"
             echo
             os-exit_function
         fi
@@ -63,7 +63,7 @@ os-install_dependencies() {
 
     set -e
 
-    echo "${g}${b}Finished installing dependencies.${x}"
+    echo "${g-}${b-}Finished installing dependencies.${x-}"
     echo
 
     unset allow_errors

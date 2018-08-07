@@ -4,7 +4,7 @@ os-generate_ssh_keypair() {
 
     if [ $# -eq 0 ]
     then
-        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
@@ -13,7 +13,7 @@ os-generate_ssh_keypair() {
         case $arguments in
             n)	name="$OPTARG"
             ;;
-            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
             os-exit_function
             ;;
@@ -23,21 +23,21 @@ os-generate_ssh_keypair() {
 
     if [ -z "${name-}" ]
     then
-        echo "${r}${b}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
     ########################################################################
 
-    echo "${b}Now generating SSH keypair for | ${y}${ssh_keypair_name}${x}${b} |...${x}"
+    echo "${b-}Now generating SSH keypair for | ${y-}${ssh_keypair_name}${x-}${b-} |...${x-}"
     echo
     ssh-keygen -t rsa -b 8192 -N "" -f "~/.ssh/${name}"
     echo
     chmod 600 "~/.ssh/${name}"
     ssk_keypair_privkey_path="~/.ssh/${name}"
     ssk_keypair_pubkey_path="~/.ssh/${name}.pub"
-    echo "${b}Finished generating SSH keypair and stored it in | ${y}~/.ssh/${name}[.pub]${x}${b} |.${x}"
+    echo "${b-}Finished generating SSH keypair and stored it in | ${y-}~/.ssh/${name}[.pub]${x-}${b-} |.${x-}"
     echo
 
 }

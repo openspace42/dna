@@ -6,7 +6,7 @@ os-setup_backup_restore_s3() {
 		case $arguments in
 			s)	skip_questions=y
 			;;
-			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			os-exit_function
 			;;
@@ -21,28 +21,28 @@ os-setup_backup_restore_s3() {
 	if [ ! ${skip_questions-null} = "y" ]
 	then
 
-		echo  "${r}${b}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x}"
+		echo  "${r-}${b-}If you're setting up this machine to restore a previous $short_name installation from another machine, you must specify so now.${x-}"
 		echo
-		echo "${b}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x}"
+		echo "${b-}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x-}"
 		echo
-		echo "${r}${b}If you choose yes, make sure NOT to use this instance as it is [as it will NOT be backed up on S3] but rather remember to perform the restore right after you're finished running this install script.${x}"
+		echo "${r-}${b-}If you choose yes, make sure NOT to use this instance as it is [as it will NOT be backed up on S3] but rather remember to perform the restore right after you're finished running this install script.${x-}"
 		echo
-		read -rp "${b}Are you setting up this machine to restore a previous $short_name installation from another machine? (y/N): ${x}" -n 1
+		read -rp "${b-}Are you setting up this machine to restore a previous $short_name installation from another machine? (y/N): ${x-}" -n 1
 		echo
 
 		if [[ $REPLY =~ ^[Yy]$ ]]
 		then
 
 			echo
-			echo "${r}${b}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x}"
+			echo "${r-}${b-}Ok, blocking ALL backups to S3 until a restore is performed. Do so right after you're finished running this install script.${x-}"
 			echo
 
 			restore_intent=y
 			touch "$conf_backups_s3_dir/block_s3_backups"
 
-			echo "${b}If you intend to restore from S3 you must have your encryption passphrase handy now as you were reminded upon initial installation on your old machine.${x}"
+			echo "${b-}If you intend to restore from S3 you must have your encryption passphrase handy now as you were reminded upon initial installation on your old machine.${x-}"
 			echo
-			read -rp "${b}Do you have your S3 encryption passphrase ready to specify now? (Y/n): ${x}" -n 1
+			read -rp "${b-}Do you have your S3 encryption passphrase ready to specify now? (Y/n): ${x-}" -n 1
 			echo
 
 			if [[ ! $REPLY =~ ^[Nn]$ ]]
@@ -50,7 +50,7 @@ os-setup_backup_restore_s3() {
 
 				describe_setting() {
 
-					echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
+					echo "${b-}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x-}"
 					echo
 
 				}
@@ -65,11 +65,11 @@ os-setup_backup_restore_s3() {
 			else
 
 				echo
-				echo "${b}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x}"
+				echo "${b-}Ok, blocking S3 restores until you manually specify your old S3 backups encryption passphrase here:${x-}"
 				echo
-				echo "${b} | $conf_backups_s3_dir/backups_passphrase | ${x}"
+				echo "${b-} | $conf_backups_s3_dir/backups_passphrase | ${x-}"
 				echo
-				echo "${b}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x}"
+				echo "${b-}If you've lost your encryption passphrase, your S3 backups are also lost. Look for a local backup you might have from your old machine to restore your previous instance.${x-}"
 				echo
 				touch $conf_backups_s3_dir/block_s3_restores
 
@@ -77,7 +77,7 @@ os-setup_backup_restore_s3() {
 
 		else
 
-			echo "${b}NOT selected restore mode, ${g}will allow S3 backups${x}${b}..."
+			echo "${b-}NOT selected restore mode, ${g-}will allow S3 backups${x-}${b-}..."
 			echo
 
 			backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
@@ -94,17 +94,17 @@ os-setup_backup_restore_s3() {
 
 			backups_passphrase="$(cat $backups_passphrase_conf_path)"
 
-			echo "${b}Your S3 backups encryption passphrase is:${x}"
+			echo "${b-}Your S3 backups encryption passphrase is:${x-}"
 			echo
-			echo "${g}${b} | $backups_passphrase | ${x}"
+			echo "${g-}${b-} | $backups_passphrase | ${x-}"
 			echo
-			echo "${b}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x}"
+			echo "${b-}Make sure you keep it saved in a safe location OUTSIDE of this machine and NOT on the S3 file storage server.${x-}"
 			echo
-			echo "${r}${b}You will NOT be able to restore ANY backup without this passphrase.${x}"
+			echo "${r-}${b-}You will NOT be able to restore ANY backup without this passphrase.${x-}"
 			echo
-			echo "${b}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x}"
+			echo "${b-}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x-}"
 			echo
-			read -rp "${b}[press enter to continue reading...]${x}"
+			read -rp "${b-}[press enter to continue reading...]${x-}"
 			clear
 
 		fi
@@ -113,7 +113,7 @@ os-setup_backup_restore_s3() {
 
 		describe_setting() {
 
-			echo "${b}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x}"
+			echo "${b-}Now specify your previous S3 encryption passphrase here to decrypt your existing S3 backups:${x-}"
 			echo
 
 		}
@@ -142,7 +142,7 @@ os-setup_backup_restore_s3() {
 
 			describe_setting() {
 
-				echo "${b}Now set your ${s3_options_array[$i]}.${x}"
+				echo "${b-}Now set your ${s3_options_array[$i]}.${x-}"
 				echo
 
 			}
@@ -153,33 +153,33 @@ os-setup_backup_restore_s3() {
 
 		echo "----------------"
 		echo
-		echo "${b}To make sure everything is correct:${x}"
+		echo "${b-}To make sure everything is correct:${x-}"
 		echo
-		echo "1] Your ${b}AWS Access Key ID${x} will be:"
+		echo "1] Your ${b-}AWS Access Key ID${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_access_key_id${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_access_key_id${x-}${b-} | ${x-}"
 		echo
-		echo "2] Your ${b}AWS Secret Access Key${x} will be:"
+		echo "2] Your ${b-}AWS Secret Access Key${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_secret_access_key${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_secret_access_key${x-}${b-} | ${x-}"
 		echo
-		echo "3] Your ${b}S3 Endpoint URL${x} will be:"
+		echo "3] Your ${b-}S3 Endpoint URL${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_endpoint${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_endpoint${x-}${b-} | ${x-}"
 		echo
-		echo "4] Your ${b}S3 Bucket Name${x} will be:"
+		echo "4] Your ${b-}S3 Bucket Name${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_bucket_name${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_bucket_name${x-}${b-} | ${x-}"
 		echo
 		echo "----------------"
 		echo
 
-		read -rp "${b}Does everything look all right? (Y/n): ${x}" -n 1
+		read -rp "${b-}Does everything look all right? (Y/n): ${x-}" -n 1
 		echo
 		if [[ ! $REPLY =~ ^[Nn]$ ]]
 		then
 
-			echo "${b}Ok, proceeding to check S3 connection details${x}."
+			echo "${b-}Ok, proceeding to check S3 connection details${x-}."
 			echo
 
 			### Check S3 connection
@@ -189,28 +189,28 @@ os-setup_backup_restore_s3() {
 			s3cmd info s3://"$s3_bucket_name" >/dev/null 2>&1
 
 			if [[ $? -eq 0 ]]; then
-				echo "${g}${b}S3 connection details appear to be valid.${x}"
+				echo "${g-}${b-}S3 connection details appear to be valid.${x-}"
 				echo
 				s3_setup_accepted=y
 				sleep 1
 			else
-				echo "${r}${b}S3 connection details do NOT appear to be valid.${x}"
+				echo "${r-}${b-}S3 connection details do NOT appear to be valid.${x-}"
 				echo
-				read -rp "${b}Would you like to try setting it up again? (Y/n): ${x}" -n 1
+				read -rp "${b-}Would you like to try setting it up again? (Y/n): ${x-}" -n 1
 				echo
 				if [[ ! $REPLY =~ ^[Nn]$ ]]
 				then
 					s3_setup_accepted=n
-					echo "${b}Ok, repeating S3 setup...${x}"
+					echo "${b-}Ok, repeating S3 setup...${x-}"
 					echo
 				else
 					s3_setup_accepted=y
 					echo
-					echo "${b}Ok, skipping S3 setup and REMOVING S3 setting from $short_name...${x}"
+					echo "${b-}Ok, skipping S3 setup and REMOVING S3 setting from $short_name...${x-}"
 					echo
 					backup_archival_location=local
 					echo "local" > $conf_backups_dir/backup_archival_location
-					read -rp "${b}[press enter to continue reading...]${x}"
+					read -rp "${b-}[press enter to continue reading...]${x-}"
 					clear
 				fi
 			fi
@@ -219,7 +219,7 @@ os-setup_backup_restore_s3() {
 		else
 			s3_setup_accepted=n
 			echo
-			echo "${b}Ok, repeating S3 setup...${x}"
+			echo "${b-}Ok, repeating S3 setup...${x-}"
 			echo
 		fi
 
@@ -237,21 +237,21 @@ os-setup_backup_restore() {
 	clear
 
 
-	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
+	echo "${b-}$short_name performs nightly backups and stores them locally for safekeeping.${x-}"
 	echo
 
 
-	echo "${b}By default $short_name stores local backups in the | ${g}$install_dir/backups${x}${b} | directory.${x}"
+	echo "${b-}By default $short_name stores local backups in the | ${g-}$install_dir/backups${x-}${b-} | directory.${x-}"
 	echo
-	echo "${b}If and only if your machine doesn't have sufficient local storage space available, you may specify another location.${x}"
+	echo "${b-}If and only if your machine doesn't have sufficient local storage space available, you may specify another location.${x-}"
 	echo
-	echo "${b}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $short_name at the filesystem level.${x}"
+	echo "${b-}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $short_name at the filesystem level.${x-}"
 	echo
-	echo "${b}If you decide not to use the default location, be sure so specify a highly available and high performance location.${x}"
+	echo "${b-}If you decide not to use the default location, be sure so specify a highly available and high performance location.${x-}"
 	echo
-	echo "${b}Do not use a custom location for backup security / resilience purposes, but rather only if your machine has storage space limitations.${x}"
+	echo "${b-}Do not use a custom location for backup security / resilience purposes, but rather only if your machine has storage space limitations.${x-}"
 	echo
-	echo "${b}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x}"
+	echo "${b-}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x-}"
 	echo
 
 	### If option "backup_local_storage_location" is set and is currently "default", delete the "backup_local_storage_path" option to start fresh
@@ -269,7 +269,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set your local backup storage location [default/custom]:${x}"
+		echo "${b-}Please set your local backup storage location [default/custom]:${x-}"
 		echo
 
 	}
@@ -283,7 +283,7 @@ os-setup_backup_restore() {
 			custom)		backup_local_storage_location=custom
 			valid=y
 			;;
-			*)	echo "${r}${b}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x}"
+			*)	echo "${r-}${b-}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			valid=n
 			;;
@@ -304,7 +304,7 @@ os-setup_backup_restore() {
 
 		describe_setting() {
 
-			echo "${b}Please specify your custom backup local storage location [i.e. /mnt/network-volume/raptor-backups/]:${x}"
+			echo "${b-}Please specify your custom backup local storage location [i.e. /mnt/network-volume/raptor-backups/]:${x-}"
 			echo
 
 		}
@@ -332,7 +332,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please choose your backup compression type [bz2/none]:${x}"
+		echo "${b-}Please choose your backup compression type [bz2/none]:${x-}"
 		echo
 
 	}
@@ -346,7 +346,7 @@ os-setup_backup_restore() {
 			none)	backup_compression_type=none
 			valid=y
 			;;
-			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
+			*)	echo "${r-}${b-}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			valid=n
 			;;
@@ -358,7 +358,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set how many backups should be kept locally at the very minimum [suggested between 3 and 7].${x}"
+		echo "${b-}Please set how many backups should be kept locally at the very minimum [suggested between 3 and 7].${x-}"
 		echo
 
 	}
@@ -368,7 +368,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set the maximum number of backups that should be kept locally [suggested between 8 and 42].${x}"
+		echo "${b-}Please set the maximum number of backups that should be kept locally [suggested between 8 and 42].${x-}"
 		echo
 
 	}
@@ -378,7 +378,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set the maximum space that local archives storage should occupy in MB [suggested between 1000 and 8000].${x}"
+		echo "${b-}Please set the maximum space that local archives storage should occupy in MB [suggested between 1000 and 8000].${x-}"
 		echo
 
 	}
@@ -388,9 +388,9 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x}"
+		echo "${b-}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x-}"
 		echo
-		echo "${b}Now specify your desired backup storage location [local/s3]:${x}"
+		echo "${b-}Now specify your desired backup storage location [local/s3]:${x-}"
 		echo
 
 	}
@@ -404,7 +404,7 @@ os-setup_backup_restore() {
 			s3)		backup_archival_location=s3
 			valid=y
 			;;
-			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
+			*)	echo "${r-}${b-}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			valid=n
 			;;
@@ -418,31 +418,31 @@ os-setup_backup_restore() {
 	if [ $backup_archival_location = "s3" ]
 	then
 
-		if [ ! "${prev_val_outcome-null}" = "kept" ]
+		if [ ! "${previous_value_outcome-null}" = "kept" ]
 		then
 
-			read -rp "${b}Do you have an S3 file storage server already set up? (Y/n): ${x}" -n 1
+			read -rp "${b-}Do you have an S3 file storage server already set up? (Y/n): ${x-}" -n 1
 			echo
 
 			if [[ ! $REPLY =~ ^[Nn]$ ]]
 			then
 
-				echo "${b}Ok, so let's set up your S3 file storage server settings now.${x}"
+				echo "${b-}Ok, so let's set up your S3 file storage server settings now.${x-}"
 				echo
 				s3_continue_setup=y
 
 			else
 
 				echo
-				echo "${b}No problem, follow this guide [link will be published here soon] to configure your S3 file storage server.${x}"
+				echo "${b-}No problem, follow this guide [link will be published here soon] to configure your S3 file storage server.${x-}"
 				echo
-				echo "${b}Keeping backups local for now [simply re-run this installation when you're ready to upgrade your backups to S3 enabled].${x}"
+				echo "${b-}Keeping backups local for now [simply re-run this installation when you're ready to upgrade your backups to S3 enabled].${x-}"
 				echo
 
 				backup_archival_location=local
 				echo "local" > $conf_dir/backup_archival_location
 
-				read -rp "${b}[press enter to continue reading...]${x}"
+				read -rp "${b-}[press enter to continue reading...]${x-}"
 				clear
 
 			fi
@@ -465,9 +465,9 @@ os-setup_backup_restore() {
 
 				describe_setting() {
 
-					echo "${b}Please set your desired minimum backup history interval to keep on S3.${x}"
+					echo "${b-}Please set your desired minimum backup history interval to keep on S3.${x-}"
 					echo
-					echo "${b}Indicate an interval, which is a number followed by one of the characters D, W, M, or Y (indicating days, weeks, months, or years respectively).${x}"
+					echo "${b-}Indicate an interval, which is a number followed by one of the characters D, W, M, or Y (indicating days, weeks, months, or years respectively).${x-}"
 					echo
 
 				}
@@ -476,7 +476,7 @@ os-setup_backup_restore() {
 
 				describe_setting() {
 
-					echo "${b}Also upload a full backup archive file to S3 on the first of the month? [y/n]${x}"
+					echo "${b-}Also upload a full backup archive file to S3 on the first of the month? [y/n]${x-}"
 					echo
 
 				}
@@ -490,7 +490,7 @@ os-setup_backup_restore() {
 						n)	s3_monthly_uploads=s3
 						valid=y
 						;;
-						*)	echo "${r}${b}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x}"
+						*)	echo "${r-}${b-}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x-}"
 						echo
 						valid=n
 						;;
@@ -507,10 +507,10 @@ os-setup_backup_restore() {
 	else
 
 		echo
-		echo "${b}Ok, keeping backups local. Remember to periodically copy your backups from the backups directory over to your backup storage machine!${x}"
+		echo "${b-}Ok, keeping backups local. Remember to periodically copy your backups from the backups directory over to your backup storage machine!${x-}"
 		echo
 
-		read -rp "${b}[press enter to continue reading...]${x}"
+		read -rp "${b-}[press enter to continue reading...]${x-}"
 		clear
 
 	fi

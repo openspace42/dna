@@ -6,12 +6,12 @@ os-exit_function() {
     then
         if [ -f "${lockfile_set}" ]
         then
-            echo "${r}${b}Exiting and clearing lockfile...${x}"
+            echo "${r-}${b-}Exiting and clearing lockfile...${x-}"
             echo
             rm "${lockfile_set}"
         fi
     else
-        echo "${r}${b}Exiting...${x}"
+        echo "${r-}${b-}Exiting...${x-}"
         echo
     fi
     sleep 1

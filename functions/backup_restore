@@ -23,7 +23,7 @@ os-br_purge_loop() {
 
 		if [ $counter = -1 ]
 		then
-			echo "${r}${b}Infinite loop error caught. Exiting...${b}"
+			echo "${r-}${b-}Infinite loop error caught. Exiting...${b-}"
 			exit 1
 		fi
 
@@ -40,16 +40,16 @@ os-br_purge_loop() {
 		if [ $counter = 0 ]
 		then
 
-			echo "${r}${b}Even though there are no backups currently archived in local storage, meeting your setting of minimum backups to keep at | 0 |, there still isn't enough storage on the local storage's [$backup_local_storage_path] underlying volume.${x}"
+			echo "${r-}${b-}Even though there are no backups currently archived in local storage, meeting your setting of minimum backups to keep at | 0 |, there still isn't enough storage on the local storage's [$backup_local_storage_path] underlying volume.${x-}"
 			echo
-			echo "${b}Please inspect your disk for any files you don't need, or consider using an[other] external location by re-running the installer and choosing | custom | for the | backup_local_storage_location | setting.${x}"
+			echo "${b-}Please inspect your disk for any files you don't need, or consider using an[other] external location by re-running the installer and choosing | custom | for the | backup_local_storage_location | setting.${x-}"
 			echo
 
 		else
 
-			echo "${r}${b}The specified number of minimum backups to keep [$min_local_backups] is too high $error_description.${x}"
+			echo "${r-}${b-}The specified number of minimum backups to keep [$min_local_backups] is too high $error_description.${x-}"
 			echo
-			echo "${b}Lower this figure by re-running the install and lowering this figure during configuration or make more space available on this machine.${x}"
+			echo "${b-}Lower this figure by re-running the install and lowering this figure during configuration or make more space available on this machine.${x-}"
 			echo
 
 		fi
@@ -59,9 +59,9 @@ os-br_purge_loop() {
 
 			old_dir_size="$(du -sm "$backup_local_storage_path/archive/old" | xargs | sed -e "s|"${backup_local_storage_path}/archive/old"||g" | xargs)"
 
-			echo "${b}Found | $backup_local_storage_path/archive/old | directory weighing | $old_dir_size |.${x}"
+			echo "${b-}Found | $backup_local_storage_path/archive/old | directory weighing | $old_dir_size |.${x-}"
 			echo
-			echo "${b}Consider freeing up space by removing these old backups if unneeded.${x}"
+			echo "${b-}Consider freeing up space by removing these old backups if unneeded.${x-}"
 			echo
 
 		fi
@@ -84,15 +84,15 @@ os-br_purge_backups() {
 		os-br_update_storage_info
 	fi
 
-	echo "${b}You have $local_archive_items local backups occupying $local_archive_size MB of space.${x}"
+	echo "${b-}You have $local_archive_items local backups occupying $local_archive_size MB of space.${x-}"
 	echo
 
 	if [ $local_archive_size -gt $max_local_storage ]
 	then
 
-		echo "${r}${b}Local archive size [$local_archive_size MB] LARGER than | max_local_storage | setting [$max_local_storage MB].${x}"
+		echo "${r-}${b-}Local archive size [$local_archive_size MB] LARGER than | max_local_storage | setting [$max_local_storage MB].${x-}"
 		echo
-		echo "${b}Now purging old backups while respecting your specified number of minimum backups to keep...${x}"
+		echo "${b-}Now purging old backups while respecting your specified number of minimum backups to keep...${x-}"
 		echo
 		error_description="to stay below the | max_local_storage | setting you chose"
 
@@ -103,11 +103,11 @@ os-br_purge_backups() {
 			os-br_purge_loop
 		done
 
-		echo "${g}${b}Local archive size now low enough [$local_archive_size MB] to respect your settings.${x}"
+		echo "${g-}${b-}Local archive size now low enough [$local_archive_size MB] to respect your settings.${x-}"
 		echo
-		echo "${b}Purged all backups older than the most recent | $counter |.${x}"
+		echo "${b-}Purged all backups older than the most recent | $counter |.${x-}"
 		echo
-		echo "${b}Continuing...${x}"
+		echo "${b-}Continuing...${x-}"
 		echo
 
 	fi
@@ -115,9 +115,9 @@ os-br_purge_backups() {
 	if [ $est_backup_size -gt $free_disk_space ]
 	then
 
-		echo "${r}${b}Estimated backup size [$est_backup_size MB] LARGER than available disk space [$free_disk_space MB].${x}"
+		echo "${r-}${b-}Estimated backup size [$est_backup_size MB] LARGER than available disk space [$free_disk_space MB].${x-}"
 		echo
-		echo "${b}Now purging old backups while respecting your specified number of minimum backups to keep...${x}"
+		echo "${b-}Now purging old backups while respecting your specified number of minimum backups to keep...${x-}"
 		echo
 		error_description="to free enough disk space for the next backup"
 
@@ -128,11 +128,11 @@ os-br_purge_backups() {
 			os-br_purge_loop
 		done
 
-		echo "${g}${b}Enough free space [$free_disk_space MB] now available for new backup.${x}"
+		echo "${g-}${b-}Enough free space [$free_disk_space MB] now available for new backup.${x-}"
 		echo
-		echo "${b}Purged all backups older than the most recent | $counter |.${x}"
+		echo "${b-}Purged all backups older than the most recent | $counter |.${x-}"
 		echo
-		echo "${b}Continuing...${x}"
+		echo "${b-}Continuing...${x-}"
 		echo
 
 	fi
@@ -194,7 +194,7 @@ os-br_backup_locally() {
 			;;
 			s)	skip_install_complete_check="y"
 			;;
-			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			os-exit_function
 			;;
@@ -204,7 +204,7 @@ os-br_backup_locally() {
 
     ### backup_locally_loop is project-specific and must be defined before calling this function
 
-    echo "${b}Now backing up locally...${x}"
+    echo "${b-}Now backing up locally...${x-}"
 	echo
 
 	if [ ! ${skip_install_complete_check-null} = "y" ]
@@ -229,7 +229,7 @@ os-br_backup_locally() {
 
     backup_locally_loop
 
-    echo "${b}Now archiving backup...${x}"
+    echo "${b-}Now archiving backup...${x-}"
 	echo
 
 	cd "$backup_local_storage_path/temp"
@@ -269,17 +269,17 @@ os-br_backup_locally() {
 
 	mv "${output_file_path}.incomplete" "${output_file_path}"
 
-	echo "${g}${b}Finished archiving backup and storing it in: | $backup_local_storage_path/archive/ | ${x}"
+	echo "${g-}${b-}Finished archiving backup and storing it in: | $backup_local_storage_path/archive/ | ${x-}"
 	echo
 
-	echo "${g}${b}Finished local backup.${x}"
+	echo "${g-}${b-}Finished local backup.${x-}"
 	echo
 
 }
 
 os-br_last_local_backup() {
 
-    echo "${b}Now performing a last backup [locally - no S3 of course] this machine's currently running $short_name installation just in case...${x}"
+    echo "${b-}Now performing a last backup [locally - no S3 of course] this machine's currently running $short_name installation just in case...${x-}"
 	echo
 
 	os-br_create_dirs backup
@@ -295,7 +295,7 @@ os-br_last_local_backup() {
 	if [ $restore_source = "here" ]
 	then
 
-		echo "${b}Backed up current installation to | $backup_local_storage_path/archive |.${x}"
+		echo "${b-}Backed up current installation to | $backup_local_storage_path/archive |.${x-}"
 		echo
 
 	else
@@ -309,7 +309,7 @@ os-br_last_local_backup() {
 			mv "$duplicity_log_dir"/backup/ "$duplicity_log_dir"/old/backup-old-before-"$now"-restore 2> /dev/null || true
 		fi
 
-		echo "${b}Backed up current installation to local backups directory and moved the latter to $backup_local_storage_path/old/archive-old-before-$now-restore.${x}"
+		echo "${b-}Backed up current installation to local backups directory and moved the latter to $backup_local_storage_path/old/archive-old-before-$now-restore.${x-}"
 		echo
 	fi
 
@@ -319,13 +319,13 @@ os-br_restore_from_here() {
 
 	if [ ! -d "$backup_local_storage_path/archive" ]
 	then
-		echo "${r}${b}Local backups directory [$backup_local_storage_path/archive] not found.${x}"
+		echo "${r-}${b-}Local backups directory [$backup_local_storage_path/archive] not found.${x-}"
 		echo
-		echo "${b}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x}"
+		echo "${b-}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x-}"
 		echo
-		echo "${b}Check your $install_dir for a directory called | backups(-[something]) | and if you find something rename the most recently datestamped directory to | backups | ."
+		echo "${b-}Check your $install_dir for a directory called | backups(-[something]) | and if you find something rename the most recently datestamped directory to | backups | ."
 		echo
-		echo "${b}Exiting...${x}"
+		echo "${b-}Exiting...${x-}"
 		echo
 		exit 1
 	fi
@@ -333,25 +333,25 @@ os-br_restore_from_here() {
 	count="$(ls -1 $backup_local_storage_path/archive/*.tar* 2>/dev/null | wc -l)"
 	if [ $count = 0 ]
 	then
-		echo "${r}${b}No backup archives found in local backups directory [$backup_local_storage_path/archive].${x}"
+		echo "${r-}${b-}No backup archives found in local backups directory [$backup_local_storage_path/archive].${x-}"
 		echo
-		echo "${b}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x}"
+		echo "${b-}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x-}"
 		echo
-		echo "${b}Check your $install_dir for a directory called | backups(-[something]) | and if you find something rename the most recently datestamped directory to | backups | ."
+		echo "${b-}Check your $install_dir for a directory called | backups(-[something]) | and if you find something rename the most recently datestamped directory to | backups | ."
 		echo
-		echo "${b}Exiting...${x}"
+		echo "${b-}Exiting...${x-}"
 		echo
 		exit 1
 	fi
 
-	echo "${b}These are the backup dates available for restore:${x}"
+	echo "${b-}These are the backup dates available for restore:${x-}"
 	echo
 	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${short_name}-backup-//g" | sed -e 's/.tar//g' | sed -e 's/.bz2//g'
 	echo
-	read -rp "${b}[press enter to continue...]${x}"
+	read -rp "${b-}[press enter to continue...]${x-}"
 	clear
 
-	choice="${b}Now choose the file you'd like to restore: ${x}"
+	choice="${b-}Now choose the file you'd like to restore: ${x-}"
 	echo "$choice"
 	echo
 
@@ -374,16 +374,16 @@ os-br_restore_from_here() {
 			echo
 			case $sel_backup_file in
 				*.tar)
-				echo "${b}Backup file $sel_backup_file selected.${x}"
+				echo "${b-}Backup file $sel_backup_file selected.${x-}"
 				break
 				;;
 				"exit")
-				echo "${b}Exiting...${x}"
+				echo "${b-}Exiting...${x-}"
 				echo
 				exit
 				;;
 				*)
-				echo "${r}${b}Invalid option. Retry...${x}"
+				echo "${r-}${b-}Invalid option. Retry...${x-}"
 				echo
 				;;
 			esac
@@ -393,7 +393,7 @@ os-br_restore_from_here() {
 		valid=n
 		until [ $valid = "y" ]
 		do
-			read -n 1 -rp "${b}Is this the correct file?${x} (${b}Y${x}[es]/${b}n${x}[o]/${b}e${x}[xit]) " answer;
+			read -n 1 -rp "${b-}Is this the correct file?${x-} (${b-}Y${x-}[es]/${b-}n${x-}[o]/${b-}e${x-}[xit]) " answer;
 			case $answer in
 				"")
 				echo
@@ -407,20 +407,20 @@ os-br_restore_from_here() {
 				;;
 				n)
 				echo -e "\\n"
-				echo "${b}No problem, please select your desired file again now...${x}"
+				echo "${b-}No problem, please select your desired file again now...${x-}"
 				echo
 				valid=y
 				accept=n
 				;;
 				e)
 				echo -e "\\n"
-				echo "${b}Exiting...${x}"
+				echo "${b-}Exiting...${x-}"
 				echo
 				exit
 				;;
 				*)
 				echo -e "\\n"
-				echo "${b}Invalid option. Retry...${x}"
+				echo "${b-}Invalid option. Retry...${x-}"
 				echo
 				valid=n
 				accept=n
@@ -445,10 +445,10 @@ os-br_restore_from_here() {
 
 os-br_restore_from_standalone() {
 
-	echo "${b}Ok, restoring from a standalone $short_name backup file.${x}"
+	echo "${b-}Ok, restoring from a standalone $short_name backup file.${x-}"
 	echo
 	mkdir -p "/root/$short_name-restore/"
-	read -p "${b}Do you have a file called | $short_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x}" -n 1 -r
+	read -p "${b-}Do you have a file called | $short_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x-}" -n 1 -r
 	echo
 	if [[ ! $REPLY =~ ^[Nn]$ ]]
 	then
@@ -461,14 +461,14 @@ os-br_restore_from_standalone() {
 				standalone_backup_file=""
 				until [ ! $standalone_backup_file = "" ]
 				do
-					read -rp "${b}Ok, specify the path to that file now: ${x}" standalone_backup_file
+					read -rp "${b-}Ok, specify the path to that file now: ${x-}" standalone_backup_file
 					echo
 				done
 				if [ -f "$standalone_backup_file" ]
 				then
 					exists=y
 				else
-					echo "${r}${b}The specified file does not exists. Please retry...${x}"
+					echo "${r-}${b-}The specified file does not exists. Please retry...${x-}"
 					echo
 					exists=n
 				fi
@@ -476,7 +476,7 @@ os-br_restore_from_standalone() {
 			valid=n
 			until [ $valid = "y" ]
 			do
-				read -n 1 -rp "${b}Is | $standalone_backup_file | correct? (Y/n/e[xit]) ${x}" answer;
+				read -n 1 -rp "${b-}Is | $standalone_backup_file | correct? (Y/n/e[xit]) ${x-}" answer;
 				case $answer in
 					"")
 					echo
@@ -490,20 +490,20 @@ os-br_restore_from_standalone() {
 					;;
 					n)
 					echo -e "\\n"
-					echo "${b}Ok, then please try again...${x}"
+					echo "${b-}Ok, then please try again...${x-}"
 					echo
 					valid=y
 					defined=n
 					;;
 					e)
 					echo -e "\\n"
-					echo "${b}Exiting...${x}"
+					echo "${b-}Exiting...${x-}"
 					echo
 					exit
 					;;
 					*)
 					echo -e "\\n"
-					echo "${r}${b}Invalid option. Retry...${x}"
+					echo "${r-}${b-}Invalid option. Retry...${x-}"
 					echo
 					valid=n
 					defined=n
@@ -511,7 +511,7 @@ os-br_restore_from_standalone() {
 				esac
 			done
 		done
-		echo "${b}Backup file $standalone_backup_file selected.${x}"
+		echo "${b-}Backup file $standalone_backup_file selected.${x-}"
 		echo
 		if [ ${standalone_backup_file: -4} == ".bz2" ]
 		then
@@ -525,15 +525,15 @@ os-br_restore_from_standalone() {
 		rm -r "/root/$short_name-restore/$restoresubdir"
 	else
 		echo
-		echo "${b}Ok, no problem. Make sure you populate the | /root/$short_name-restore/ | directory with the following files/directories from your standalone backup:${x}"
+		echo "${b-}Ok, no problem. Make sure you populate the | /root/$short_name-restore/ | directory with the following files/directories from your standalone backup:${x-}"
 		echo
 		restore_from_standalone_content_description
 		echo
-		echo "${r}${b}If you don't correctly place all the above files/directories, the restore will not work correctly [you will be alerted if something is wrong further along this script]${x}"
+		echo "${r-}${b-}If you don't correctly place all the above files/directories, the restore will not work correctly [you will be alerted if something is wrong further along this script]${x-}"
 		echo
-		echo "${b}As soon as you're done moving these items into place...${x}"
+		echo "${b-}As soon as you're done moving these items into place...${x-}"
 		echo
-		read -rp "${b}[press enter to continue...]${x}"
+		read -rp "${b-}[press enter to continue...]${x-}"
 		clear
 		if [ $validate_standalone_restore_content = "y" ]
 		then
@@ -682,11 +682,11 @@ os-br_duplicity_loop() {
 
 	else
 
-		echo "${r}${b}It appears duplicity is already running on this server.${x}"
+		echo "${r-}${b-}It appears duplicity is already running on this server.${x-}"
 		echo
-		echo "${b}If you've manually overridden a lockfile check at the beginning of this script's execution, you should consider that it's likely another backup is occurring.${x}"
+		echo "${b-}If you've manually overridden a lockfile check at the beginning of this script's execution, you should consider that it's likely another backup is occurring.${x-}"
 		echo
-		echo "${b}If you're sure this is not the case, reboot the server and run this script again or see what happens at the next automated run.${x}"
+		echo "${b-}If you're sure this is not the case, reboot the server and run this script again or see what happens at the next automated run.${x-}"
 		echo
 		os-exit_function
 
@@ -698,18 +698,18 @@ os-br_duplicity_loop() {
 
 os-br_backup_to_S3() {
 
-	echo "${b}Now backing up to S3...${x}"
+	echo "${b-}Now backing up to S3...${x-}"
 	echo
 
     if [ -f "$conf_backups_s3_dir/block_s3_backups" ]
     then
-        echo "${r}${b}NOT performing backup as | $conf_backups_s3_dir/block_s3_backups | file found.${x}"
+        echo "${r-}${b-}NOT performing backup as | $conf_backups_s3_dir/block_s3_backups | file found.${x-}"
         echo
-        echo "${b}This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of $short_name backed up on S3.${x}"
+        echo "${b-}This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of $short_name backed up on S3.${x-}"
         echo
-        echo "${b}If this is the case, simply run the restore script right away. If it is not, and you want to use this machine for a new installation and OVERWRITE all backups currently on S3, erase this file.${x}"
+        echo "${b-}If this is the case, simply run the restore script right away. If it is not, and you want to use this machine for a new installation and OVERWRITE all backups currently on S3, erase this file.${x-}"
         echo
-        echo "${r}${b}NO backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation.${x}"
+        echo "${r-}${b-}NO backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation.${x-}"
         echo
 		os-exit_function
     fi
@@ -722,7 +722,7 @@ os-br_backup_to_S3() {
 
 	if [ $today_day_of_month = "1" ] && [ $interactive = "n" ]
 	then
-		echo "${b}Now also performing duplicity-independent first-of-the-month upload of | "$output_file_name" | to S3 as well."
+		echo "${b-}Now also performing duplicity-independent first-of-the-month upload of | "$output_file_name" | to S3 as well."
 		echo
 
 		encrypt() {
@@ -765,14 +765,14 @@ os-br_restore_from_S3() {
 
 	if [ "${1:-null}" = "test" ]
 	then
-		echo "${b}Now testing restore from S3 to $backup_local_storage_path/restores/s3/ to ensure existing backups integrity and passphrase match...${x}"
+		echo "${b-}Now testing restore from S3 to $backup_local_storage_path/restores/s3/ to ensure existing backups integrity and passphrase match...${x-}"
 		echo
 	else
-		echo "${b}Now restoring from S3 to $backup_local_storage_path/restores/s3/...${x}"
+		echo "${b-}Now restoring from S3 to $backup_local_storage_path/restores/s3/...${x-}"
 		echo
 	fi
 
-	echo "${b}This is going to take some time and will NOT output any progress information until it's done.${x}"
+	echo "${b-}This is going to take some time and will NOT output any progress information until it's done.${x-}"
 	echo
 
 	os-br_duplicity_loop restore
@@ -783,15 +783,15 @@ os-br_restore_from_S3() {
 		if [ "${1:-null}" = "test" ]
 		then
 			# This is the first backup, all is good.
-			echo "${g}${b}First S3 backup detected. Skipping restore test...${x}"
+			echo "${g-}${b-}First S3 backup detected. Skipping restore test...${x-}"
 			echo
 		else
 			# No backups found on server, something's wrong.
-			echo "${r}${b}Restore from S3 failed.${x}"
+			echo "${r-}${b-}Restore from S3 failed.${x-}"
 			echo
-			echo "${b}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check the above output for messages like: | ${r}No backup chains found${x}${b} |].${x}"
+			echo "${b-}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check the above output for messages like: | ${r-}No backup chains found${x-}${b-} |].${x-}"
 			echo
-			echo "${b}Exiting...${x}"
+			echo "${b-}Exiting...${x-}"
 			echo
 			exit 1
 		fi
@@ -803,50 +803,50 @@ os-br_restore_from_S3() {
 
 			if [ "${1:-null}" = "test" ]
 			then
-				echo "${r}${b}Testing restore from S3 failed.${x}"
+				echo "${r-}${b-}Testing restore from S3 failed.${x-}"
 				echo
-				echo "${b}Is appears this instance of $short_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b-}Is appears this instance of $short_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${x-}${b-} |].${x-}"
 				echo
-				echo "${b}If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one.${x}"
+				echo "${b-}If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one.${x-}"
 				echo
-				echo "${b}This would cause S3 backups to be encrypted with two or more encryption keys at the same time, which would render them unusable in the future should you ever need them.${x}"
+				echo "${b-}This would cause S3 backups to be encrypted with two or more encryption keys at the same time, which would render them unusable in the future should you ever need them.${x-}"
 				echo
-				echo "${b}Edit the file | $conf_backups_s3_dir/backups_passphrase | and set once again your previous encryption passphrase, then re-run this script.${x}"
+				echo "${b-}Edit the file | $conf_backups_s3_dir/backups_passphrase | and set once again your previous encryption passphrase, then re-run this script.${x-}"
 				echo
-				echo "${b}If you have lost your previous encryption passphrase, delete all your S3 backups and re-run this script to make an entirely new backup set encrypted solely with the currently specified passphrase.${x}"
+				echo "${b-}If you have lost your previous encryption passphrase, delete all your S3 backups and re-run this script to make an entirely new backup set encrypted solely with the currently specified passphrase.${x-}"
 				echo
-				echo "${r}${b}Aborting S3 backup because of connection / integrity check failure.${x}"
+				echo "${r-}${b-}Aborting S3 backup because of connection / integrity check failure.${x-}"
 				echo
 				if [ $interactive = "y" ]
 				then
-					read -rp "${b}Would you like to continue with a local-only backup anyway? (Y/n): ${x}" -n 1
+					read -rp "${b-}Would you like to continue with a local-only backup anyway? (Y/n): ${x-}" -n 1
 					echo
 					if [[ ! $REPLY =~ ^[Nn]$ ]]
 					then
-						echo "${b}Ok, continuing with local-only backup...${x}"
+						echo "${b-}Ok, continuing with local-only backup...${x-}"
 						echo
 						export s3_restore_test_failed=y
 					else
 						echo
-						echo "${b}Ok, aborting.${x}"
+						echo "${b-}Ok, aborting.${x-}"
 						echo
 						os-exit_function
 					fi
 				else
-					echo "${b}Continuing with local-only backup anyway...${x}"
+					echo "${b-}Continuing with local-only backup anyway...${x-}"
 					echo
 					export s3_restore_test_failed=y
 				fi
 			else
-				echo "${r}${b}Restore from S3 failed.${x}"
+				echo "${r-}${b-}Restore from S3 failed.${x-}"
 				echo
-				echo "${b}Is appears this instance of $short_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r}gpg: decryption failed: bad key${x}${b} |].${x}"
+				echo "${b-}Is appears this instance of $short_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${x-}${b-} |].${x-}"
 				echo
-				echo "${b}Edit the file | $conf_backups_s3_dir/backups_passphrase | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script.${x}"
+				echo "${b-}Edit the file | $conf_backups_s3_dir/backups_passphrase | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script.${x-}"
 				echo
-				echo "${b}If you have lost your previous encryption passphrase, you've also lost access to your backups.${x}"
+				echo "${b-}If you have lost your previous encryption passphrase, you've also lost access to your backups.${x-}"
 				echo
-				echo "${b}Exiting...${x}"
+				echo "${b-}Exiting...${x-}"
 				echo
 				exit 1
 			fi
@@ -856,10 +856,10 @@ os-br_restore_from_S3() {
 			echo
 			if [ "${1:-null}" = "test" ]
 			then
-				echo "${g}${b}S3 Restore test succeded. Proceeding with S3 backup...${x}"
+				echo "${g-}${b-}S3 Restore test succeded. Proceeding with S3 backup...${x-}"
 				echo
 			else
-				echo "${g}${b}Restore succeded.${x}"
+				echo "${g-}${b-}Restore succeded.${x-}"
 				echo
 			fi
 
@@ -877,7 +877,7 @@ os-br_launch_restore() {
 				skip_questions=y
 				restore_source=elsewhere
 			;;
-			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			os-exit_function
 			;;
@@ -888,7 +888,7 @@ os-br_launch_restore() {
 	if [ ! ${skip_questions-null} = "y" ]
 	then
 
-	    choice="${b}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $short_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x}"
+	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $short_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
 	    echo "$choice"
 	    echo
 	    options=("backup file stored locally" "backup file stored elsewhere" "exit")
@@ -905,12 +905,12 @@ os-br_launch_restore() {
 	    		break
 	    		;;
 	    		"exit")
-	    		echo "${b}Exiting...${x}"
+	    		echo "${b-}Exiting...${x-}"
 	    		echo
 	    		exit
 	    		;;
 	    		*)
-	    		echo "${r}${b}Invalid option. Retry...${x}"
+	    		echo "${r-}${b-}Invalid option. Retry...${x-}"
 	    		echo
 	    		;;
 	    	esac
@@ -925,9 +925,9 @@ os-br_launch_restore() {
 
 	    	if [ "${backup_archival_location-null}" = "s3" ]
 	    	then
-	    		echo "${b}You've previously set up an S3 file storage server connection on this machine.${x}"
+	    		echo "${b-}You've previously set up an S3 file storage server connection on this machine.${x-}"
 	    		echo
-	    		choice="${b}Do you want to restore from S3 or from a standalone $short_name backup file you have stored individually? ${x}"
+	    		choice="${b-}Do you want to restore from S3 or from a standalone $short_name backup file you have stored individually? ${x-}"
 	    		echo "$choice"
 	    		echo
 	    		options=("S3" "standalone" "exit")
@@ -944,11 +944,11 @@ os-br_launch_restore() {
 	    				break
 	    				;;
 	    				"exit")
-	    				echo "${b}Exiting...${x}"
+	    				echo "${b-}Exiting...${x-}"
 	    				echo
 	    				exit
 	    				;;
-	    				*)  echo "${r}${b}Invalid option. Retry...${x}"
+	    				*)  echo "${r-}${b-}Invalid option. Retry...${x-}"
 	    				echo
 	    				;;
 	    			esac

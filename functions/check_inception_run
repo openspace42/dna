@@ -4,18 +4,18 @@ os-check_inception_run() {
 
     if [ -f $os_base_dir/inception/run-ok ]
     then
-        echo "${g}${b}inception was previously run successfully. Continuing...${x}"
+        echo "${g-}${b-}inception was previously run successfully. Continuing...${x-}"
         echo
     else
-        echo "${r}${b}inception was NOT previously run successfully OR the system was not rebooted at the end.${x}"
+        echo "${r-}${b-}inception was NOT previously run successfully OR the system was not rebooted at the end.${x-}"
         echo
-        read -p "${b}Run it now? (Y/n): ${x}" -n 1 -r
+        read -p "${b-}Run it now? (Y/n): ${x-}" -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Nn]$ ]]
         then
-            echo "${b}Ok, running inception now...${x}"
+            echo "${b-}Ok, running inception now...${x-}"
             echo
-            echo "${b}After you're done running inception and your machine automaticallty reboots, simply run the aenigma installer again.${x}"
+            echo "${b-}After you're done running inception and your machine automaticallty reboots, simply run the aenigma installer again.${x-}"
             echo
             sleep 3
             cd
@@ -29,11 +29,11 @@ os-check_inception_run() {
             exit
         else
             echo
-            echo "${b}No problem, you can run it [make sure you reboot this machine at the end] by executing the following commands:${x}"
+            echo "${b-}No problem, you can run it [make sure you reboot this machine at the end] by executing the following commands:${x-}"
             echo
-            echo "${b} | git clone https://github.com/openspace42/inception |${x}"
+            echo "${b-} | git clone https://github.com/openspace42/inception |${x-}"
             echo
-            echo "${b} | bash inception/setup |${x}"
+            echo "${b-} | bash inception/setup |${x-}"
             echo
             os-exit_function
         fi

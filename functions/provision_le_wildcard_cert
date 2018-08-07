@@ -4,7 +4,7 @@ os-provision_le_wildcard_cert() {
 
     if [ $# -eq 0 ]
     then
-        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
@@ -13,7 +13,7 @@ os-provision_le_wildcard_cert() {
         case $arguments in
             d)	domain="$OPTARG"
             ;;
-            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
             os-exit_function
             ;;
@@ -23,7 +23,7 @@ os-provision_le_wildcard_cert() {
 
     if [ -z "${domain-}" ]
     then
-        echo "${r}${b}Domain [option | -d |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Domain [option | -d |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi

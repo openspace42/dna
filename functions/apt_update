@@ -20,12 +20,12 @@ os-apt_update() {
         # Check if file older
         if [ $TIMEDIFF -gt $OLDTIME ]
         then
-            echo "${b}APT cache out of date. Updating now...${x}"
+            echo "${b-}APT cache out of date. Updating now...${x-}"
             echo
             apt-get update
             echo
         else
-            echo "${g}${b}APT cache up to date.${x}"
+            echo "${g-}${b-}APT cache up to date.${x-}"
             echo
         fi
 

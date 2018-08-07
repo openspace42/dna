@@ -6,7 +6,7 @@ os-setup_dns_provider() {
 		case $arguments in
 			s)	skip_questions=y
 			;;
-			\?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			os-exit_function
 			;;
@@ -23,7 +23,7 @@ os-setup_dns_provider() {
 
 		describe_setting() {
 
-			echo "${b}Please choose your DNS provider type [miab/cloudflare]:${x}"
+			echo "${b-}Please choose your DNS provider type [miab/cloudflare]:${x-}"
 			echo
 
 		}
@@ -37,7 +37,7 @@ os-setup_dns_provider() {
 				cloudflare)		dns_provider_type=cloudflare
 				valid=y
 				;;
-				*)	echo "${r}${b}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x}"
+				*)	echo "${r-}${b-}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x-}"
 				echo
 				valid=n
 				;;
@@ -67,7 +67,7 @@ os-setup_dns_provider() {
 
 			describe_setting() {
 
-				echo "${b}Now set your ${s3_options_array[$i]}.${x}"
+				echo "${b-}Now set your ${s3_options_array[$i]}.${x-}"
 				echo
 
 			}
@@ -78,33 +78,33 @@ os-setup_dns_provider() {
 
 		echo "----------------"
 		echo
-		echo "${b}To make sure everything is correct:${x}"
+		echo "${b-}To make sure everything is correct:${x-}"
 		echo
-		echo "1] Your ${b}AWS Access Key ID${x} will be:"
+		echo "1] Your ${b-}AWS Access Key ID${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_access_key_id${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_access_key_id${x-}${b-} | ${x-}"
 		echo
-		echo "2] Your ${b}AWS Secret Access Key${x} will be:"
+		echo "2] Your ${b-}AWS Secret Access Key${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_secret_access_key${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_secret_access_key${x-}${b-} | ${x-}"
 		echo
-		echo "3] Your ${b}S3 Endpoint URL${x} will be:"
+		echo "3] Your ${b-}S3 Endpoint URL${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_endpoint${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_endpoint${x-}${b-} | ${x-}"
 		echo
-		echo "4] Your ${b}S3 Bucket Name${x} will be:"
+		echo "4] Your ${b-}S3 Bucket Name${x-} will be:"
 		echo
-		echo "${b} | ${g}$s3_bucket_name${x}${b} | ${x}"
+		echo "${b-} | ${g-}$s3_bucket_name${x-}${b-} | ${x-}"
 		echo
 		echo "----------------"
 		echo
 
-		read -rp "${b}Does everything look all right? (Y/n): ${x}" -n 1
+		read -rp "${b-}Does everything look all right? (Y/n): ${x-}" -n 1
 		echo
 		if [[ ! $REPLY =~ ^[Nn]$ ]]
 		then
 
-			echo "${b}Ok, proceeding to check S3 connection details${x}."
+			echo "${b-}Ok, proceeding to check S3 connection details${x-}."
 			echo
 
 			### Check S3 connection
@@ -114,28 +114,28 @@ os-setup_dns_provider() {
 			s3cmd info s3://"$s3_bucket_name" >/dev/null 2>&1
 
 			if [[ $? -eq 0 ]]; then
-				echo "${g}${b}S3 connection details appear to be valid.${x}"
+				echo "${g-}${b-}S3 connection details appear to be valid.${x-}"
 				echo
 				s3_setup_accepted=y
 				sleep 1
 			else
-				echo "${r}${b}S3 connection details do NOT appear to be valid.${x}"
+				echo "${r-}${b-}S3 connection details do NOT appear to be valid.${x-}"
 				echo
-				read -rp "${b}Would you like to try setting it up again? (Y/n): ${x}" -n 1
+				read -rp "${b-}Would you like to try setting it up again? (Y/n): ${x-}" -n 1
 				echo
 				if [[ ! $REPLY =~ ^[Nn]$ ]]
 				then
 					s3_setup_accepted=n
-					echo "${b}Ok, repeating S3 setup...${x}"
+					echo "${b-}Ok, repeating S3 setup...${x-}"
 					echo
 				else
 					s3_setup_accepted=y
 					echo
-					echo "${b}Ok, skipping S3 setup and REMOVING S3 setting from $short_name...${x}"
+					echo "${b-}Ok, skipping S3 setup and REMOVING S3 setting from $short_name...${x-}"
 					echo
 					backup_archival_location=local
 					echo "local" > $conf_backups_dir/backup_archival_location
-					read -rp "${b}[press enter to continue reading...]${x}"
+					read -rp "${b-}[press enter to continue reading...]${x-}"
 					clear
 				fi
 			fi
@@ -144,7 +144,7 @@ os-setup_dns_provider() {
 		else
 			s3_setup_accepted=n
 			echo
-			echo "${b}Ok, repeating S3 setup...${x}"
+			echo "${b-}Ok, repeating S3 setup...${x-}"
 			echo
 		fi
 
@@ -162,21 +162,21 @@ os-setup_backup_restore() {
 	clear
 
 
-	echo "${b}$short_name performs nightly backups and stores them locally for safekeeping.${x}"
+	echo "${b-}$short_name performs nightly backups and stores them locally for safekeeping.${x-}"
 	echo
 
 
-	echo "${b}By default $short_name stores local backups in the | ${g}$install_dir/backups${x}${b} | directory.${x}"
+	echo "${b-}By default $short_name stores local backups in the | ${g-}$install_dir/backups${x-}${b-} | directory.${x-}"
 	echo
-	echo "${b}If and only if your machine doesn't have sufficient local storage space available, you may specify another location.${x}"
+	echo "${b-}If and only if your machine doesn't have sufficient local storage space available, you may specify another location.${x-}"
 	echo
-	echo "${b}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $short_name at the filesystem level.${x}"
+	echo "${b-}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $short_name at the filesystem level.${x-}"
 	echo
-	echo "${b}If you decide not to use the default location, be sure so specify a highly available and high performance location.${x}"
+	echo "${b-}If you decide not to use the default location, be sure so specify a highly available and high performance location.${x-}"
 	echo
-	echo "${b}Do not use a custom location for backup security / resilience purposes, but rather only if your machine has storage space limitations.${x}"
+	echo "${b-}Do not use a custom location for backup security / resilience purposes, but rather only if your machine has storage space limitations.${x-}"
 	echo
-	echo "${b}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x}"
+	echo "${b-}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x-}"
 	echo
 
 	### If option "backup_local_storage_location" is set and is currently "default", delete the "backup_local_storage_path" option to start fresh
@@ -194,7 +194,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set your local backup storage location [default/custom]:${x}"
+		echo "${b-}Please set your local backup storage location [default/custom]:${x-}"
 		echo
 
 	}
@@ -208,7 +208,7 @@ os-setup_backup_restore() {
 			custom)		backup_local_storage_location=custom
 			valid=y
 			;;
-			*)	echo "${r}${b}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x}"
+			*)	echo "${r-}${b-}Invalid setting for | backup_local_storage_location | in function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			valid=n
 			;;
@@ -229,7 +229,7 @@ os-setup_backup_restore() {
 
 		describe_setting() {
 
-			echo "${b}Please specify your custom backup local storage location [i.e. /mnt/network-volume/raptor-backups/]:${x}"
+			echo "${b-}Please specify your custom backup local storage location [i.e. /mnt/network-volume/raptor-backups/]:${x-}"
 			echo
 
 		}
@@ -257,7 +257,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please choose your backup compression type [bz2/none]:${x}"
+		echo "${b-}Please choose your backup compression type [bz2/none]:${x-}"
 		echo
 
 	}
@@ -271,7 +271,7 @@ os-setup_backup_restore() {
 			none)	backup_compression_type=none
 			valid=y
 			;;
-			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
+			*)	echo "${r-}${b-}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			valid=n
 			;;
@@ -283,7 +283,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set how many backups should be kept locally at the very minimum [suggested between 3 and 7].${x}"
+		echo "${b-}Please set how many backups should be kept locally at the very minimum [suggested between 3 and 7].${x-}"
 		echo
 
 	}
@@ -293,7 +293,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set the maximum number of backups that should be kept locally [suggested between 8 and 42].${x}"
+		echo "${b-}Please set the maximum number of backups that should be kept locally [suggested between 8 and 42].${x-}"
 		echo
 
 	}
@@ -303,7 +303,7 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}Please set the maximum space that local archives storage should occupy in MB [suggested between 1000 and 8000].${x}"
+		echo "${b-}Please set the maximum space that local archives storage should occupy in MB [suggested between 1000 and 8000].${x-}"
 		echo
 
 	}
@@ -313,9 +313,9 @@ os-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x}"
+		echo "${b-}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x-}"
 		echo
-		echo "${b}Now specify your desired backup storage location [local/s3]:${x}"
+		echo "${b-}Now specify your desired backup storage location [local/s3]:${x-}"
 		echo
 
 	}
@@ -329,7 +329,7 @@ os-setup_backup_restore() {
 			s3)		backup_archival_location=s3
 			valid=y
 			;;
-			*)	echo "${r}${b}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x}"
+			*)	echo "${r-}${b-}Invalid setting for | backup_type | in function | ${FUNCNAME[0]} |.${x-}"
 			echo
 			valid=n
 			;;
@@ -343,31 +343,31 @@ os-setup_backup_restore() {
 	if [ $backup_archival_location = "s3" ]
 	then
 
-		if [ ! "${prev_val_outcome-null}" = "kept" ]
+		if [ ! "${previous_value_outcome-null}" = "kept" ]
 		then
 
-			read -rp "${b}Do you have an S3 file storage server already set up? (Y/n): ${x}" -n 1
+			read -rp "${b-}Do you have an S3 file storage server already set up? (Y/n): ${x-}" -n 1
 			echo
 
 			if [[ ! $REPLY =~ ^[Nn]$ ]]
 			then
 
-				echo "${b}Ok, so let's set up your S3 file storage server settings now.${x}"
+				echo "${b-}Ok, so let's set up your S3 file storage server settings now.${x-}"
 				echo
 				s3_continue_setup=y
 
 			else
 
 				echo
-				echo "${b}No problem, follow this guide [link will be published here soon] to configure your S3 file storage server.${x}"
+				echo "${b-}No problem, follow this guide [link will be published here soon] to configure your S3 file storage server.${x-}"
 				echo
-				echo "${b}Keeping backups local for now [simply re-run this installation when you're ready to upgrade your backups to S3 enabled].${x}"
+				echo "${b-}Keeping backups local for now [simply re-run this installation when you're ready to upgrade your backups to S3 enabled].${x-}"
 				echo
 
 				backup_archival_location=local
 				echo "local" > $conf_dir/backup_archival_location
 
-				read -rp "${b}[press enter to continue reading...]${x}"
+				read -rp "${b-}[press enter to continue reading...]${x-}"
 				clear
 
 			fi
@@ -390,9 +390,9 @@ os-setup_backup_restore() {
 
 				describe_setting() {
 
-					echo "${b}Please set your desired minimum backup history interval to keep on S3.${x}"
+					echo "${b-}Please set your desired minimum backup history interval to keep on S3.${x-}"
 					echo
-					echo "${b}Indicate an interval, which is a number followed by one of the characters D, W, M, or Y (indicating days, weeks, months, or years respectively).${x}"
+					echo "${b-}Indicate an interval, which is a number followed by one of the characters D, W, M, or Y (indicating days, weeks, months, or years respectively).${x-}"
 					echo
 
 				}
@@ -401,7 +401,7 @@ os-setup_backup_restore() {
 
 				describe_setting() {
 
-					echo "${b}Also upload a full backup archive file to S3 on the first of the month? [y/n]${x}"
+					echo "${b-}Also upload a full backup archive file to S3 on the first of the month? [y/n]${x-}"
 					echo
 
 				}
@@ -415,7 +415,7 @@ os-setup_backup_restore() {
 						n)	s3_monthly_uploads=s3
 						valid=y
 						;;
-						*)	echo "${r}${b}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x}"
+						*)	echo "${r-}${b-}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x-}"
 						echo
 						valid=n
 						;;
@@ -432,10 +432,10 @@ os-setup_backup_restore() {
 	else
 
 		echo
-		echo "${b}Ok, keeping backups local. Remember to periodically copy your backups from the backups directory over to your backup storage machine!${x}"
+		echo "${b-}Ok, keeping backups local. Remember to periodically copy your backups from the backups directory over to your backup storage machine!${x-}"
 		echo
 
-		read -rp "${b}[press enter to continue reading...]${x}"
+		read -rp "${b-}[press enter to continue reading...]${x-}"
 		clear
 
 	fi

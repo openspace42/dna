@@ -2,7 +2,7 @@
 
 os-install_easyengine() {
 
-	echo "${b}Now [re-]installing and updating EasyEngine...${x}"
+	echo "${b-}Now [re-]installing and updating EasyEngine...${x-}"
 	echo
 
 	wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
@@ -24,11 +24,11 @@ os-install_easyengine() {
 
 	if [ $distro_name = "Ubuntu" ]
 	then
-		read -p "${b}Also install full EasyEngine stack and PhpMyAdmin? (Y/n): ${x}" -n 1 -r
+		read -p "${b-}Also install full EasyEngine stack and PhpMyAdmin? (Y/n): ${x-}" -n 1 -r
 		echo
 		if [[ ! $REPLY =~ ^[Nn]$ ]]
 		then
-			echo "${b}Ok, installing full EE stack...${x}"
+			echo "${b-}Ok, installing full EE stack...${x-}"
 			echo
 			os-install_dependencies -p "composer"
 			ufw allow 22222 || true
@@ -39,12 +39,12 @@ os-install_easyengine() {
 			echo
 		else
 			echo
-			echo "${b}Ok, skipping full EE stack installation...${x}"
+			echo "${b-}Ok, skipping full EE stack installation...${x-}"
 			echo
 		fi
 	fi
 
-	echo "${b}Finished installing EasyEngine.${x}"
+	echo "${b-}Finished installing EasyEngine.${x-}"
 	echo
 
 }

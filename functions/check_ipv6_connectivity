@@ -2,14 +2,14 @@
 
 os-check_ipv6_connectivity() {
 
-    echo "${b}Now testing IPv6 connectivity...${x}"
+    echo "${b-}Now testing IPv6 connectivity...${x-}"
     echo
 
     ipv6_ping_test_addr="2001:4860:4860::8888"
 
     if ping6 -q -c 1 -W 1 $ipv6_ping_test_addr >/dev/null
     then
-        echo "${g}${b}IPv6 connectivity good.${x}"
+        echo "${g-}${b-}IPv6 connectivity good.${x-}"
         echo
         ipv6_avail=y
     else
@@ -18,7 +18,7 @@ os-check_ipv6_connectivity() {
         echo
         until ping6 -c1 $ipv6_ping_test_addr &>/dev/null
         do
-            echo "${b}Waiting $counter more seconds for IPv6 connectivity...${x}"
+            echo "${b-}Waiting $counter more seconds for IPv6 connectivity...${x-}"
             echo
             if [ $counter = 0 ]
             then
@@ -30,11 +30,11 @@ os-check_ipv6_connectivity() {
         done
         if [ $ping_acquired = "y" ]
         then
-            echo "${g}${b}IPv6 connectivity acquired.${x}"
+            echo "${g-}${b-}IPv6 connectivity acquired.${x-}"
             echo
             ipv6_avail=y
         else
-            echo "${r}${b}IPv6 connectivity not found.${x}"
+            echo "${r-}${b-}IPv6 connectivity not found.${x-}"
             echo
             ipv6_avail=n
         fi
@@ -42,10 +42,10 @@ os-check_ipv6_connectivity() {
     if [ $ipv6_avail = "y" ]
     then
         this_ipv6="$(dig +short -6 myip.opendns.com aaaa @resolver1.ipv6-sandbox.opendns.com)"
-        echo "${b}Your IPv6 global [public] address appears to be: | $this_ipv6 | ${x}"
+        echo "${b-}Your IPv6 global [public] address appears to be: | $this_ipv6 | ${x-}"
         echo
     fi
-    echo "${b}Finished testing IPv6 connectivity.${x}"
+    echo "${b-}Finished testing IPv6 connectivity.${x-}"
     echo
 
 }

@@ -2,7 +2,7 @@
 
 os-install_duplicity() {
 
-	echo "${b}Now installing the duplicity backup utility...${x}"
+	echo "${b-}Now installing the duplicity backup utility...${x-}"
 	echo
 
 	os-get_distro_name
@@ -21,7 +21,7 @@ os-install_duplicity() {
 	pip install --upgrade boto
 	echo
 
-	echo "${b}Finished installing duplicity.${x}"
+	echo "${b-}Finished installing duplicity.${x-}"
 	echo
 
 }

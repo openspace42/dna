@@ -4,7 +4,7 @@ os-set_admin_email() {
 
 	describe_setting() {
 
-		echo "${b}$short_name sends you email notifications for any scheduled job runtime errors and / or failures.${x}"
+		echo "${b-}$short_name sends you email notifications for any scheduled job runtime errors and / or failures.${x-}"
 		echo
 
 	}

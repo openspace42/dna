@@ -12,10 +12,10 @@ os-check_distro_ubuntu() {
 
     if ! lsb_release --id | cut -f2 | grep Ubuntu >/dev/null
     then
-        echo "${b}Detected distro is NOT Ubuntu. It appears instead to be:${x}"
+        echo "${b-}Detected distro is NOT Ubuntu. It appears instead to be:${x-}"
         echo
         lsb_release -i
-        echo "${b}$short_name only runs on Ubuntu.${x}"
+        echo "${b-}$short_name only runs on Ubuntu.${x-}"
         echo
         os-exit_function
     fi
@@ -30,10 +30,10 @@ os-check_distro_ubuntu_lts() {
 
     if ! lsb_release -d | grep -q LTS
     then
-        echo "${b}Detected Ubuntu version is NOT an LTS version. It appears instead to be:${x}"
+        echo "${b-}Detected Ubuntu version is NOT an LTS version. It appears instead to be:${x-}"
         echo
         lsb_release -d
-        echo "${b}$short_name only runs on Ubuntu LTS versions.${x}"
+        echo "${b-}$short_name only runs on Ubuntu LTS versions.${x-}"
         echo
         os-exit_function
     fi

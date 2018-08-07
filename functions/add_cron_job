@@ -10,7 +10,7 @@ os-add_cron_job() {
 
     if [ $# -eq 0 ]
     then
-        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
@@ -23,7 +23,7 @@ os-add_cron_job() {
             ;;
             c)	content="$OPTARG"
             ;;
-            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
             os-exit_function
             ;;
@@ -33,28 +33,28 @@ os-add_cron_job() {
 
     if [ -z "${name-}" ]
     then
-        echo "${r}${b}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
     if [ -z "${time-}" ]
     then
-        echo "${r}${b}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
     if [ -z "${content-}" ]
     then
-        echo "${r}${b}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
     ########################################################################
 
-    echo "${b}Now adding job to crontab...${x}"
+    echo "${b-}Now adding job to crontab...${x-}"
     echo
     job_path="/etc/cron.d/$name"
     touch "$job_path"
@@ -64,7 +64,7 @@ os-add_cron_job() {
     echo "MAILTO=$admin_mail" >> "$job_path"
     echo >> "$job_path"
     echo "$time root cronic $content" >> "$job_path"
-    echo "${b}Finished adding backup script to daily crontab...${x}"
+    echo "${b-}Finished adding backup script to daily crontab...${x-}"
     echo
 
 }

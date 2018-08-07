@@ -31,7 +31,7 @@ os-check_dns_record_address() {
 
 	if [ $# -eq 0 ]
     then
-        echo "${r}${b}No argument supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
@@ -44,7 +44,7 @@ os-check_dns_record_address() {
 	            ;;
 			v)	version="$OPTARG"
 	            ;;
-            \?)	echo "${r}${b}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x}"
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 	            echo
 	            os-exit_function
 	            ;;
@@ -54,21 +54,21 @@ os-check_dns_record_address() {
 
     if [ -z "${name-}" ]
     then
-        echo "${r}${b}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
 	if [ -z "${reference-}" ]
     then
-        echo "${r}${b}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
 
 	if [ -z "${version-}" ]
     then
-        echo "${r}${b}Version [option | -v |] must be supplied for function | ${FUNCNAME[0]} |.${x}"
+        echo "${r-}${b-}Version [option | -v |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
         os-exit_function
     fi
@@ -131,10 +131,10 @@ os-check_dns_record_address() {
         result="$(array_contains name_array "${i}"  && echo y || echo n)"
         if [ "${result}" = "y" ]
         then
-            echo -e "${g}${b}The IPv${version} address record | ${x}${item_name}${g}${b} | for DNS name | ${x}${name}${g}${b} | is registered correctly.${x}"
+            echo -e "${g-}${b-}The IPv${version} address record | ${x-}${item_name}${g-}${b-} | for DNS name | ${x-}${name}${g-}${b-} | is registered correctly.${x-}"
 			echo
         else
-            echo -e "${r}${b}The IPv${version} address record | ${x}${item_name}${r}${b} | for DNS name | ${x}${name}${r}${b} | is NOT registered.${x}"
+            echo -e "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is NOT registered.${x-}"
 			echo
         fi
 	done
@@ -156,7 +156,7 @@ os-check_dns_record_address() {
 	for i in "${diff_array[@]}"
 	do
 		item_name="$(echo ${i} | xargs)"
-        echo "${r}${b}The IPv${version} address record | ${x}${item_name}${r}${b} | for DNS name | ${x}${name}${r}${b} | is registered but should NOT be.${x}"
+        echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is registered but should NOT be.${x-}"
 		echo
 	done
 
