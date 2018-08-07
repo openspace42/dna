@@ -253,6 +253,6 @@ os-set_option() {
 	value="$(cat ${opt_path})"
 	export "${option}"="${value}"
 
-	unset arguments option validate describe path setting validate_input describe_setting valid value skip_descr defined new_val
+	unset arguments option path describe choices validate setting validate_input describe_setting valid value skip_descr defined new_val
 
 }
