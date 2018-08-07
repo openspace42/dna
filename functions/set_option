@@ -126,7 +126,7 @@ os-set_option() {
 		then
 			echo "${b-}Your previous value for option | ${g-}$option${n-} | was: | ${y-}$previous_value${n-} |. ${x-}"
 			echo
-			if [ ! -z "${choices}" ]
+			if [ ! -z "${choices-}" ]
 			then
 				echo "${b-}The possible choices for this value are: | ${y-}${choices}${n-} |."
 				echo
