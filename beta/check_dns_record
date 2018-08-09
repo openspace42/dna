@@ -104,7 +104,7 @@ os-check_dns_record_address() {
 
 	############################################################################
 
-	getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${dns_checks_dir}/${name}-${version}"
+	getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
 
 	readarray reference_array < "${reference_file_path}"
 
@@ -220,6 +220,7 @@ os-check_dns_record_address() {
 
 					until [ "${valid-null}" = "y" ]
 					do
+
 						read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
 						case $answer in
 							"")	echo
@@ -248,6 +249,7 @@ os-check_dns_record_address() {
 								accept=n
 								;;
 						esac
+
 					done
 
 				fi
@@ -258,7 +260,7 @@ os-check_dns_record_address() {
 
 	done
 
-	### Check if name_array has additional values
+	### Check if name_array has additional incorrect values
 
 	diff_array=()
 	for i in "${name_array[@]}"
@@ -355,6 +357,7 @@ os-check_dns_record_address() {
 
 				until [ "${valid-null}" = "y" ]
 				do
+
 					read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
 					case $answer in
 						"")	echo
@@ -383,6 +386,7 @@ os-check_dns_record_address() {
 							accept=n
 							;;
 					esac
+
 				done
 
 			fi
@@ -390,5 +394,7 @@ os-check_dns_record_address() {
 		done
 
 	done
+
+	rm -rf "${dns_checks_dir}"
 
 }

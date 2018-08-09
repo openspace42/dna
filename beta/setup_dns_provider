@@ -2,7 +2,7 @@
 
 os-setup_dns_provider() {
 
-	while getopts ":s" arguments; do
+	while getopts ":s:" arguments; do
 		case $arguments in
 			s)	skip_questions=y
 			;;
