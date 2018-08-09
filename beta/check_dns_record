@@ -102,6 +102,8 @@ os-check_dns_record_address() {
 		echo "${reference}" | tr " " "\n" > "${reference_file_path}"
 	fi
 
+	readarray reference_array < "${reference_file_path}"
+
 	############################################################################
 
 	array_contains () {
@@ -126,8 +128,6 @@ os-check_dns_record_address() {
 		do
 
 			getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
-
-			readarray reference_array < "${reference_file_path}"
 			readarray name_array < "${name_file_path}"
 
 			item_name="$(echo ${i} | xargs)"
