@@ -146,7 +146,7 @@ os-check_dns_record_address() {
 
 				incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
 
-				if [ "${iteration}" = "1" ]
+				if [ "${incorrect_iteration}" = "1" ]
 				then
 
 		            echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is NOT registered.${x-}"
@@ -183,7 +183,7 @@ os-check_dns_record_address() {
 						fi
 					fi
 
-				elif [ "${iteration}" -lt "4" ]
+				elif [ "${incorrect_iteration}" -lt "4" ]
 				then
 
 					echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears NOT to be registered.${x-}"
@@ -283,7 +283,7 @@ os-check_dns_record_address() {
 
 	        incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
 
-			if [ "${iteration}" = "1" ]
+			if [ "${incorrect_iteration}" = "1" ]
 			then
 
 				echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is registered but should NOT be.${x-}"
@@ -320,7 +320,7 @@ os-check_dns_record_address() {
 					fi
 				fi
 
-			elif [ "${iteration}" -lt "4" ]
+			elif [ "${incorrect_iteration}" -lt "4" ]
 			then
 
 				echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
