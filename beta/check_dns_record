@@ -121,7 +121,7 @@ os-check_dns_record_address() {
 
 	### Check that every item in reference_array is contained in name_array
 
-	for item in "${reference_array[@]}"
+	for reference_item in "${reference_array[@]}"
 	do
 
 		until [ "${accept-null}" = "y" ]
@@ -130,13 +130,13 @@ os-check_dns_record_address() {
 			getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
 			readarray name_array < "${name_file_path}"
 
-			item_name="$(echo ${item} | xargs)"
-			result="$(array_contains name_array ${item} && echo y || echo n)"
+			reference_item_name="$(echo ${reference_item} | xargs)"
+			result="$(array_contains name_array ${reference_item} && echo y || echo n)"
 
 	        if [ "${result}" = "y" ]
 	        then
 
-	            echo "${g-}${b-}The IPv${version} address record | ${x-}${item_name}${g-}${b-} | for DNS name | ${x-}${name}${g-}${b-} | is registered correctly.${x-}"
+	            echo "${g-}${b-}The IPv${version} address record | ${x-}${reference_item_name}${g-}${b-} | for DNS name | ${x-}${name}${g-}${b-} | is registered correctly.${x-}"
 				echo
 				outcome="ok"
 				accept="y"
@@ -148,7 +148,7 @@ os-check_dns_record_address() {
 				if [ "${incorrect_iteration}" = "1" ]
 				then
 
-		            echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is NOT registered.${x-}"
+		            echo "${r-}${b-}The IPv${version} address record | ${x-}${reference_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is NOT registered.${x-}"
 					echo
 
 					if [ "${autoset_dns-null}" = "y" ]
@@ -185,7 +185,7 @@ os-check_dns_record_address() {
 				elif [ "${incorrect_iteration}" -lt "4" ]
 				then
 
-					echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears NOT to be registered.${x-}"
+					echo "${r-}${b-}The IPv${version} address record | ${x-}${reference_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears NOT to be registered.${x-}"
 					echo
 
 					if [ "${outcome}" = "manualfix" ]
@@ -214,7 +214,11 @@ os-check_dns_record_address() {
 
 				else
 
-					echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears NOT to be registered.${x-}"
+					echo "${r-}${b-}The IPv${version} address record | ${x-}${reference_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears NOT to be registered after several lookups.${x-}"
+					echo
+					echo "${b-}This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider.${x-}"
+					echo
+					echo "${b-}Also ensure you're applying the correct setting to the authoritative DNS provider for this zone.${x-}"
 					echo
 
 					until [ "${valid-null}" = "y" ]
@@ -251,6 +255,8 @@ os-check_dns_record_address() {
 
 					done
 
+					unset incorrect_iteration outcome valid accept
+
 				fi
 
 			fi
@@ -259,24 +265,26 @@ os-check_dns_record_address() {
 
 	done
 
+	############################################################################
+
 	### Check if name_array has additional incorrect values
 
 	diff_array=()
-	for i in "${name_array[@]}"
+	for name_item in "${name_array[@]}"
 	do
 	     skip=
-	     for j in "${reference_array[@]}"
+	     for reference_item in "${reference_array[@]}"
 		 do
-	         [[ $i == $j ]] && { skip=1; break; }
+	         [[ $name_item == $reference_item ]] && { skip=1; break; }
 	     done
-	     [[ -n $skip ]] || diff_array+=("$i")
+	     [[ -n $skip ]] || diff_array+=("$name_item")
 	done
 	declare -p diff_array &> /dev/null
 
-	for i in "${diff_array[@]}"
+	for diff_item in "${diff_array[@]}"
 	do
 
-		item_name="$(echo ${item} | xargs)"
+		diff_item_name="$(echo ${diff_item} | xargs)"
 
 		until [ "${accept-null}" = "y" ]
 		do
@@ -286,7 +294,7 @@ os-check_dns_record_address() {
 			if [ "${incorrect_iteration}" = "1" ]
 			then
 
-				echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is registered but should NOT be.${x-}"
+				echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is registered but should NOT be.${x-}"
 				echo
 
 				if [ "${autoset_dns-null}" = "y" ]
@@ -296,7 +304,7 @@ os-check_dns_record_address() {
 					outcome="autofix"
 					os-set_dns_record [...]
 				else
-					echo "${g-}${b-}You must now remove this record on the authoritative DNS provider for this zone.${x-}"
+					echo "${b-}You must now remove this record on the authoritative DNS provider for this zone.${x-}"
 					echo
 					if [ "${dns_provider_setup-null}" = "y" ]
 					then
@@ -323,7 +331,7 @@ os-check_dns_record_address() {
 			elif [ "${incorrect_iteration}" -lt "4" ]
 			then
 
-				echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
+				echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
 				echo
 
 				if [ "${outcome}" = "manualfix" ]
@@ -352,7 +360,7 @@ os-check_dns_record_address() {
 
 			else
 
-				echo "${r-}${b-}The IPv${version} address record | ${x-}${item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
+				echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
 				echo
 
 				until [ "${valid-null}" = "y" ]
