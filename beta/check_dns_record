@@ -104,12 +104,6 @@ os-check_dns_record_address() {
 
 	############################################################################
 
-	getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
-
-	readarray reference_array < "${reference_file_path}"
-
-	readarray name_array < "${name_file_path}"
-
 	array_contains () {
 	    local array="$1[@]"
 	    local seeking=$2
@@ -128,11 +122,16 @@ os-check_dns_record_address() {
 	for i in "${reference_array[@]}"
 	do
 
-		item_name="$(echo ${i} | xargs)"
-		result="$(array_contains name_array "${i}"  && echo y || echo n)"
-
 		until [ "${accept-null}" = "y" ]
 		do
+
+			getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
+
+			readarray reference_array < "${reference_file_path}"
+			readarray name_array < "${name_file_path}"
+
+			item_name="$(echo ${i} | xargs)"
+			result="$(array_contains name_array "${i}"  && echo y || echo n)"
 
 	        if [ "${result}" = "y" ]
 	        then
