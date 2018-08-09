@@ -198,7 +198,7 @@ os-check_dns_record_address() {
 					tput sc
 					while [ "${wait}" -ge "0" ]
 					do
-					    case $((i % 4)) in
+					    case $((wait % 4)) in
 					        0 ) j="-" ;;
 					        1 ) j="/" ;;
 					        2 ) j="|" ;;
@@ -207,7 +207,7 @@ os-check_dns_record_address() {
 					    tput rc
 					    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
 					    sleep 1
-					    ((wait=i-1)) || true
+					    ((wait=wait-1)) || true
 					done
 					echo
 					echo
@@ -336,7 +336,7 @@ os-check_dns_record_address() {
 				tput sc
 				while [ "${wait}" -ge "0" ]
 				do
-				    case $((i % 4)) in
+				    case $((wait % 4)) in
 				        0 ) j="-" ;;
 				        1 ) j="/" ;;
 				        2 ) j="|" ;;
@@ -345,7 +345,7 @@ os-check_dns_record_address() {
 				    tput rc
 				    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
 				    sleep 1
-				    ((wait=i-1)) || true
+				    ((wait=wait-1)) || true
 				done
 				echo
 				echo
