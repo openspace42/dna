@@ -255,13 +255,15 @@ os-check_dns_record_address() {
 
 					done
 
-					unset incorrect_iteration outcome valid accept
+					unset incorrect_iteration outcome valid
 
 				fi
 
 			fi
 
 		done
+
+		unset accept
 
 	done
 
