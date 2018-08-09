@@ -121,7 +121,7 @@ os-check_dns_record_address() {
 
 	### Check that every item in reference_array is contained in name_array
 
-	for i in "${reference_array[@]}"
+	for item in "${reference_array[@]}"
 	do
 
 		until [ "${accept-null}" = "y" ]
@@ -130,8 +130,8 @@ os-check_dns_record_address() {
 			getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
 			readarray name_array < "${name_file_path}"
 
-			item_name="$(echo ${i} | xargs)"
-			result="$(array_contains name_array "${i}"  && echo y || echo n)"
+			item_name="$(echo ${item} | xargs)"
+			result="$(array_contains name_array ${item} && echo y || echo n)"
 
 	        if [ "${result}" = "y" ]
 	        then
@@ -194,9 +194,9 @@ os-check_dns_record_address() {
 						echo
 					fi
 
-					i="$[${incorrect_iteration}**3]"
+					wait="$[${incorrect_iteration}**3]"
 					tput sc
-					while [ "${i}" -ge "0" ]
+					while [ "${wait}" -ge "0" ]
 					do
 					    case $((i % 4)) in
 					        0 ) j="-" ;;
@@ -205,9 +205,9 @@ os-check_dns_record_address() {
 					        3 ) j="\\" ;;
 					    esac
 					    tput rc
-					    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${i}${n-} more seconds to allow for DNS propagation...${x-}"
+					    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
 					    sleep 1
-					    ((i=i-1)) || true
+					    ((wait=i-1)) || true
 					done
 					echo
 					echo
@@ -276,7 +276,7 @@ os-check_dns_record_address() {
 	for i in "${diff_array[@]}"
 	do
 
-		item_name="$(echo ${i} | xargs)"
+		item_name="$(echo ${item} | xargs)"
 
 		until [ "${accept-null}" = "y" ]
 		do
@@ -332,9 +332,9 @@ os-check_dns_record_address() {
 					echo
 				fi
 
-				i="$[${incorrect_iteration}**3]"
+				wait="$[${incorrect_iteration}**3]"
 				tput sc
-				while [ "${i}" -ge "0" ]
+				while [ "${wait}" -ge "0" ]
 				do
 				    case $((i % 4)) in
 				        0 ) j="-" ;;
@@ -343,9 +343,9 @@ os-check_dns_record_address() {
 				        3 ) j="\\" ;;
 				    esac
 				    tput rc
-				    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${i}${n-} more seconds to allow for DNS propagation...${x-}"
+				    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
 				    sleep 1
-				    ((i=i-1)) || true
+				    ((wait=i-1)) || true
 				done
 				echo
 				echo
