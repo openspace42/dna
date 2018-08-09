@@ -117,8 +117,10 @@ os-check_dns_record_address() {
 	    local array="$1[@]"
 	    local seeking=$2
 	    local in=1
-	    for element in "${!array}"; do
-	        if [[ $element == $seeking ]]; then
+	    for element in "${!array-null}"
+		do
+	        if [[ $element == $seeking ]]
+			then
 	            in=0
 	            break
 	        fi
@@ -201,7 +203,7 @@ os-check_dns_record_address() {
 						echo
 					fi
 
-					wait="$[${incorrect_iteration}**3]"
+					wait="$[${incorrect_iteration}**2]"
 					tput sc
 					while [ "${wait}" -ge "0" ]
 					do
