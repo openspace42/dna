@@ -106,7 +106,14 @@ os-check_dns_record_address() {
 
 	############################################################################
 
-	array_contains () {
+	lookup_name(){
+
+		getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
+		readarray name_array < "${name_file_path}"
+
+	}
+
+	array_contains() {
 	    local array="$1[@]"
 	    local seeking=$2
 	    local in=1
@@ -127,10 +134,10 @@ os-check_dns_record_address() {
 		until [ "${accept-null}" = "y" ]
 		do
 
-			getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
-			readarray name_array < "${name_file_path}"
-
 			reference_item_name="$(echo ${reference_item} | xargs)"
+
+			lookup_name
+
 			result="$(array_contains name_array ${reference_item} && echo y || echo n)"
 
 	        if [ "${result}" = "y" ]
@@ -168,10 +175,10 @@ os-check_dns_record_address() {
 				            then
 								echo "${b-}Ok, automatically setting this DNS record.${x-}"
 								echo
-								routcome="autofix"
+								outcome="autofix"
 								os-set_dns_record [...]
 							else
-								read -rp "${b-}Ok,  after you've manually set the record and are ready to continue.${x-}"
+								read -rp "${b-}Ok, press enter after you've manually set the record and are ready to continue.${x-}"
 								echo
 								outcome="manualfix"
 							fi
@@ -271,17 +278,25 @@ os-check_dns_record_address() {
 
 	### Check if name_array has additional incorrect values
 
-	diff_array=()
-	for name_item in "${name_array[@]}"
-	do
-	     skip=
-	     for reference_item in "${reference_array[@]}"
-		 do
-	         [[ $name_item == $reference_item ]] && { skip=1; break; }
-	     done
-	     [[ -n $skip ]] || diff_array+=("$name_item")
-	done
-	declare -p diff_array &> /dev/null
+	calculate_extra_diff() {
+
+		diff_array=()
+		for name_item in "${name_array[@]}"
+		do
+		     skip=
+		     for reference_item in "${reference_array[@]}"
+			 do
+		         [[ $name_item == $reference_item ]] && { skip=1; break; }
+		     done
+		     [[ -n $skip ]] || diff_array+=("$name_item")
+		done
+		declare -p diff_array &> /dev/null
+
+	}
+
+	lookup_name
+
+	calculate_extra_diff
 
 	for diff_item in "${diff_array[@]}"
 	do
@@ -291,119 +306,147 @@ os-check_dns_record_address() {
 		until [ "${accept-null}" = "y" ]
 		do
 
-	        incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
+			### Check to see if this extra item is still actually erroneously registered on DNS
 
-			if [ "${incorrect_iteration}" = "1" ]
-			then
+			lookup_name
 
-				echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is registered but should NOT be.${x-}"
+			calculate_extra_diff
+
+			result="$(array_contains diff_array ${diff_item} && echo y || echo n)"
+
+			if [ "${result}" = "n" ]
+	        then
+
+				echo "${g-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${g-}${b-} | for DNS name | ${x-}${name}${g-}${b-} | has been correctly removed.${x-}"
 				echo
-
-				if [ "${autoset_dns-null}" = "y" ]
-				then
-					echo "${b-}Automatically removing this record on your DNS provider.${x-}"
-					echo
-					outcome="autofix"
-					os-set_dns_record [...]
-				else
-					echo "${b-}You must now remove this record on the authoritative DNS provider for this zone.${x-}"
-					echo
-					if [ "${dns_provider_setup-null}" = "y" ]
-					then
-						ask_for_boolean_question="Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
-			            os-ask_for_boolean_def_yes
-			            if [ "$ask_for_boolean_output" = "y" ]
-			            then
-							echo "${b-}Ok, automatically removing this DNS record.${x-}"
-							echo
-							outcome="autofix"
-							os-set_dns_record [...]
-						else
-							read -rp "${b-}Ok, press enter after you've manually removed the record and are ready to continue...${x-}"
-							echo
-							outcome="manualfix"
-						fi
-					else
-						read -rp "${b-}Press enter after you've removed the record and are ready to continue...${x-}"
-						echo
-						outcome="manualfix"
-					fi
-				fi
-
-			elif [ "${incorrect_iteration}" -le "4" ]
-			then
-
-				echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
-				echo
-
-				if [ "${outcome}" = "manualfix" ]
-				then
-					echo "${b-}As we wait to ensure DNS propagation, ensure you've correctly removed the record on your DNS provider.${x-}"
-					echo
-				fi
-
-				wait="$[${incorrect_iteration}**3]"
-				tput sc
-				while [ "${wait}" -ge "0" ]
-				do
-				    case $((wait % 4)) in
-				        0 ) j="-" ;;
-				        1 ) j="/" ;;
-				        2 ) j="|" ;;
-				        3 ) j="\\" ;;
-				    esac
-				    tput rc
-				    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
-				    sleep 1
-				    ((wait=wait-1)) || true
-				done
-				echo
-				echo
+				outcome="ok"
+				accept="y"
 
 			else
 
-				echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
-				echo
+				incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
 
-				until [ "${valid-null}" = "y" ]
-				do
+				if [ "${incorrect_iteration}" = "1" ]
+				then
 
-					read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
-					case $answer in
-						"")	echo
-							valid=y
-							accept=n
-							;;
-						y)	echo -e "\\n"
-							valid=y
-							accept=n
-							;;
-						s)	echo -e "\\n"
-							echo "${b-}Ok, skipping DNS check for this record...${x-}"
-							echo
-							valid=y
-							accept=y
-							;;
-						e)	echo -e "\\n"
-							echo "${b-}Exiting...${x-}"
-							echo
-							exit
-							;;
-						*)	echo -e "\\n"
-							echo "${b-}Invalid option. Try again...${x-}"
-							echo
-							valid=n
-							accept=n
-							;;
-					esac
+					echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | is registered but should NOT be.${x-}"
+					echo
 
-				done
+					if [ "${autoset_dns-null}" = "y" ]
+					then
+						echo "${b-}Automatically removing this record on your DNS provider.${x-}"
+						echo
+						outcome="autofix"
+						os-set_dns_record [...]
+					else
+						echo "${b-}You must now remove this record on the authoritative DNS provider for this zone.${x-}"
+						echo
+						if [ "${dns_provider_setup-null}" = "y" ]
+						then
+							ask_for_boolean_question="Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
+				            os-ask_for_boolean_def_yes
+				            if [ "$ask_for_boolean_output" = "y" ]
+				            then
+								echo "${b-}Ok, automatically removing this DNS record.${x-}"
+								echo
+								outcome="autofix"
+								os-set_dns_record [...]
+							else
+								read -rp "${b-}Ok, press enter after you've manually removed the record and are ready to continue...${x-}"
+								echo
+								outcome="manualfix"
+							fi
+						else
+							read -rp "${b-}Press enter after you've removed the record and are ready to continue...${x-}"
+							echo
+							outcome="manualfix"
+						fi
+					fi
+
+				elif [ "${incorrect_iteration}" -le "4" ]
+				then
+
+					echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered even though it should NOT be.${x-}"
+					echo
+
+					if [ "${outcome}" = "manualfix" ]
+					then
+						echo "${b-}As we wait to ensure DNS propagation, ensure you've correctly removed the record on your DNS provider.${x-}"
+						echo
+					fi
+
+					wait="$[${incorrect_iteration}**3]"
+					tput sc
+					while [ "${wait}" -ge "0" ]
+					do
+					    case $((wait % 4)) in
+					        0 ) j="-" ;;
+					        1 ) j="/" ;;
+					        2 ) j="|" ;;
+					        3 ) j="\\" ;;
+					    esac
+					    tput rc
+					    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
+					    sleep 1
+					    ((wait=wait-1)) || true
+					done
+					echo
+					echo
+
+				else
+
+					echo "${r-}${b-}The IPv${version} address record | ${x-}${diff_item_name}${r-}${b-} | for DNS name | ${x-}${name}${r-}${b-} | still appears to be registered after several lookups even though it should NOT be.${x-}"
+					echo
+					echo "${b-}This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider.${x-}"
+					echo
+					echo "${b-}Also ensure you're removing the record from the authoritative DNS provider for this zone.${x-}"
+					echo
+
+					until [ "${valid-null}" = "y" ]
+					do
+
+						read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
+						case $answer in
+							"")	echo
+								valid=y
+								accept=n
+								;;
+							y)	echo -e "\\n"
+								valid=y
+								accept=n
+								;;
+							s)	echo -e "\\n"
+								echo "${b-}Ok, skipping DNS check for this record...${x-}"
+								echo
+								valid=y
+								accept=y
+								;;
+							e)	echo -e "\\n"
+								echo "${b-}Exiting...${x-}"
+								echo
+								exit
+								;;
+							*)	echo -e "\\n"
+								echo "${b-}Invalid option. Try again...${x-}"
+								echo
+								valid=n
+								accept=n
+								;;
+						esac
+
+					done
+
+					unset incorrect_iteration outcome valid
+
+				fi
 
 			fi
 
-			unset incorrect_iteration outcome valid accept
+		fi
 
 		done
+
+		unset accept
 
 	done
 
