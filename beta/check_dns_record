@@ -450,6 +450,9 @@ os-check_dns_record_address() {
 
 	done
 
+	echo "${g-}${b-}All DNS checks for DNS name | ${x-}${name}${g-}${b-} | completed successfully.${x-}"
+	echo
+
 	rm -rf "${dns_checks_dir}"
 
 }
