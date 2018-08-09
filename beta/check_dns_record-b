@@ -270,7 +270,7 @@ os-check_dns_record_address() {
 
 		done
 
-		unset accept
+		unset incorrect_iteration outcome valid accept
 
 	done
 
@@ -444,7 +444,7 @@ os-check_dns_record_address() {
 
 		done
 
-		unset accept
+		unset incorrect_iteration outcome valid accept
 
 	done
 
