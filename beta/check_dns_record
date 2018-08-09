@@ -128,11 +128,11 @@ os-check_dns_record_address() {
 	for i in "${reference_array[@]}"
 	do
 
+		item_name="$(echo ${i} | xargs)"
+		result="$(array_contains name_array "${i}"  && echo y || echo n)"
+
 		until [ "${accept-null}" = "y" ]
 		do
-
-	        item_name="$(echo ${i} | xargs)"
-	        result="$(array_contains name_array "${i}"  && echo y || echo n)"
 
 	        if [ "${result}" = "y" ]
 	        then
