@@ -442,8 +442,6 @@ os-check_dns_record_address() {
 
 			fi
 
-		fi
-
 		done
 
 		unset accept
