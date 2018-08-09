@@ -197,7 +197,7 @@ os-check_dns_record_address() {
 
 					i="$[${incorrect_iteration}**3]"
 					tput sc
-					while [ "${i}" -gt "0" ]
+					while [ "${i}" -ge "0" ]
 					do
 					    case $((i % 4)) in
 					        0 ) j="-" ;;
@@ -276,6 +276,7 @@ os-check_dns_record_address() {
 
 	for i in "${diff_array[@]}"
 	do
+
 		item_name="$(echo ${i} | xargs)"
 
 		until [ "${accept-null}" = "y" ]
@@ -306,7 +307,7 @@ os-check_dns_record_address() {
 			            then
 							echo "${b-}Ok, automatically removing this DNS record.${x-}"
 							echo
-							routcome="autofix"
+							outcome="autofix"
 							os-set_dns_record [...]
 						else
 							read -rp "${b-}Ok, press enter after you've manually removed the record and are ready to continue...${x-}"
@@ -334,7 +335,7 @@ os-check_dns_record_address() {
 
 				i="$[${incorrect_iteration}**3]"
 				tput sc
-				while [ "${i}" -gt "0" ]
+				while [ "${i}" -ge "0" ]
 				do
 				    case $((i % 4)) in
 				        0 ) j="-" ;;
@@ -390,6 +391,8 @@ os-check_dns_record_address() {
 				done
 
 			fi
+
+			unset incorrect_iteration outcome valid accept
 
 		done
 
