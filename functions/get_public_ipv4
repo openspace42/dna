@@ -24,4 +24,6 @@ os-get_public_ipv4() {
 
     fi
 
+    unset silent
+
 }
