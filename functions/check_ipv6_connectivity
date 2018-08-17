@@ -16,7 +16,7 @@ os-check_ipv6_connectivity() {
 
     echo_function() {
 
-        while getopts ":m" arguments; do
+        while getopts ":m:" arguments; do
             case $arguments in
                 m)	message="$OPTARG"
                 ;;
