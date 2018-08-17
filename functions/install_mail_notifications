@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-install_mail_notifications() {
+dna-install_mail_notifications() {
 
     hostname="$(cat /etc/hostname)"
 

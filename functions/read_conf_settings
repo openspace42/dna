@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-read_conf_settings() {
+dna-read_conf_settings() {
 
     conf_files="$(find $conf_dir -type f | xargs)"
 

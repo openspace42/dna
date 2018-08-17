@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-add_cron_job() {
+dna-add_cron_job() {
 
     curl https://habilis.net/cronic/cronic > /usr/bin/cronic
     chmod +x /usr/bin/cronic
@@ -12,7 +12,7 @@ os-add_cron_job() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
     while getopts ":n:t:c:" arguments; do
@@ -25,7 +25,7 @@ os-add_cron_job() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            os-exit_function
+            dna-exit_function
             ;;
         esac
     done
@@ -35,21 +35,21 @@ os-add_cron_job() {
     then
         echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
     if [ -z "${time-}" ]
     then
         echo "${r-}${b-}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
     if [ -z "${content-}" ]
     then
         echo "${r-}${b-}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
     ########################################################################

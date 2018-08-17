@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-check_dns_record_address() {
+dna-check_dns_record_address() {
 
 	### This function verifies DNS "address" records [A/AAAA]. For other types of checks see other functions below.
 
@@ -33,7 +33,7 @@ os-check_dns_record_address() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
     while getopts ":n:r:v:" arguments; do
@@ -46,7 +46,7 @@ os-check_dns_record_address() {
 	            ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 	            echo
-	            os-exit_function
+	            dna-exit_function
 	            ;;
         esac
     done
@@ -56,21 +56,21 @@ os-check_dns_record_address() {
     then
         echo "${r-}${b-}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
 	if [ -z "${reference-}" ]
     then
         echo "${r-}${b-}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
 	if [ -z "${version-}" ]
     then
         echo "${r-}${b-}Version [option | -v |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
 	############################################################################
@@ -165,20 +165,20 @@ os-check_dns_record_address() {
 						echo "${b-}Automatically setting this record on your DNS provider.${x-}"
 						echo
 						outcome="autofix"
-						os-set_dns_record [...]
+						dna-set_dns_record [...]
 					else
 						echo "${g-}${b-}You must now set this record on the authoritative DNS provider for this zone.${x-}"
 						echo
 						if [ "${dns_provider_setup-null}" = "y" ]
 						then
 							ask_for_boolean_question="Would you like to automatically set this record on [one of] your previously specified DNS provider[s]?"
-				            os-ask_for_boolean_def_yes
+				            dna-ask_for_boolean_def_yes
 				            if [ "$ask_for_boolean_output" = "y" ]
 				            then
 								echo "${b-}Ok, automatically setting this DNS record.${x-}"
 								echo
 								outcome="autofix"
-								os-set_dns_record [...]
+								dna-set_dns_record [...]
 							else
 								read -rp "${b-}Ok, press enter after you've manually set the record and are ready to continue.${x-}"
 								echo
@@ -339,20 +339,20 @@ os-check_dns_record_address() {
 						echo "${b-}Automatically removing this record on your DNS provider.${x-}"
 						echo
 						outcome="autofix"
-						os-set_dns_record [...]
+						dna-set_dns_record [...]
 					else
 						echo "${b-}You must now remove this record on the authoritative DNS provider for this zone.${x-}"
 						echo
 						if [ "${dns_provider_setup-null}" = "y" ]
 						then
 							ask_for_boolean_question="Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
-				            os-ask_for_boolean_def_yes
+				            dna-ask_for_boolean_def_yes
 				            if [ "$ask_for_boolean_output" = "y" ]
 				            then
 								echo "${b-}Ok, automatically removing this DNS record.${x-}"
 								echo
 								outcome="autofix"
-								os-set_dns_record [...]
+								dna-set_dns_record [...]
 							else
 								read -rp "${b-}Ok, press enter after you've manually removed the record and are ready to continue...${x-}"
 								echo

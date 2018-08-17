@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-define_vars() {
+dna-define_vars() {
 
 	### Define variables. Don't change these! | No trailing slash!
 

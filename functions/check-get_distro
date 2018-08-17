@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-os-get_distro_name() {
+dna-get_distro_name() {
 
     distro_name="$(lsb_release --id | cut -f2)"
 
 }
 
-os-check_distro_ubuntu() {
+dna-check_distro_ubuntu() {
 
     ### Check that the running distro is Ubuntu
 
@@ -17,16 +17,16 @@ os-check_distro_ubuntu() {
         lsb_release -i
         echo "${b-}$short_name only runs on Ubuntu.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
 }
 
-os-check_distro_ubuntu_lts() {
+dna-check_distro_ubuntu_lts() {
 
     ### Check that the running distro is Ubuntu on an LTS version
 
-    os-check_distro_ubuntu()
+    dna-check_distro_ubuntu()
 
     if ! lsb_release -d | grep -q LTS
     then
@@ -35,7 +35,7 @@ os-check_distro_ubuntu_lts() {
         lsb_release -d
         echo "${b-}$short_name only runs on Ubuntu LTS versions.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
 
 }

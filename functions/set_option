@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-set_option() {
+dna-set_option() {
 
 	########################################################################
 
@@ -20,7 +20,7 @@ os-set_option() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			os-exit_function
+			dna-exit_function
 			;;
 		esac
 	done
@@ -30,7 +30,7 @@ os-set_option() {
 	then
 		echo "${r-}${b-}Argument | option [-o] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
 		echo
-		os-exit_function
+		dna-exit_function
 	fi
 
 	if [ ! -z "${describe-}" ]
@@ -42,7 +42,7 @@ os-set_option() {
 			;;
 			*)	echo "${r-}${b-}Invalid content for describe argument in function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			os-exit_function
+			dna-exit_function
 			;;
 		esac
 	fi
@@ -56,7 +56,7 @@ os-set_option() {
 			;;
 			*)	echo "${r-}${b-}Invalid content for validate argument in function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			os-exit_function
+			dna-exit_function
 			;;
 		esac
 	fi

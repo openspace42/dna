@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-get_public_ipv4() {
+dna-get_public_ipv4() {
 
     while getopts ":s" arguments; do
         case $arguments in
@@ -8,7 +8,7 @@ os-get_public_ipv4() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            os-exit_function
+            dna-exit_function
             ;;
         esac
     done

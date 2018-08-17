@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-define_formatting() {
+dna-define_formatting() {
 
 	r=$'\e[1;31m'
 	g=$'\e[1;32m'

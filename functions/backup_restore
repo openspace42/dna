@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-br_update_storage_info() {
+dna-br_update_storage_info() {
 
 	free_disk_space="$(df -m --output=avail "$backup_local_storage_path" | xargs | sed -e 's/Avail //g')"
 	ref_dir_size="$(du -sm "$backup_ref_dir" | xargs | sed -e "s|"${backup_ref_dir}"||g" | xargs)"
@@ -12,7 +12,7 @@ os-br_update_storage_info() {
 
 }
 
-os-br_purge_loop() {
+dna-br_purge_loop() {
 
 	if [ $local_archive_items -gt $min_local_backups ]
 	then
@@ -33,7 +33,7 @@ os-br_purge_loop() {
 			( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
 		fi
 
-		os-br_update_storage_info
+		dna-br_update_storage_info
 
 	else
 
@@ -66,13 +66,13 @@ os-br_purge_loop() {
 
 		fi
 
-		os-exit_function
+		dna-exit_function
 
 	fi
 
 }
 
-os-br_purge_backups() {
+dna-br_purge_backups() {
 
 	### Purge backups older than the latest $max_local_backups
 
@@ -81,7 +81,7 @@ os-br_purge_backups() {
 	then
 		tail_number=$(( $max_local_backups + 1 ))
 		( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
-		os-br_update_storage_info
+		dna-br_update_storage_info
 	fi
 
 	echo "${b-}You have $local_archive_items local backups occupying $local_archive_size MB of space.${x-}"
@@ -100,7 +100,7 @@ os-br_purge_backups() {
 
 		while [ $local_archive_size -gt $max_local_storage ]
 		do
-			os-br_purge_loop
+			dna-br_purge_loop
 		done
 
 		echo "${g-}${b-}Local archive size now low enough [$local_archive_size MB] to respect your settings.${x-}"
@@ -125,7 +125,7 @@ os-br_purge_backups() {
 
 		while [ $est_backup_size -gt $free_disk_space ]
 		do
-			os-br_purge_loop
+			dna-br_purge_loop
 		done
 
 		echo "${g-}${b-}Enough free space [$free_disk_space MB] now available for new backup.${x-}"
@@ -139,7 +139,7 @@ os-br_purge_backups() {
 
 }
 
-os-br_purge_dirs() {
+dna-br_purge_dirs() {
 
 	### Purge temp and create directories
 
@@ -160,7 +160,7 @@ os-br_purge_dirs() {
 
 }
 
-os-br_create_dirs() {
+dna-br_create_dirs() {
 
 	if [ "${1:-null}" = "backup" ]
 	then
@@ -177,7 +177,7 @@ os-br_create_dirs() {
 
 }
 
-os-br_purge_incomplete_archives() {
+dna-br_purge_incomplete_archives() {
 
 	if [ -d "$backup_local_storage_path/archive" ]
 	then
@@ -186,7 +186,7 @@ os-br_purge_incomplete_archives() {
 
 }
 
-os-br_backup_locally() {
+dna-br_backup_locally() {
 
     while getopts ":ls" arguments; do
 		case $arguments in
@@ -196,7 +196,7 @@ os-br_backup_locally() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			os-exit_function
+			dna-exit_function
 			;;
 		esac
 	done
@@ -212,7 +212,7 @@ os-br_backup_locally() {
 
 		### Abort if the current installation was never completed
 
-		os-check_install_complete
+		dna-check_install_complete
 
 		if [ $install_complete = "n" ]
 		then
@@ -222,7 +222,7 @@ os-br_backup_locally() {
 	        echo
 	        echo "${b-}Please finish installing $short_name before running this script.${x-}"
 	        echo
-			os-exit_function
+			dna-exit_function
 		fi
 
 	fi
@@ -277,18 +277,18 @@ os-br_backup_locally() {
 
 }
 
-os-br_last_local_backup() {
+dna-br_last_local_backup() {
 
     echo "${b-}Now performing a last backup [locally - no S3 of course] this machine's currently running $short_name installation just in case...${x-}"
 	echo
 
-	os-br_create_dirs backup
+	dna-br_create_dirs backup
 
-	os-br_update_storage_info noS3
+	dna-br_update_storage_info noS3
 
-	os-br_purge_backups
+	dna-br_purge_backups
 
-	os-br_backup_locally last
+	dna-br_backup_locally last
 
 	### If not restoring a previous state of this same installation, then move the backups directory to an "old" named one.
 
@@ -315,7 +315,7 @@ os-br_last_local_backup() {
 
 }
 
-os-br_restore_from_here() {
+dna-br_restore_from_here() {
 
 	if [ ! -d "$backup_local_storage_path/archive" ]
 	then
@@ -443,7 +443,7 @@ os-br_restore_from_here() {
 
 }
 
-os-br_restore_from_standalone() {
+dna-br_restore_from_standalone() {
 
 	echo "${b-}Ok, restoring from a standalone $short_name backup file.${x-}"
 	echo
@@ -543,7 +543,7 @@ os-br_restore_from_standalone() {
 
 }
 
-os-br_duplicity_loop() {
+dna-br_duplicity_loop() {
 
 	# Export some ENV variables so you don't have to type anything
 	export AWS_ACCESS_KEY_ID=$s3_access_key_id
@@ -688,7 +688,7 @@ os-br_duplicity_loop() {
 		echo
 		echo "${b-}If you're sure this is not the case, reboot the server and run this script again or see what happens at the next automated run.${x-}"
 		echo
-		os-exit_function
+		dna-exit_function
 
 	fi
 
@@ -696,7 +696,7 @@ os-br_duplicity_loop() {
 
 
 
-os-br_backup_to_S3() {
+dna-br_backup_to_S3() {
 
 	echo "${b-}Now backing up to S3...${x-}"
 	echo
@@ -711,10 +711,10 @@ os-br_backup_to_S3() {
         echo
         echo "${r-}${b-}NO backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation.${x-}"
         echo
-		os-exit_function
+		dna-exit_function
     fi
 
-	os-br_duplicity_loop backup
+	dna-br_duplicity_loop backup
 
 	### Also upload today's full backup file to S3 if s3_monthly_uploads=y [only if this is NOT a manual run]
 
@@ -761,7 +761,7 @@ os-br_backup_to_S3() {
 
 
 
-os-br_restore_from_S3() {
+dna-br_restore_from_S3() {
 
 	if [ "${1:-null}" = "test" ]
 	then
@@ -775,7 +775,7 @@ os-br_restore_from_S3() {
 	echo "${b-}This is going to take some time and will NOT output any progress information until it's done.${x-}"
 	echo
 
-	os-br_duplicity_loop restore
+	dna-br_duplicity_loop restore
 
 	if grep -q "No backup chains found" "$backup_local_storage_path/temp/duplicity-log"
 	then
@@ -830,7 +830,7 @@ os-br_restore_from_S3() {
 						echo
 						echo "${b-}Ok, aborting.${x-}"
 						echo
-						os-exit_function
+						dna-exit_function
 					fi
 				else
 					echo "${b-}Continuing with local-only backup anyway...${x-}"
@@ -869,7 +869,7 @@ os-br_restore_from_S3() {
 
 }
 
-os-br_launch_restore() {
+dna-br_launch_restore() {
 
 	while getopts ":s" arguments; do
 		case $arguments in
@@ -879,7 +879,7 @@ os-br_launch_restore() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			os-exit_function
+			dna-exit_function
 			;;
 		esac
 	done
@@ -919,7 +919,7 @@ os-br_launch_restore() {
 	    if [ $restore_source = "here" ]
 	    then
 
-	    	os-br_restore_from_here
+	    	dna-br_restore_from_here
 
 	    else
 
@@ -960,11 +960,11 @@ os-br_launch_restore() {
 			if [ $restore_type = "s3" ]
 			then
 
-				os-br_restore_from_S3
+				dna-br_restore_from_S3
 
 			else
 
-				os-br_restore_from_standalone
+				dna-br_restore_from_standalone
 
 				echo
 
@@ -974,7 +974,7 @@ os-br_launch_restore() {
 
 	else
 
-		os-br_restore_from_S3
+		dna-br_restore_from_S3
 
 	fi
 

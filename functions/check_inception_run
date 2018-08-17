@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-check_inception_run() {
+dna-check_inception_run() {
 
     if [ -f $os_base_dir/inception/run-ok ]
     then
@@ -35,7 +35,7 @@ os-check_inception_run() {
             echo
             echo "${b-} | bash inception/setup |${x-}"
             echo
-            os-exit_function
+            dna-exit_function
         fi
     fi
 

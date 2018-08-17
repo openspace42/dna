@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-os-check_argument_presence() {
+dna-check_argument_presence() {
 
     if [ $# -eq 0 ]
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        os-exit_function
+        dna-exit_function
     fi
     
 }

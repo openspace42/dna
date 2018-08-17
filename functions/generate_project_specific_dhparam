@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-generate_project_specific_dhparam() {
+dna-generate_project_specific_dhparam() {
 
     if [ -f $tls_dir/dh.pem ]
     then

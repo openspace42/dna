@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-check_install_complete() {
+dna-check_install_complete() {
 
     if [ -f $conf_dir/version/version_initiated ]
     then

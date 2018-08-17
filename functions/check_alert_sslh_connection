@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-check_sslh_connection() {
+dna-check_sslh_connection() {
 
     # Determine if user is connected via SSH on SSLH port 443
 

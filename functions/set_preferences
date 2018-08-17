@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-set_admin_email() {
+dna-set_admin_email() {
 
 	describe_setting() {
 
@@ -9,5 +9,5 @@ os-set_admin_email() {
 
 	}
 
-	os-set_option -o admin_mail -v n -d y
+	dna-set_option -o admin_mail -v n -d y
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-check_dpkg_availability() {
+dna-check_dpkg_availability() {
 
     echo "${b-}Now ensuring DPKG is available...${x-}"
     echo

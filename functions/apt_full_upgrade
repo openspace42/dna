@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-apt_full_upgrade() {
+dna-apt_full_upgrade() {
 
     while getopts ":e" arguments; do
         case $arguments in
@@ -8,7 +8,7 @@ os-apt_full_upgrade() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            os-exit_function
+            dna-exit_function
             ;;
         esac
     done
@@ -22,7 +22,7 @@ os-apt_full_upgrade() {
         set +e
     fi
 
-    os-apt_update
+    dna-apt_update
     apt-get -y upgrade
     apt-get -y dist-upgrade
     apt-get -y autoremove

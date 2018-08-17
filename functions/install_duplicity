@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-os-install_duplicity() {
+dna-install_duplicity() {
 
 	echo "${b-}Now installing the duplicity backup utility...${x-}"
 	echo
 
-	os-get_distro_name
+	dna-get_distro_name
 
 	if [ $distro_name = "Ubuntu" ]
 	then
-		os-install_dependencies -p "software-properties-common"
+		dna-install_dependencies -p "software-properties-common"
 		apt-add-repository ppa:duplicity-team/ppa -y
 		apt-get update
 		echo
 	fi
 
-	os-install_dependencies -p "libpcre3-dev duplicity python-pip s3cmd pwgen pv ufw curl" #review
+	dna-install_dependencies -p "libpcre3-dev duplicity python-pip s3cmd pwgen pv ufw curl" #review
 	pip install --upgrade pip
 	pip install boto || true
 	pip install --upgrade boto

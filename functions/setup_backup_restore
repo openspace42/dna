@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-setup_backup_restore_s3() {
+dna-setup_backup_restore_s3() {
 
 	while getopts ":s" arguments; do
 		case $arguments in
@@ -8,13 +8,13 @@ os-setup_backup_restore_s3() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			os-exit_function
+			dna-exit_function
 			;;
 		esac
 	done
     OPTIND=1
 
-	os-install_dependencies -p "s3cmd"
+	dna-install_dependencies -p "s3cmd"
 
 	mkdir -p "$conf_backups_s3_dir"
 
@@ -60,7 +60,7 @@ os-setup_backup_restore_s3() {
 					mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase_old"
 				fi
 
-				os-set_option -o backups_passphrase -v n -d y -p backups/s3
+				dna-set_option -o backups_passphrase -v n -d y -p backups/s3
 
 			else
 
@@ -123,7 +123,7 @@ os-setup_backup_restore_s3() {
 			mv "$conf_backups_s3_dir/backups_passphrase" "$conf_backups_s3_dir/backups_passphrase_old"
 		fi
 
-		os-set_option -o backups_passphrase -v n -d y -p backups/s3
+		dna-set_option -o backups_passphrase -v n -d y -p backups/s3
 
 	fi
 
@@ -147,7 +147,7 @@ os-setup_backup_restore_s3() {
 
 			}
 
-			os-set_option -o "$i" -v n -d y -p backups/s3
+			dna-set_option -o "$i" -v n -d y -p backups/s3
 
 		done
 
@@ -230,7 +230,7 @@ os-setup_backup_restore_s3() {
 
 }
 
-os-setup_backup_restore() {
+dna-setup_backup_restore() {
 
 	mkdir -p $conf_backups_local_dir
 
@@ -291,7 +291,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_local_storage_location -v y -d y -p backups/local
+	dna-set_option -o backup_local_storage_location -v y -d y -p backups/local
 
 	if [ $backup_local_storage_location = "default" ]
     then
@@ -326,7 +326,7 @@ os-setup_backup_restore() {
 
 		}
 
-		os-set_option -o backup_local_storage_path -v y -d y -p backups/local
+		dna-set_option -o backup_local_storage_path -v y -d y -p backups/local
 
     fi
 
@@ -354,7 +354,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_compression_type -v y -d y -p backups/local
+	dna-set_option -o backup_compression_type -v y -d y -p backups/local
 
 	describe_setting() {
 
@@ -363,7 +363,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o min_local_backups -v n -d y -p backups/local
+	dna-set_option -o min_local_backups -v n -d y -p backups/local
 
 
 	describe_setting() {
@@ -373,7 +373,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_backups -v n -d y -p backups/local
+	dna-set_option -o max_local_backups -v n -d y -p backups/local
 
 
 	describe_setting() {
@@ -383,7 +383,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o max_local_storage -v n -d y -p backups/local
+	dna-set_option -o max_local_storage -v n -d y -p backups/local
 
 
 	describe_setting() {
@@ -412,7 +412,7 @@ os-setup_backup_restore() {
 
 	}
 
-	os-set_option -o backup_archival_location -v y -d y -p backups
+	dna-set_option -o backup_archival_location -v y -d y -p backups
 
 
 	if [ $backup_archival_location = "s3" ]
@@ -456,7 +456,7 @@ os-setup_backup_restore() {
 		if [ "${s3_continue_setup-null}" = "y" ]
 		then
 
-			os-setup_backup_restore_s3
+			dna-setup_backup_restore_s3
 
 			### Check that the user has actually completed and confirmed S3 connection
 
@@ -472,7 +472,7 @@ os-setup_backup_restore() {
 
 				}
 
-				os-set_option -o duplicity_min_history -v n -d y -p backups/s3
+				dna-set_option -o duplicity_min_history -v n -d y -p backups/s3
 
 				describe_setting() {
 
@@ -498,7 +498,7 @@ os-setup_backup_restore() {
 
 				}
 
-				os-set_option -o s3_monthly_uploads -v y -d y -p backups/s3
+				dna-set_option -o s3_monthly_uploads -v y -d y -p backups/s3
 
 			fi
 

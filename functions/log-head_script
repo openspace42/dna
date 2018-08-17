@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-log_script() {
+dna-log_script() {
 
 	script_name=$(basename "$0")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
@@ -22,7 +22,7 @@ os-log_script() {
 
 }
 
-os-head_script() {
+dna-head_script() {
 
 	script_name=$(basename "$0")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
