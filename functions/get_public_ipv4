@@ -4,7 +4,7 @@ os-get_public_ipv4() {
 
     while getopts ":s" arguments; do
         case $arguments in
-            s)	silent="y"
+            s)	export silent="y"
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
@@ -16,13 +16,7 @@ os-get_public_ipv4() {
 
     this_ipv4="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
-    if [ ! "${silent-null}" = "y" ]
-    then
-
-        echo "${b-}Your IPv4 public address appears to be: | $this_ipv4 | ${x-}"
-        echo
-
-    fi
+    dna-echo -m "Your IPv4 public address appears to be: | ${this_ipv4} |."
 
     unset silent
 

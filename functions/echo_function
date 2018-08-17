@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-os-echo_function() {
+dna-echo() {
 
     while getopts ":m:" arguments; do
         case $arguments in
