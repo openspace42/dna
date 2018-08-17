@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+os-echo_function() {
+
+    while getopts ":m:" arguments; do
+        case $arguments in
+            m)	message="$OPTARG"
+            ;;
+            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
+            echo
+            os-exit_function
+            ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ ! "${silent-null}" = "y" ]
+    then
+        echo "${b-}${message}${x-}"
+        echo
+    fi
+
+    unset message
+
+}
