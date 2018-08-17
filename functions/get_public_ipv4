@@ -16,7 +16,7 @@ os-get_public_ipv4() {
 
     this_ipv4="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
-    if [ ! "${silent}" = "y" ]
+    if [ ! "${silent-null}" = "y" ]
     then
 
         echo "${b-}Your IPv4 public address appears to be: | $this_ipv4 | ${x-}"

@@ -28,7 +28,7 @@ os-check_ipv6_connectivity() {
         done
         OPTIND=1
 
-        if [ ! "${silent}" = "y" ]
+        if [ ! "${silent-null}" = "y" ]
         then
             echo "${b-}${message}${x-}"
             echo
