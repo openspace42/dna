@@ -459,7 +459,6 @@ dna-check_dns_record() {
 	done
 
 	dna-echo -m "${g-}All | ${n-}${type_name}${g-} | DNS checks for name | ${n-}${name}${g-} | completed successfully."
-	echo
 
 	rm -rf "${dns_checks_dir}"
 
