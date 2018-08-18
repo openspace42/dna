@@ -122,7 +122,7 @@ dna-check_dns_record() {
 		if [ ! -z "${version-}" ]
 		then
 
-			getent ahostsv"${version}" "${name}" | grep STREAM | cut -d' ' -f1 > "${name_file_path}"
+			host -t "${type}" "${name}" | sed -n -e 's/^.*address //p' > "${name_file_path}"
 
 		elif [ "${type}" = "srv" ]
 		then
