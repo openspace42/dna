@@ -142,11 +142,11 @@ dna-check_dns_record() {
 
 	array_contains() {
 	    local array="$1[@]"
-	    local seeking=$2
+	    local seeking="$2"
 	    local in=1
 	    for element in "${!array-null}"
 		do
-	        if [[ $element == $seeking ]]
+	        if [[ "$element" == "$seeking" ]]
 			then
 	            in=0
 	            break
@@ -167,12 +167,12 @@ dna-check_dns_record() {
 
 			lookup_name
 
-			result="$(array_contains name_array ${reference_item} && echo y || echo n)"
+			result=$(array_contains name_array "${reference_item}" && echo y || echo n)
 
 	        if [ "${result}" = "y" ]
 	        then
 
-	            dna-echo -m "${g-}The| ${n-}${type_name}${g-} |record | ${n-}${reference_item_name}${g-} | for DNS name | ${n-}${name}${g-} | is registered correctly."
+	            dna-echo -m "${g-}The | ${n-}${type_name}${g-} | record | ${n-}${reference_item_name}${g-} | for DNS name | ${n-}${name}${g-} | is registered correctly."
 
 				outcome="ok"
 				accept="y"
@@ -184,7 +184,7 @@ dna-check_dns_record() {
 				if [ "${incorrect_iteration}" = "1" ]
 				then
 
-					dna-echo -m "${r-}The| ${n-}${type_name}${r-} |record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is NOT registered."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is NOT registered."
 
 					if [ "${autoset_dns-null}" = "y" ]
 					then
@@ -222,7 +222,7 @@ dna-check_dns_record() {
 				elif [ "${incorrect_iteration}" -le "4" ]
 				then
 
-					dna-echo -m "${r-}The| ${n-}${type_name}${r-} |record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered."
 
 					if [ "${outcome}" = "manualfix" ]
 					then
@@ -249,7 +249,7 @@ dna-check_dns_record() {
 
 				else
 
-					dna-echo -m "${r-}The| ${n-}${type_name}${r-} |address record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered after several lookups."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered after several lookups."
 					dna-echo -m "his could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
 					dna-echo -m "Also ensure you're applying the correct setting to the authoritative DNS provider for this zone."
 
@@ -334,12 +334,12 @@ dna-check_dns_record() {
 
 			calculate_extra_diff
 
-			result="$(array_contains diff_array ${diff_item} && echo y || echo n)"
+			result=$(array_contains diff_array "${diff_item}" && echo y || echo n)
 
 			if [ "${result}" = "n" ]
 	        then
 
-				dna-echo -m "${g-}The| ${n-}${type_name}${g-} |address record | ${n-}${diff_item_name}${g-} | for DNS name | ${n-}${name}${g-} | has been correctly removed."
+				dna-echo -m "${g-}The | ${n-}${type_name}${g-} | record | ${n-}${diff_item_name}${g-} | for DNS name | ${n-}${name}${g-} | has been correctly removed."
 
 				outcome="ok"
 				accept="y"
@@ -351,7 +351,7 @@ dna-check_dns_record() {
 				if [ "${incorrect_iteration}" = "1" ]
 				then
 
-					dna-echo -m "${r-}The| ${n-}${type_name}${r-} |address record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is registered but should NOT be."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is registered but should NOT be."
 
 					if [ "${autoset_dns-null}" = "y" ]
 					then
@@ -389,7 +389,7 @@ dna-check_dns_record() {
 				elif [ "${incorrect_iteration}" -le "4" ]
 				then
 
-					dna-echo -m "${r-}The| ${n-}${type_name}${r-} |address record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-}| still appears to be registered even though it should NOT be."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-}| still appears to be registered even though it should NOT be."
 
 					if [ "${outcome}" = "manualfix" ]
 					then
@@ -416,7 +416,7 @@ dna-check_dns_record() {
 
 				else
 
-					dna-echo -m "${r-}The| ${n-}${type_name}${r-} |address record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered after several lookups even though it should NOT be."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered after several lookups even though it should NOT be."
 					dna-echo -m "This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
 					dna-echo -m "Also ensure you're removing the record from the authoritative DNS provider for this zone."
 
