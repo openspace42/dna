@@ -33,8 +33,7 @@ dna-check_dns_record() {
 
 	if [ $# -eq 0 ]
     then
-        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -m "${r-}No argument supplied for function | ${FUNCNAME[0]} |."
         dna-exit
     fi
 
@@ -46,8 +45,7 @@ dna-check_dns_record() {
 	            ;;
 			r)	reference="$OPTARG"
 	            ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-	            echo
+            \?)	dna-echo -m "${r-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |."
 	            dna-exit
 	            ;;
         esac
@@ -56,22 +54,19 @@ dna-check_dns_record() {
 
     if [ -z "${name-}" ]
     then
-        echo "${r-}${b-}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -m "${r-}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |."
         dna-exit
     fi
 
 	if [ -z "${type-}" ]
     then
-        echo "${r-}${b-}Type [option | -t |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -m "${r-}Type [option | -t |] must be supplied for function | ${FUNCNAME[0]} |."
         dna-exit
     fi
 
 	if [ -z "${reference-}" ]
     then
-        echo "${r-}${b-}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -m "${r-}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |."
         dna-exit
     fi
 
@@ -389,7 +384,7 @@ dna-check_dns_record() {
 				elif [ "${incorrect_iteration}" -le "4" ]
 				then
 
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-}| still appears to be registered even though it should NOT be."
+					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered even though it should NOT be."
 
 					if [ "${outcome}" = "manualfix" ]
 					then
@@ -463,7 +458,7 @@ dna-check_dns_record() {
 
 	done
 
-	echo "${g-}${b-}All | ${n-}${type_name}${g-} | DNS checks for DNS name | ${x-}${name}${g-}${b-} | completed successfully.${x-}"
+	dna-echo -m "${g-}All | ${n-}${type_name}${g-} | DNS checks for name | ${n-}${name}${g-} | completed successfully."
 	echo
 
 	rm -rf "${dns_checks_dir}"
