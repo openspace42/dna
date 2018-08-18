@@ -6,7 +6,7 @@ dna-check_argument_presence() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
     
 }

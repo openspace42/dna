@@ -20,7 +20,7 @@ dna-set_option() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			dna-exit_function
+			dna-exit
 			;;
 		esac
 	done
@@ -30,7 +30,7 @@ dna-set_option() {
 	then
 		echo "${r-}${b-}Argument | option [-o] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
 		echo
-		dna-exit_function
+		dna-exit
 	fi
 
 	if [ ! -z "${describe-}" ]
@@ -42,7 +42,7 @@ dna-set_option() {
 			;;
 			*)	echo "${r-}${b-}Invalid content for describe argument in function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			dna-exit_function
+			dna-exit
 			;;
 		esac
 	fi
@@ -56,7 +56,7 @@ dna-set_option() {
 			;;
 			*)	echo "${r-}${b-}Invalid content for validate argument in function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			dna-exit_function
+			dna-exit
 			;;
 		esac
 	fi

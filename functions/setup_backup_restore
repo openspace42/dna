@@ -8,7 +8,7 @@ dna-setup_backup_restore_s3() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			dna-exit_function
+			dna-exit
 			;;
 		esac
 	done

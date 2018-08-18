@@ -6,7 +6,7 @@ dna-generate_ssh_keypair() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     while getopts ":n:" arguments; do
@@ -15,7 +15,7 @@ dna-generate_ssh_keypair() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            dna-exit_function
+            dna-exit
             ;;
         esac
     done
@@ -25,7 +25,7 @@ dna-generate_ssh_keypair() {
     then
         echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     ########################################################################

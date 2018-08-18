@@ -17,7 +17,7 @@ dna-check_distro_ubuntu() {
         lsb_release -i
         echo "${b-}$short_name only runs on Ubuntu.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
 }
@@ -35,7 +35,7 @@ dna-check_distro_ubuntu_lts() {
         lsb_release -d
         echo "${b-}$short_name only runs on Ubuntu LTS versions.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
 }

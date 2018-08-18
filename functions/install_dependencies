@@ -6,7 +6,7 @@ dna-install_dependencies() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     while getopts ":ep:" arguments; do
@@ -17,7 +17,7 @@ dna-install_dependencies() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            dna-exit_function
+            dna-exit
             ;;
         esac
     done
@@ -27,7 +27,7 @@ dna-install_dependencies() {
     then
         echo "${r-}${b-}Packages [option | -p |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     echo "${b-}Now installing dependencies...${x-}"
@@ -47,7 +47,7 @@ dna-install_dependencies() {
             dna-ask_for_boolean_def_no
             if [ "$ask_for_boolean_output" = "n" ]
             then
-                dna-exit_function
+                dna-exit
             else
                 echo "${b-}Ok, continuing installation anyway...${x-}"
             fi
@@ -55,7 +55,7 @@ dna-install_dependencies() {
             echo
             echo "${r-}${b-}An error occured performing APT operations.${x-}"
             echo
-            dna-exit_function
+            dna-exit
         fi
     fi
 

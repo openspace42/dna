@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 
-dna-exit_function() {
+dna-exit() {
 
     if [ ! -z "${lockfile_set-}" ]
     then
         if [ -f "${lockfile_set}" ]
         then
-            echo "${r-}${b-}Exiting and clearing lockfile...${x-}"
-            echo
+            dna-echo -m "${r-}Exiting and clearing lockfile..."
             rm "${lockfile_set}"
         fi
     else
-        echo "${r-}${b-}Exiting...${x-}"
-        echo
+        dna-echo -m "${r-}Exiting..."
     fi
     sleep 1
     exit 1

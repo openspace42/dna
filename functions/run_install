@@ -64,7 +64,7 @@ dna-run_install() {
         echo "${b-}Please inspect the any error messages above and try the installation again or open an issue on GitHub. Thank you.${x-}"
         echo
 
-        dna-exit_function
+        dna-exit
 
     fi
 

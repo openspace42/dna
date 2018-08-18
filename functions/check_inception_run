@@ -35,7 +35,7 @@ dna-check_inception_run() {
             echo
             echo "${b-} | bash inception/setup |${x-}"
             echo
-            dna-exit_function
+            dna-exit
         fi
     fi
 

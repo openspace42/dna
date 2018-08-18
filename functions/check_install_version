@@ -134,7 +134,7 @@ dna-check_install_version() {
                             echo
                             echo "${b-}This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check.${x-}"
                             echo
-                            dna-exit_function
+                            dna-exit
                         fi
                     fi
 
@@ -225,7 +225,7 @@ dna-check_install_version() {
                         echo
                         echo "${b-}Ok, aborting...${x-}"
                         echo
-                        dna-exit_function
+                        dna-exit
                     fi
                 fi
             else

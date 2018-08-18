@@ -33,7 +33,7 @@ dna-check_dns_record_address() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     while getopts ":n:r:v:" arguments; do
@@ -46,7 +46,7 @@ dna-check_dns_record_address() {
 	            ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 	            echo
-	            dna-exit_function
+	            dna-exit
 	            ;;
         esac
     done
@@ -56,21 +56,21 @@ dna-check_dns_record_address() {
     then
         echo "${r-}${b-}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
 	if [ -z "${reference-}" ]
     then
         echo "${r-}${b-}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
 	if [ -z "${version-}" ]
     then
         echo "${r-}${b-}Version [option | -v |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
 	############################################################################

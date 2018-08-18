@@ -8,7 +8,7 @@ dna-apt_full_upgrade() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            dna-exit_function
+            dna-exit
             ;;
         esac
     done

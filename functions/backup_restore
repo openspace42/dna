@@ -66,7 +66,7 @@ dna-br_purge_loop() {
 
 		fi
 
-		dna-exit_function
+		dna-exit
 
 	fi
 
@@ -196,7 +196,7 @@ dna-br_backup_locally() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			dna-exit_function
+			dna-exit
 			;;
 		esac
 	done
@@ -222,7 +222,7 @@ dna-br_backup_locally() {
 	        echo
 	        echo "${b-}Please finish installing $short_name before running this script.${x-}"
 	        echo
-			dna-exit_function
+			dna-exit
 		fi
 
 	fi
@@ -688,7 +688,7 @@ dna-br_duplicity_loop() {
 		echo
 		echo "${b-}If you're sure this is not the case, reboot the server and run this script again or see what happens at the next automated run.${x-}"
 		echo
-		dna-exit_function
+		dna-exit
 
 	fi
 
@@ -711,7 +711,7 @@ dna-br_backup_to_S3() {
         echo
         echo "${r-}${b-}NO backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation.${x-}"
         echo
-		dna-exit_function
+		dna-exit
     fi
 
 	dna-br_duplicity_loop backup
@@ -830,7 +830,7 @@ dna-br_restore_from_S3() {
 						echo
 						echo "${b-}Ok, aborting.${x-}"
 						echo
-						dna-exit_function
+						dna-exit
 					fi
 				else
 					echo "${b-}Continuing with local-only backup anyway...${x-}"
@@ -879,7 +879,7 @@ dna-br_launch_restore() {
 			;;
 			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
 			echo
-			dna-exit_function
+			dna-exit
 			;;
 		esac
 	done

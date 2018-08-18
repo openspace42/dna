@@ -12,7 +12,7 @@ dna-add_cron_job() {
     then
         echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     while getopts ":n:t:c:" arguments; do
@@ -25,7 +25,7 @@ dna-add_cron_job() {
             ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
             echo
-            dna-exit_function
+            dna-exit
             ;;
         esac
     done
@@ -35,21 +35,21 @@ dna-add_cron_job() {
     then
         echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     if [ -z "${time-}" ]
     then
         echo "${r-}${b-}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     if [ -z "${content-}" ]
     then
         echo "${r-}${b-}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
         echo
-        dna-exit_function
+        dna-exit
     fi
 
     ########################################################################
