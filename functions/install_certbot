@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-dna-install_duplicity() {
+dna-install_certbot() {
 
 	dna-echo -m "Now installing certbot/letsencrypt..."
 
