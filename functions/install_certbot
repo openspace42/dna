@@ -15,7 +15,7 @@ dna-install_certbot() {
 
 	dna-install_dependencies -p "certbot"
 	echo
-	certbot &> /dev/null
+	certbot &> /dev/null || true
 	echo
 
 	dna-echo -m "${g-}Finished installing certbot/letsencrypt."
