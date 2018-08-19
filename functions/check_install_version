@@ -204,7 +204,6 @@ dna-check_install_version() {
                 then
                     backup_output=ok
                 else
-                    echo
                     backup_output=failed
                 fi
                 sleep 1
