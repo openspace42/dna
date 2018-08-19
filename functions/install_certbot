@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+dna-install_duplicity() {
+
+	dna-echo -m "Now installing certbot/letsencrypt..."
+
+	dna-get_distro_name
+
+	if [ $distro_name = "Ubuntu" ]
+	then
+		dna-install_dependencies -p "software-properties-common"
+		apt-add-repository ppa:certbot/certbot -y
+		echo
+	fi
+
+	dna-install_dependencies -p "certbot"
+	echo
+	certbot &> /dev/null
+	echo
+
+	dna-echo -m "${g-}Finished installing certbot/letsencrypt."
+
+}

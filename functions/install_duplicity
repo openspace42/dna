@@ -2,8 +2,7 @@
 
 dna-install_duplicity() {
 
-	echo "${b-}Now installing the duplicity backup utility...${x-}"
-	echo
+	dna-echo -m "Now installing the duplicity backup utility..."
 
 	dna-get_distro_name
 
@@ -20,7 +19,6 @@ dna-install_duplicity() {
 	pip install --upgrade boto
 	echo
 
-	echo "${b-}Finished installing duplicity.${x-}"
-	echo
+	dna-echo -m "${g-}Finished installing duplicity."
 
 }
