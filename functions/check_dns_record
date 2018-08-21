@@ -315,148 +315,153 @@ dna-check_dns_record() {
 
 	calculate_extra_diff
 
-	for diff_item in "${diff_array[@]}"
-	do
+	if [ -n "${diff_array-}" ]
+	then
 
-		diff_item_name="$(echo ${diff_item} | xargs)"
-
-		until [ "${accept-null}" = "y" ]
+		for diff_item in "${diff_array[@]}"
 		do
 
-			### Check to see if this extra item is still actually erroneously registered on DNS
+			diff_item_name="$(echo ${diff_item} | xargs)"
 
-			lookup_name
+			until [ "${accept-null}" = "y" ]
+			do
 
-			calculate_extra_diff
+				### Check to see if this extra item is still actually erroneously registered on DNS
 
-			result=$(array_contains diff_array "${diff_item}" && echo y || echo n)
+				lookup_name
 
-			if [ "${result}" = "n" ]
-	        then
+				calculate_extra_diff
 
-				dna-echo -m "${g-}The | ${n-}${type_name}${g-} | record | ${n-}${diff_item_name}${g-} | for DNS name | ${n-}${name}${g-} | has been correctly removed."
+				result=$(array_contains diff_array "${diff_item}" && echo y || echo n)
 
-				outcome="ok"
-				accept="y"
+				if [ "${result}" = "n" ]
+		        then
 
-			else
+					dna-echo -m "${g-}The | ${n-}${type_name}${g-} | record | ${n-}${diff_item_name}${g-} | for DNS name | ${n-}${name}${g-} | has been correctly removed."
 
-				incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
-
-				if [ "${incorrect_iteration}" = "1" ]
-				then
-
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is registered but should NOT be."
-
-					if [ "${autoset_dns-null}" = "y" ]
-					then
-
-						dna-echo -m "Automatically removing this record on your DNS provider."
-						outcome="autofix"
-						dna-set_dns_record [...]
-
-					else
-
-						dna-echo -m "You must now remove this record on the authoritative DNS provider for this zone."
-
-						if [ "${dns_provider_setup-null}" = "y" ]
-						then
-							ask_for_boolean_question="Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
-				            dna-ask_for_boolean_def_yes
-				            if [ "$ask_for_boolean_output" = "y" ]
-				            then
-								dna-echo -m "Ok, automatically removing this DNS record."
-								outcome="autofix"
-								dna-set_dns_record [...]
-							else
-								read -rp "${b-}Ok, press enter after you've manually removed the record and are ready to continue...${x-}"
-								echo
-								outcome="manualfix"
-							fi
-						else
-							read -rp "${b-}Press enter after you've removed the record and are ready to continue...${x-}"
-							echo
-							outcome="manualfix"
-						fi
-
-					fi
-
-				elif [ "${incorrect_iteration}" -le "4" ]
-				then
-
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered even though it should NOT be."
-
-					if [ "${outcome}" = "manualfix" ]
-					then
-						dna-echo -m "As we wait to ensure DNS propagation, ensure you've correctly removed the record on your DNS provider."
-					fi
-
-					wait="$[${incorrect_iteration}**3]"
-					tput sc
-					while [ "${wait}" -ge "0" ]
-					do
-					    case $((wait % 4)) in
-					        0 ) j="-" ;;
-					        1 ) j="/" ;;
-					        2 ) j="|" ;;
-					        3 ) j="\\" ;;
-					    esac
-					    tput rc
-					    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
-					    sleep 1
-					    ((wait=wait-1)) || true
-					done
-					echo
-					echo
+					outcome="ok"
+					accept="y"
 
 				else
 
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered after several lookups even though it should NOT be."
-					dna-echo -m "This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
-					dna-echo -m "Also ensure you're removing the record from the authoritative DNS provider for this zone."
+					incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
 
-					until [ "${valid-null}" = "y" ]
-					do
+					if [ "${incorrect_iteration}" = "1" ]
+					then
 
-						read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
-						case $answer in
-							"")	echo
-								valid=y
-								accept=n
-								;;
-							y)	echo -e "\\n"
-								valid=y
-								accept=n
-								;;
-							s)	echo -e "\\n"
-								dna-echo -m "Ok, skipping DNS check for this record..."
-								valid=y
-								accept=y
-								;;
-							e)	echo -e "\\n"
-								dna-echo -m "Exiting..."
-								exit
-								;;
-							*)	echo -e "\\n"
-								dna-echo -m "Invalid option. Try again..."
-								valid=n
-								accept=n
-								;;
-						esac
+						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is registered but should NOT be."
 
-					done
+						if [ "${autoset_dns-null}" = "y" ]
+						then
 
-					unset incorrect_iteration outcome valid
+							dna-echo -m "Automatically removing this record on your DNS provider."
+							outcome="autofix"
+							dna-set_dns_record [...]
+
+						else
+
+							dna-echo -m "You must now remove this record on the authoritative DNS provider for this zone."
+
+							if [ "${dns_provider_setup-null}" = "y" ]
+							then
+								ask_for_boolean_question="Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
+					            dna-ask_for_boolean_def_yes
+					            if [ "$ask_for_boolean_output" = "y" ]
+					            then
+									dna-echo -m "Ok, automatically removing this DNS record."
+									outcome="autofix"
+									dna-set_dns_record [...]
+								else
+									read -rp "${b-}Ok, press enter after you've manually removed the record and are ready to continue...${x-}"
+									echo
+									outcome="manualfix"
+								fi
+							else
+								read -rp "${b-}Press enter after you've removed the record and are ready to continue...${x-}"
+								echo
+								outcome="manualfix"
+							fi
+
+						fi
+
+					elif [ "${incorrect_iteration}" -le "4" ]
+					then
+
+						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered even though it should NOT be."
+
+						if [ "${outcome}" = "manualfix" ]
+						then
+							dna-echo -m "As we wait to ensure DNS propagation, ensure you've correctly removed the record on your DNS provider."
+						fi
+
+						wait="$[${incorrect_iteration}**3]"
+						tput sc
+						while [ "${wait}" -ge "0" ]
+						do
+						    case $((wait % 4)) in
+						        0 ) j="-" ;;
+						        1 ) j="/" ;;
+						        2 ) j="|" ;;
+						        3 ) j="\\" ;;
+						    esac
+						    tput rc
+						    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
+						    sleep 1
+						    ((wait=wait-1)) || true
+						done
+						echo
+						echo
+
+					else
+
+						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered after several lookups even though it should NOT be."
+						dna-echo -m "This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
+						dna-echo -m "Also ensure you're removing the record from the authoritative DNS provider for this zone."
+
+						until [ "${valid-null}" = "y" ]
+						do
+
+							read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
+							case $answer in
+								"")	echo
+									valid=y
+									accept=n
+									;;
+								y)	echo -e "\\n"
+									valid=y
+									accept=n
+									;;
+								s)	echo -e "\\n"
+									dna-echo -m "Ok, skipping DNS check for this record..."
+									valid=y
+									accept=y
+									;;
+								e)	echo -e "\\n"
+									dna-echo -m "Exiting..."
+									exit
+									;;
+								*)	echo -e "\\n"
+									dna-echo -m "Invalid option. Try again..."
+									valid=n
+									accept=n
+									;;
+							esac
+
+						done
+
+						unset incorrect_iteration outcome valid
+
+					fi
 
 				fi
 
-			fi
+			done
+
+			unset incorrect_iteration outcome valid accept
 
 		done
 
-		unset incorrect_iteration outcome valid accept
-
-	done
+	fi
 
 	dna-echo -m "${g-}All | ${n-}${type_name}${g-} | DNS checks for name | ${n-}${name}${g-} | completed successfully."
 
