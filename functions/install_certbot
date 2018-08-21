@@ -9,7 +9,7 @@ dna-install_certbot() {
 	if [ $distro_name = "Ubuntu" ]
 	then
 		dna-install_dependencies -p "software-properties-common"
-		apt-add-repository ppa:certbot/certbot -y
+		apt-add-repository -yu ppa:certbot/certbot
 		echo
 	fi
 
