@@ -15,8 +15,8 @@ dna-install_duplicity() {
 
 	dna-install_dependencies -p "libpcre3-dev duplicity python-pip s3cmd pwgen pv ufw curl" #review
 	pip install --upgrade pip
-	pip install boto || true
-	pip install --upgrade boto
+	/usr/local/bin/pip install boto
+	/usr/local/bin/pip install --upgrade boto
 	echo
 
 	dna-echo -m "${g-}Finished installing duplicity."
