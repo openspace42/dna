@@ -297,6 +297,9 @@ dna-check_dns_record() {
 
 	calculate_extra_diff() {
 
+	if [ -n "${name_array-}" ]
+	then
+
 		diff_array=()
 		for name_item in "${name_array[@]}"
 		do
@@ -308,6 +311,12 @@ dna-check_dns_record() {
 		     [[ -n $skip ]] || diff_array+=("$name_item")
 		done
 		declare -p diff_array &> /dev/null
+
+	else
+
+		unset diff_array
+
+	fi
 
 	}
 
