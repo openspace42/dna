@@ -12,11 +12,10 @@ dna-check_distro_ubuntu() {
 
     if ! lsb_release --id | cut -f2 | grep Ubuntu >/dev/null
     then
-        echo "${b-}Detected distro is NOT Ubuntu. It appears instead to be:${x-}"
-        echo
+        dna-echo -m "${r-}Detected distro is NOT Ubuntu. It appears instead to be:"
         lsb_release -i
-        echo "${b-}$short_name only runs on Ubuntu.${x-}"
         echo
+        dna-echo -m "${short_name} only runs on Ubuntu."
         dna-exit
     fi
 
@@ -30,11 +29,10 @@ dna-check_distro_ubuntu_lts() {
 
     if ! lsb_release -d | grep -q LTS
     then
-        echo "${b-}Detected Ubuntu version is NOT an LTS version. It appears instead to be:${x-}"
-        echo
+        dna-echo -m "${r-}Detected Ubuntu version is NOT an LTS version. It appears instead to be:"
         lsb_release -d
-        echo "${b-}$short_name only runs on Ubuntu LTS versions.${x-}"
         echo
+        dna-echo -m "${short_name} only runs on Ubuntu LTS versions."
         dna-exit
     fi
 
@@ -46,11 +44,10 @@ dna-check_distro_ubuntu_18() {
 
     if ! lsb_release -d | cut -f2 | grep "Ubuntu 18.04" >/dev/null
     then
-        echo "${b-}Detected distro is NOT Ubuntu 18.04 LTS. It appears instead to be:${x-}"
+        dna-echo -m "${r-}Detected distro is NOT Ubuntu 18.04 LTS. It appears instead to be:"
+        lsb_release -d
         echo
-        lsb_release -i
-        echo "${b-}$short_name only runs on Ubuntu 18.04 LTS.${x-}"
-        echo
+        dna-echo -m "${short_name} only runs on Ubuntu 18.04 LTS."
         dna-exit
     fi
 
