@@ -2,13 +2,13 @@
 
 dna-check_install_complete() {
 
-    if [ -f $conf_dir/version/version_initiated ]
+    if [ -f "${conf_dir}/version/version_initiated" ]
     then
         prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
-        if [ -f $conf_dir/version/version_installed ]
+        if [ -f "${conf_dir}/version/version_installed" ]
         then
-            prev_version_installed="$(cat $conf_dir/version/version_installed)"
-            if [ "$prev_version_installed" = "$prev_version_initiated" ]
+            prev_version_installed="$(cat ${conf_dir}/version/version_installed)"
+            if [ "${prev_version_installed}" = "${prev_version_initiated}" ]
             then
                 export install_complete=y
             else
