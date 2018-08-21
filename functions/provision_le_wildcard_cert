@@ -28,7 +28,7 @@ dna-provision_le_wildcard_cert() {
         dna-exit
     fi
 
-    dna-install_dependencies -p certbot
+    dna-install_certbot
 
     certbot certonly --manual -d "$domain, *.$domain" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
 
