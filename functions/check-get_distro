@@ -39,3 +39,19 @@ dna-check_distro_ubuntu_lts() {
     fi
 
 }
+
+dna-check_distro_ubuntu_18() {
+
+    ### Check that the running distro is Ubuntu
+
+    if ! lsb_release -d | cut -f2 | grep "Ubuntu 18.04" >/dev/null
+    then
+        echo "${b-}Detected distro is NOT Ubuntu 18.04 LTS. It appears instead to be:${x-}"
+        echo
+        lsb_release -i
+        echo "${b-}$short_name only runs on Ubuntu 18.04 LTS.${x-}"
+        echo
+        dna-exit
+    fi
+
+}
