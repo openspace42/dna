@@ -30,7 +30,7 @@ dna-provision_le_wildcard_cert() {
 
     dna-install_certbot
 
-    if [ -z "${admin_mail-}" ]
+    if [ ! -z "${admin_mail-}" ]
     then
         certbot certonly --manual -d "$domain, *.$domain" -m "${admin_mail}" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
     else
