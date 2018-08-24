@@ -2,8 +2,7 @@
 
 dna-check_dpkg_availability() {
 
-    echo "${b-}Now ensuring DPKG is available...${x-}"
-    echo
+    dna-echo -m "Now ensuring DPKG is available..."
     sleep 3
     i=0
     tput sc
@@ -16,12 +15,11 @@ dna-check_dpkg_availability() {
             3 ) j="/" ;;
         esac
         tput rc
-        echo -en "\\r[$j] ${b-}Waiting for other software managers to finish...${x-}"
+        echo -en "\\r[$j] ${r-}${b-}Waiting for other software managers to finish...${x-}"
         echo
         sleep 0.5
         ((i=i+1))
     done
-    echo "${b-}DPKG available. Continuing...${x-}"
-    echo
+    dna-echo -m "${g-}DPKG available. Continuing..."
 
 }

@@ -32,7 +32,6 @@ dna-generate_project_specific_dhparam() {
             echo
             echo "${b-}mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem${x-}"
             echo
-            /usr/sbin/service ejabberd restart
         fi
         echo "${b-}Finished generating DHparams.${x-}"
         echo

@@ -5,17 +5,15 @@ dna-apt_full_upgrade() {
     while getopts ":e" arguments; do
         case $arguments in
             e)	allow_errors="y"
-            ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-            echo
-            dna-exit
-            ;;
+                ;;
+            \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
         esac
     done
     OPTIND=1
 
-    echo "${b-}Now performing APT upgrade, dist-upgrade, and autoremove...${x-}"
-    echo
+    dna-echo -m "Now performing APT upgrade, dist-upgrade, and autoremove..."
 
     if [ "${allow_errors-null}" = "y" ]
     then
@@ -23,6 +21,7 @@ dna-apt_full_upgrade() {
     fi
 
     dna-apt_update
+
     apt-get -y upgrade
     apt-get -y dist-upgrade
     apt-get -y autoremove
@@ -31,7 +30,6 @@ dna-apt_full_upgrade() {
 
     set -e
 
-    echo "${b-}Finished performing APT upgrade, dist-upgrade, and autoremove.${x-}"
-    echo
+    dna-echo -m "${g-}Finished performing APT operations."
 
 }
