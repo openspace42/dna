@@ -131,6 +131,26 @@ dna-check_dns_record() {
 		version=6
 	fi
 
+	############################################################################
+
+	### Validate all reference items if record type is an address [A / AAAA]
+
+	if [ ! -z "${version-}" ]
+	then
+		for reference_item in "${reference_array[@]}"
+		do
+			dna-validate_ipv"${type}" -s -i "${reference_item}"
+			if [ "${ip_is_valid}" = "n" ]
+			then
+				dna-echo -m "${r-}The reference value | ${n-}${reference_item}${r-} | is not a valid | ${n-}IPv${version-}${r-} | address."
+				dna-exit
+			fi
+		done
+		unset reference_item
+	fi
+
+	############################################################################
+
 	### Convert $type to uppercase for printed messages
 
 	type_name="$(echo ${type} | awk '{print toupper($0)}')"
