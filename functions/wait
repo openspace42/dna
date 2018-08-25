@@ -119,7 +119,7 @@ dna-wait_for() {
         if [ ! -z "${max_seconds-}" ]
         then
             remaining_seconds=$((max_seconds-seconds))
-            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-} [for ${y-}${seconds}${n-} more seconds]"
+            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${remaining_seconds}${n-} more seconds]"
         else
             echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
         fi
