@@ -150,7 +150,7 @@ dna-check_dns_record() {
 			dna-validate_ipv"${version}" -s -i "${reference_item}"
 			if [ "${ip_is_valid}" = "n" ]
 			then
-				dna-echo -m "${r-}The reference value | ${n-}${reference_item}${r-} | is not a valid | ${n-}IPv${version-}${r-} | address."
+				dna-echo -e "The reference value | ${n-}${reference_item}${r-} | is not a valid | ${n-}IPv${version-}${r-} | address."
 				dna-exit
 			fi
 		done
