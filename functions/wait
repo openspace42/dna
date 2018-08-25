@@ -59,11 +59,13 @@ dna-wait_for() {
         dna-exit
     fi
 
-	while getopts ":s:d:" arguments; do
+	while getopts ":d:m:e:" arguments; do
 		case $arguments in
-            s)  seconds="$OPTARG"
-                ;;
             d)  description="$OPTARG"
+                ;;
+            m)  max_seconds="$OPTARG"
+                ;;
+            e)  error_message="$OPTARG"
                 ;;
 			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
@@ -71,12 +73,6 @@ dna-wait_for() {
 		esac
 	done
 	OPTIND=1
-
-	if [ -z "${seconds-}" ]
-	then
-		dna-echo -m "${r-}Argument | ${n-}seconds [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
-		dna-exit
-	fi
 
     if [ -z "${description-}" ]
 	then
@@ -92,6 +88,21 @@ dna-wait_for() {
     seconds=0
     while [ ! "${condition_verified-null}" = "y" ]
     do
+
+        if [ ! -z "${max_seconds-}" ]
+    	then
+            if [ "${seconds}" -gt "${max_seconds-}" ]
+            then
+                if [ ! -z "${error_message-}" ]
+                then
+                    dna-echo -m "${r-}${message}"
+                else
+                    dna-echo -m "${r-}Timeout exceeded | ${n-}${max_seconds}${r-} | seconds in function | ${n-}dna-wait_for${r-} |."
+                fi
+                dna-exit
+            fi
+        fi
+
         case $((seconds % 4)) in
             0 ) j="-" ;;
             1 ) j="/" ;;
@@ -103,7 +114,9 @@ dna-wait_for() {
         sleep 1
         check_condition
         ((seconds=seconds+1)) || true
+
     done
+
     echo
 
     unset seconds description check_condition condition_verified
