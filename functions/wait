@@ -23,7 +23,7 @@ dna-wait() {
 
 	if [ -z "${seconds-}" ]
 	then
-		dna-echo -m "${r-}Argument | ${n-}seconds [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-echo -e "Argument | ${n-}seconds [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
 
@@ -69,7 +69,7 @@ dna-wait_for() {
                 ;;
             e)  error_message="$OPTARG"
                 ;;
-			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
 				;;
 		esac
@@ -78,7 +78,7 @@ dna-wait_for() {
 
     if [ -z "${description-}" ]
 	then
-		dna-echo -m "${r-}Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-echo -e "Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
 
@@ -108,32 +108,40 @@ dna-wait_for() {
             fi
         fi
 
-        case $((seconds % 4)) in
-            0 ) j="-" ;;
-            1 ) j="\\" ;;
-            2 ) j="|" ;;
-            3 ) j="/" ;;
-        esac
-        tput rc
-        echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
-        sleep 1
-        ((seconds=seconds+1)) || true
-
-        if [ ! -z "${interval-}" ]
+        if [ ! "${wait_output}" = "timeout" ]
         then
-            if [ ! "${seconds}" = "0" ] && (( $seconds % $interval == 0 ))
+
+            case $((seconds % 4)) in
+                0 ) j="-" ;;
+                1 ) j="\\" ;;
+                2 ) j="|" ;;
+                3 ) j="/" ;;
+            esac
+            tput rc
+            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
+            sleep 1
+            ((seconds=seconds+1)) || true
+
+            if [ ! -z "${interval-}" ]
             then
+                if [ ! "${seconds}" = "0" ] && (( $seconds % $interval == 0 ))
+                then
+                    check_condition
+                fi
+            else
                 check_condition
             fi
-        else
-            check_condition
+
         fi
 
     done
     echo
 
-    wait_output="ok"
+    if [ ! "${wait_output}" = "timeout" ]
+    then
+        wait_output="ok"
+    fi
 
-    unset seconds description check_condition condition_verified
+    unset seconds interval description max_seconds error_message check_condition condition_verified
 
 }
