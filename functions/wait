@@ -13,10 +13,10 @@ dna-wait() {
 	while getopts ":s:" arguments; do
 		case $arguments in
 			s)	seconds="$OPTARG"
-				;;
+                ;;
 			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
-				;;
+                ;;
 		esac
 	done
 	OPTIND=1
@@ -42,6 +42,74 @@ dna-wait() {
         echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${seconds}${n-} more seconds to allow for DNS propagation...${x-}"
         sleep 1
         ((seconds=seconds-1)) || true
+    done
+    echo
+
+}
+
+dna-wait_for() {
+
+	############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+	while getopts ":s:c:d:" arguments; do
+		case $arguments in
+            s)  seconds="$OPTARG"
+                ;;
+            c)  condition="$OPTARG"
+                ;;
+            d)  description="$OPTARG"
+                ;;
+			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	done
+	OPTIND=1
+
+	if [ -z "${seconds-}" ]
+	then
+		dna-echo -m "${r-}Argument | ${n-}seconds [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+    if [ -z "${condition-}" ]
+	then
+		dna-echo -m "${r-}Argument | ${n-}condition [-c]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+    if [ -z "${description-}" ]
+	then
+		dna-echo -m "${r-}Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+
+	############################################################################
+
+    ### check_condition must be defined immediately prior to calling this function.
+
+    tput sc
+    seconds=0
+    while [ ! "${condition_verified-null}" = "y" ]
+    do
+        case $((seconds % 4)) in
+            0 ) j="-" ;;
+            1 ) j="/" ;;
+            2 ) j="|" ;;
+            3 ) j="\\" ;;
+        esac
+        tput rc
+        echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
+        sleep 1
+        check_condition
+        ((seconds=seconds+1)) || true
     done
     echo
 
