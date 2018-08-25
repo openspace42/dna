@@ -6,7 +6,7 @@ dna-wait() {
 
     if [ $# -eq 0 ]
     then
-        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
@@ -55,7 +55,7 @@ dna-wait_for() {
 
     if [ $# -eq 0 ]
     then
-        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
@@ -100,7 +100,7 @@ dna-wait_for() {
             then
                 if [ ! -z "${error_message-}" ]
                 then
-                    dna-echo -e "${message}"
+                    dna-echo -e "${error_message}"
                 else
                     dna-echo -e "Timeout exceeded | ${n-}${max_seconds}${r-} | seconds in function | ${n-}dna-wait_for${r-} |."
                 fi
