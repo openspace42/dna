@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+dna-validate_ssh_pubkey() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
+        echo
+        dna-exit
+    fi
+
+    while getopts ":k:s" arguments; do
+        case $arguments in
+            k)	key="$OPTARG"
+                ;;
+            s)	export silent="y"
+                ;;
+            \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${key-}" ]
+    then
+        dna-echo -m "${r-}Key [option | ${n-}-k${r-} |] must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    echo "${key}" > "/tmp/validate_ssh_pubkey"
+
+    if ssh-keygen -l -f "/tmp/validate_ssh_pubkey"
+    then
+        dna-echo -m "${g-}The SSH public key you specified is valid."
+        export key_is_valid="y"
+    else
+        dna-echo -m "${r-}The SSH public key you specified is NOT valid."
+        export key_is_valid="n"
+    fi
+
+    rm "/tmp/validate_ssh_pubkey"
+    unset silent
+
+}
