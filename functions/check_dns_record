@@ -96,13 +96,29 @@ dna-check_dns_record() {
 		reference_type=array
 	fi
 
+	reference_file_path="${dns_checks_dir}/reference"
+
 	if [ $reference_type = "file" ]
 	then
-		reference_file_path="${reference}"
+
+		### Check that the file actually exists
+
+		if [ ! -f "${reference}" ]
+		then
+			dna-echo -e "The specified reference file does NOT exist."
+			dna-exit
+		fi
+
+		### Copy specified file to /tmp/
+
+		cp "${reference}" "${reference_file_path}"
+
 	else
-		### Write specified array to a text file
-		reference_file_path="${dns_checks_dir}/reference"
+
+		### Write specified array to a text file in /tmp/
+
 		echo "${reference}" | tr "," "\n" > "${reference_file_path}"
+
 	fi
 
 	if ! grep -q '[^[:space:]]' "${reference_file_path}"
