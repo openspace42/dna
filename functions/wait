@@ -45,6 +45,8 @@ dna-wait() {
     done
     echo
 
+    unset seconds
+
 }
 
 dna-wait_for() {
@@ -103,5 +105,7 @@ dna-wait_for() {
         ((seconds=seconds+1)) || true
     done
     echo
+
+    unset seconds description check_condition condition_verified
 
 }
