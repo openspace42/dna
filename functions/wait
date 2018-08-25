@@ -101,8 +101,6 @@ dna-wait_for() {
                 if [ ! -z "${error_message-}" ]
                 then
                     dna-echo -e "${error_message}"
-                else
-                    dna-echo -e "Timeout exceeded | ${n-}${max_seconds}${r-} | seconds in function | ${n-}dna-wait_for${r-} |."
                 fi
                 wait_output="timeout"
             fi
