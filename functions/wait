@@ -108,9 +108,9 @@ dna-wait_for() {
 
         case $((seconds % 4)) in
             0 ) j="-" ;;
-            1 ) j="/" ;;
+            1 ) j="\\" ;;
             2 ) j="|" ;;
-            3 ) j="\\" ;;
+            3 ) j="/" ;;
         esac
         tput rc
         echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
