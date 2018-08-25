@@ -4,7 +4,8 @@ dna-echo() {
 
     if [ $# -eq 0 ]
     then
-        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        echo "${r-}${b-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
+        echo
         dna-exit
     fi
 
@@ -24,13 +25,15 @@ dna-echo() {
 
     if [ -z "${message-}" ] && [ -z "${error_message-}" ]
 	then
-		dna-echo -m "${r-}Argument | ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		echo "${r-}${b-}Argument | ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
+        echo
 		dna-exit
 	fi
 
     if [ ! -z "${message-}" ] && [ ! -z "${error_message-}" ]
 	then
-		dna-echo -m "${r-}Only one argument [| ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} |] can be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		echo "${r-}${b-}Only one argument [| ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} |] can be supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
+        echo
 		dna-exit
 	fi
 
