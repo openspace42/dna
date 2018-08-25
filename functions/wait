@@ -59,8 +59,10 @@ dna-wait_for() {
         dna-exit
     fi
 
-	while getopts ":d:m:e:" arguments; do
+	while getopts ":i:d:m:e:" arguments; do
 		case $arguments in
+            i)  interval="$OPTARG"
+                ;;
             d)  description="$OPTARG"
                 ;;
             m)  max_seconds="$OPTARG"
@@ -98,11 +100,11 @@ dna-wait_for() {
             then
                 if [ ! -z "${error_message-}" ]
                 then
-                    dna-echo -m "${r-}${message}"
+                    dna-echo -e "${message}"
                 else
-                    dna-echo -m "${r-}Timeout exceeded | ${n-}${max_seconds}${r-} | seconds in function | ${n-}dna-wait_for${r-} |."
+                    dna-echo -e "Timeout exceeded | ${n-}${max_seconds}${r-} | seconds in function | ${n-}dna-wait_for${r-} |."
                 fi
-                dna-exit
+                wait_output="timeout"
             fi
         fi
 
@@ -116,11 +118,21 @@ dna-wait_for() {
         echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
         sleep 1
         ((seconds=seconds+1)) || true
-        check_condition
+
+        if [ ! -z "${interval-}" ]
+        then
+            if [ ! "${seconds}" = "0" ] && (( $seconds % $interval == 0 ))
+            then
+                check_condition
+            fi
+        else
+            check_condition
+        fi
 
     done
-
     echo
+
+    wait_output="ok"
 
     unset seconds description check_condition condition_verified
 
