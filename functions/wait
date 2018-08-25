@@ -101,6 +101,8 @@ dna-wait_for() {
                 if [ ! -z "${error_message-}" ]
                 then
                     dna-echo -e "${error_message}"
+                else
+                    echo
                 fi
                 wait_output="timeout"
                 break
