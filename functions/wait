@@ -57,11 +57,9 @@ dna-wait_for() {
         dna-exit
     fi
 
-	while getopts ":s:c:d:" arguments; do
+	while getopts ":s:d:" arguments; do
 		case $arguments in
             s)  seconds="$OPTARG"
-                ;;
-            c)  condition="$OPTARG"
                 ;;
             d)  description="$OPTARG"
                 ;;
@@ -78,18 +76,11 @@ dna-wait_for() {
 		dna-exit
 	fi
 
-    if [ -z "${condition-}" ]
-	then
-		dna-echo -m "${r-}Argument | ${n-}condition [-c]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
-		dna-exit
-	fi
-
     if [ -z "${description-}" ]
 	then
 		dna-echo -m "${r-}Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
-
 
 	############################################################################
 
