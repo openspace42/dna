@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+dna-wait() {
+
+	############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+	while getopts ":s:" arguments; do
+		case $arguments in
+			s)	seconds="$OPTARG"
+				;;
+			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	done
+	OPTIND=1
+
+	if [ -z "${seconds-}" ]
+	then
+		dna-echo -m "${r-}Argument | ${n-}seconds [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+	############################################################################
+
+    tput sc
+    while [ "${seconds}" -ge "0" ]
+    do
+        case $((seconds % 4)) in
+            0 ) j="-" ;;
+            1 ) j="/" ;;
+            2 ) j="|" ;;
+            3 ) j="\\" ;;
+        esac
+        tput rc
+        echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${seconds}${n-} more seconds to allow for DNS propagation...${x-}"
+        sleep 1
+        ((seconds=seconds-1)) || true
+    done

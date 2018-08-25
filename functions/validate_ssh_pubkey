@@ -34,7 +34,7 @@ dna-validate_ssh_pubkey() {
 
     echo "${key}" > "/tmp/validate_ssh_pubkey"
 
-    if ssh-keygen -l -f "/tmp/validate_ssh_pubkey"
+    if ssh-keygen -l -f "/tmp/validate_ssh_pubkey" &> /dev/null
     then
         dna-echo -m "${g-}The SSH public key you specified is valid."
         export key_is_valid="y"
