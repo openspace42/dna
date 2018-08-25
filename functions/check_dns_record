@@ -27,7 +27,11 @@ dna-check_dns_record() {
 			1] A string with a comma-separated list of values [no spaces] [e.g.: "1.1.1.1,2.2.2.2,4.4.4.4,8.8.8.8"]
 			2] An absolute path to a file with a newline-separated list of IPs
 
-		An individual value can be "null" to indicate that the record must NOT be set at all.
+		The reference can be "delete" to indicate that the record must NOT be set at all.
+
+		The reference can include a "null" value that will be ignored as if it were a comment
+
+			For example: -r "1.1.1.1, 2.2.2.2, null, 4.4.4.4"
 
 	# '
 
@@ -107,15 +111,19 @@ dna-check_dns_record() {
         dna-exit
 	fi
 
-	### Check for a "null" reference
+	### Check for a "delete" reference
 
-	if grep -q "null" "${reference_file_path}"
+	if grep -q "delete" "${reference_file_path}"
 	then
-		### Mark the record as to be removed
-		remove_record=y
+		### Mark the record as to be delete
+		delete_record=y
 		### Actually clear the contents of the reference file
 		> "${reference_file_path}"
 	fi
+
+	### Remove any "null" values from the reference file
+
+	sed -i '/^null$/d' "${reference_file_path}"
 
 	### Read array out of $reference_file_path
 
@@ -192,7 +200,7 @@ dna-check_dns_record() {
 
 	############################################################################
 
-	if [ ! "${remove_record-null}" = "y" ]
+	if [ ! "${delete_record-null}" = "y" ]
 	then
 
 		### Check that every item in reference_array is contained in name_array
