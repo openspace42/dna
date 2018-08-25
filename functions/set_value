@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+dna-set_value() {
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+	while getopts ":d:v:" arguments; do
+		case $arguments in
+			d)	description="$OPTARG"
+				;;
+			v)	validate="$OPTARG"
+				;;
+			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	done
+	OPTIND=1
+
+	if [ -z "${description-}" ]
+	then
+		dna-echo -m "${r-}Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+	if [ ! -z "${validate-}" ]
+	then
+		case $validate in
+			y)	validate_input=y
+				;;
+			n)	validate_input=n
+				;;
+			*)	dna-echo -m "${r-}Invalid content for argument | ${n-}validate${r-} | in function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	fi
+
+	############################################################################
+
+	if [ -z "${value-}" ]
+	then
+		unset defined
+		until [ "${defined-null}" = "y" ]
+		do
+			unset valid
+			until [ "${valid-null}" = "y" ]
+			do
+				unset new_val
+				until [ ! -z "${new_val-}" ]
+				do
+					read -rp "${b-}${description} ${x-}" new_val
+					echo
+				done
+				if [ "${validate_input-null}" = "y" ]
+				then
+					input="$new_val"
+					### validate_input must be defined immediately prior to calling this function.
+					validate_input
+				else
+					valid=y
+				fi
+			done
+			unset acceptable
+			until [ "${acceptable-null}" = "y" ]
+			do
+				read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;
+				case $answer in
+					"")	echo
+						acceptable=y
+						defined=y
+						;;
+					y)	echo -e "\\n"
+						acceptable=y
+						defined=y
+						;;
+					n)	echo -e "\\n"
+						dna-echo -m "Ok, then please try again..."
+						acceptable=y
+						defined=n
+						;;
+					e)	echo -e "\\n"
+						dna-exit
+						;;
+					*)	echo -e "\\n"
+						dna-echo "${r-}Invalid option. Retry..."
+						acceptable=n
+						defined=n
+						;;
+				esac
+			done
+		done
+	fi
+
+	export value="${new_val}"
+
+}

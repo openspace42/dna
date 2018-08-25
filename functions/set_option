@@ -4,24 +4,29 @@ dna-set_option() {
 
 	########################################################################
 
+	if [ $# -eq 0 ]
+    then
+        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
 	while getopts ":o:p:d:c:v:s:" arguments; do
 		case $arguments in
 			o)	option="$OPTARG"
-			;;
+				;;
 			p)	path="$OPTARG"
-			;;
+				;;
 			d)	describe="$OPTARG"
-			;;
+				;;
 			c)	choices="$OPTARG"
-			;;
+				;;
 			v)	validate="$OPTARG"
-			;;
+				;;
 			s)	setting="$OPTARG"
-			;;
-			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-			echo
-			dna-exit
-			;;
+				;;
+			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
 		esac
 	done
 	OPTIND=1
@@ -197,8 +202,8 @@ dna-set_option() {
 
 					fi
 				done
-				acceptable=n
-				until [ $acceptable = "y" ]
+				unset acceptable
+				until [ "${acceptable-null}" = "y" ]
 				do
 					read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;
 					case $answer in
