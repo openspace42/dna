@@ -125,6 +125,10 @@ dna-check_dns_record() {
 
 	sed -i '/^null$/d' "${reference_file_path}"
 
+	### Remove any blank lines from the reference file
+
+	sed -i '/^$/d' "${reference_file_path}"
+
 	### Read array out of $reference_file_path
 
 	readarray -t reference_array < "${reference_file_path}"
