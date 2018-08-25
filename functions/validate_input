@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+
+dna-validate_input_ipv4() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
+        echo
+        dna-exit
+    fi
+
+    while getopts ":i:" arguments; do
+        case $arguments in
+            i)	ip="$OPTARG"
+                ;;
+            \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${ip-}" ]
+    then
+        dna-echo -m "${r-}IP [option | ${n-}-i${r-} |] must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    valid_ip () {
+        local  ip=$1
+        local  stat=1
+
+        if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+            OIFS=$IFS
+            IFS='.'
+            ip=($ip)
+            IFS=$OIFS
+            [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+                && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+            stat=$?
+        fi
+        return $stat
+    }
+
+    if valid_ip "${ip}"
+    then
+        export input_is_valid="y"
+    else
+        export input_is_valid="n"
+    fi
+
+}
+
+dna-validate_input_ipv6() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
+        echo
+        dna-exit
+    fi
+
+    while getopts ":i:" arguments; do
+        case $arguments in
+            i)	ip="$OPTARG"
+                ;;
+            \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${ip-}" ]
+    then
+        dna-echo -m "${r-}IP [option | ${n-}-i${r-} |] must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    valid_ip () {
+
+        ### This bash-scripts uses sed, wc and grep to
+        ### expand an IPv6 Address and check if its seems valid.
+        ###
+        ### Needs some review.
+        ### Author:  Florian Streibelt <florian@f-streibelt.de>
+        ### Date:    08.04.2012
+        ### License: Public Domain, but please be fair and
+        ###          attribute the original author(s) and provide
+        ###          a link to the original source for corrections:
+        ###          https://github.com/mutax/IPv6-Address-checks
+
+        INPUT="$(tr 'A-F' 'a-f' <<< "$@")"
+
+        O=""
+
+        while [ "$O" != "$INPUT" ]
+        do
+
+            O="$INPUT"
+
+            ### fill all words with zeroes
+
+            INPUT="$( sed  's|:\([0-9a-f]\{3\}\):|:0\1:|g' <<< "$INPUT" )"
+            INPUT="$( sed  's|:\([0-9a-f]\{3\}\)$|:0\1|g'  <<< "$INPUT")"
+            INPUT="$( sed  's|^\([0-9a-f]\{3\}\):|0\1:|g'  <<< "$INPUT" )"
+
+            INPUT="$( sed  's|:\([0-9a-f]\{2\}\):|:00\1:|g' <<< "$INPUT")"
+            INPUT="$( sed  's|:\([0-9a-f]\{2\}\)$|:00\1|g'  <<< "$INPUT")"
+            INPUT="$( sed  's|^\([0-9a-f]\{2\}\):|00\1:|g'  <<< "$INPUT")"
+
+            INPUT="$( sed  's|:\([0-9a-f]\):|:000\1:|g'  <<< "$INPUT")"
+            INPUT="$( sed  's|:\([0-9a-f]\)$|:000\1|g'   <<< "$INPUT")"
+            INPUT="$( sed  's|^\([0-9a-f]\):|000\1:|g'   <<< "$INPUT")"
+
+        done
+
+        ### now expand the ::
+
+        ZEROES=""
+
+        grep -qs "::" <<< "$INPUT"
+
+        if [ "$?" -eq 0 ]
+        then
+
+            GRPS="$(sed  's|[0-9a-f]||g' <<< "$INPUT" | wc -m)"
+            ((GRPS--)) # carriage return
+            ((MISSING=8-GRPS))
+
+            for ((i=0;i<$MISSING;i++))
+            do
+                ZEROES="$ZEROES:0000"
+            done
+
+            ### be careful where to place the :
+
+            INPUT="$( sed  's|\(.\)::\(.\)|\1'$ZEROES':\2|g'   <<< "$INPUT")"
+            INPUT="$( sed  's|\(.\)::$|\1'$ZEROES':0000|g'   <<< "$INPUT")"
+            INPUT="$( sed  's|^::\(.\)|'$ZEROES':0000:\1|g;s|^:||g'   <<< "$INPUT")"
+
+        fi
+
+        ### an expanded address has 39 chars + CR
+
+        if [ $(echo $INPUT | wc -m) != 40 ]
+        then
+            exit 1
+        fi
+
+        ### echo the fully expanded version of the address
+        # echo $INPUT
+
+    }
+
+    if valid_ip "${ip}"
+    then
+        export input_is_valid="y"
+    else
+        export input_is_valid="n"
+    fi
+
+}
