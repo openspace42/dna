@@ -22,7 +22,7 @@ dna-echo() {
 
     if [ -z "${message-}" ]
 	then
-		dna-echo -m "${r-}Argument | ${n-}message [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-echo -m "${r-}Argument | ${n-}message [-m]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
 
