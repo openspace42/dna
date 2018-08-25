@@ -108,7 +108,7 @@ dna-wait_for() {
             fi
         fi
 
-        if [ ! "${wait_output}" = "timeout" ]
+        if [ ! "${wait_output-null}" = "timeout" ]
         then
 
             case $((seconds % 4)) in
@@ -137,7 +137,7 @@ dna-wait_for() {
     done
     echo
 
-    if [ ! "${wait_output}" = "timeout" ]
+    if [ ! "${wait_output-null}" = "timeout" ]
     then
         wait_output="ok"
     fi
