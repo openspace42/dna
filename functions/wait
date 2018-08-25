@@ -103,33 +103,29 @@ dna-wait_for() {
                     dna-echo -e "${error_message}"
                 fi
                 wait_output="timeout"
+                break
             fi
         fi
 
-        if [ ! "${wait_output-null}" = "timeout" ]
+        case $((seconds % 4)) in
+            0 ) j="-" ;;
+            1 ) j="\\" ;;
+            2 ) j="|" ;;
+            3 ) j="/" ;;
+        esac
+        tput rc
+        echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
+        sleep 1
+        ((seconds=seconds+1)) || true
+
+        if [ ! -z "${interval-}" ]
         then
-
-            case $((seconds % 4)) in
-                0 ) j="-" ;;
-                1 ) j="\\" ;;
-                2 ) j="|" ;;
-                3 ) j="/" ;;
-            esac
-            tput rc
-            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
-            sleep 1
-            ((seconds=seconds+1)) || true
-
-            if [ ! -z "${interval-}" ]
+            if [ ! "${seconds}" = "0" ] && (( $seconds % $interval == 0 ))
             then
-                if [ ! "${seconds}" = "0" ] && (( $seconds % $interval == 0 ))
-                then
-                    check_condition
-                fi
-            else
                 check_condition
             fi
-
+        else
+            check_condition
         fi
 
     done
