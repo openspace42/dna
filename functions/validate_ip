@@ -11,9 +11,11 @@ dna-validate_ipv4() {
         dna-exit
     fi
 
-    while getopts ":i:" arguments; do
+    while getopts ":i:s" arguments; do
         case $arguments in
             i)	ip="$OPTARG"
+                ;;
+            s)	export silent="y"
                 ;;
             \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -48,10 +50,14 @@ dna-validate_ipv4() {
 
     if valid_ip "${ip}"
     then
-        export input_is_valid="y"
+        dna-echo -m "${g-}The IPv4 address | ${n-}${ip}${g-} | is valid."
+        export ip_is_valid="y"
     else
-        export input_is_valid="n"
+        dna-echo -m "${r-}The IPv4 address | ${n-}${ip}${g-} | is NOT valid."
+        export ip_is_valid="n"
     fi
+
+    unset silent
 
 }
 
@@ -66,9 +72,11 @@ dna-validate_ipv6() {
         dna-exit
     fi
 
-    while getopts ":i:" arguments; do
+    while getopts ":i:s" arguments; do
         case $arguments in
             i)	ip="$OPTARG"
+                ;;
+            s)	export silent="y"
                 ;;
             \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -163,9 +171,11 @@ dna-validate_ipv6() {
 
     if valid_ip "${ip}"
     then
-        export input_is_valid="y"
+        dna-echo -m "${g-}The IPv4 address | ${n-}${ip}${g-} | is valid."
+        export ip_is_valid="y"
     else
-        export input_is_valid="n"
+        dna-echo -m "${r-}The IPv4 address | ${n-}${ip}${g-} | is NOT valid."
+        export ip_is_valid="n"
     fi
 
 }
