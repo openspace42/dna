@@ -27,6 +27,8 @@ dna-check_dns_record() {
 			1] A string with a comma-separated list of values [no spaces] [e.g.: "1.1.1.1,2.2.2.2,4.4.4.4,8.8.8.8"]
 			2] An absolute path to a file with a newline-separated list of IPs
 
+		An individual value can be "null" to indicate that the record must NOT be set at all.
+
 	# '
 
 	############################################################################
@@ -99,6 +101,24 @@ dna-check_dns_record() {
 		echo "${reference}" | tr "," "\n" > "${reference_file_path}"
 	fi
 
+	if ! grep -q '[^[:space:]]' "${reference_file_path}"
+	then
+		dna-echo -m "${r-}Reference file is empty."
+        dna-exit
+	fi
+
+	### Check for a "null" reference
+
+	if grep -q "null" "${reference_file_path}"
+	then
+		### Mark the record as to be removed
+		remove_record=y
+		### Actually clear the contents of the reference file
+		> "${reference_file_path}"
+	fi
+
+	### Read array out of $reference_file_path
+
 	readarray -t reference_array < "${reference_file_path}"
 
 	############################################################################
@@ -150,146 +170,153 @@ dna-check_dns_record() {
 	    return $in
 	}
 
-	### Check that every item in reference_array is contained in name_array
+	############################################################################
 
-	for reference_item in "${reference_array[@]}"
-	do
+	if [ ! "${remove_record-null}" = "y" ]
+	then
 
-		until [ "${accept-null}" = "y" ]
+		### Check that every item in reference_array is contained in name_array
+
+		for reference_item in "${reference_array[@]}"
 		do
 
-			reference_item_name="$(echo ${reference_item} | xargs)"
+			until [ "${accept-null}" = "y" ]
+			do
 
-			lookup_name
+				reference_item_name="$(echo ${reference_item} | xargs)"
 
-			result=$(array_contains name_array "${reference_item}" && echo y || echo n)
+				lookup_name
 
-	        if [ "${result}" = "y" ]
-	        then
+				result=$(array_contains name_array "${reference_item}" && echo y || echo n)
 
-	            dna-echo -m "${g-}The | ${n-}${type_name}${g-} | record | ${n-}${reference_item_name}${g-} | for DNS name | ${n-}${name}${g-} | is registered correctly."
+		        if [ "${result}" = "y" ]
+		        then
 
-				outcome="ok"
-				accept="y"
+		            dna-echo -m "${g-}The | ${n-}${type_name}${g-} | record | ${n-}${reference_item_name}${g-} | for DNS name | ${n-}${name}${g-} | is registered correctly."
 
-	        else
+					outcome="ok"
+					accept="y"
 
-				incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
+		        else
 
-				if [ "${incorrect_iteration}" = "1" ]
-				then
+					incorrect_iteration=$(( ${incorrect_iteration-} + 1 ))
 
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is NOT registered."
-
-					if [ "${autoset_dns-null}" = "y" ]
+					if [ "${incorrect_iteration}" = "1" ]
 					then
 
-						dna-echo -m "Automatically setting this record on your DNS provider."
-						outcome="autofix"
-						dna-set_dns_record [...]
+						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is NOT registered."
 
-					else
-
-						dna-echo -m "You must now set this record on the authoritative DNS provider for this zone."
-
-						if [ "${dns_provider_setup-null}" = "y" ]
+						if [ "${autoset_dns-null}" = "y" ]
 						then
-							ask_for_boolean_question="Would you like to automatically set this record on [one of] your previously specified DNS provider[s]?"
-				            dna-ask_for_boolean_def_yes
-				            if [ "$ask_for_boolean_output" = "y" ]
-				            then
-								dna-echo -m "Ok, automatically setting this DNS record."
-								outcome="autofix"
-								dna-set_dns_record [...]
+
+							dna-echo -m "Automatically setting this record on your DNS provider."
+							outcome="autofix"
+							dna-set_dns_record [...]
+
+						else
+
+							dna-echo -m "You must now set this record on the authoritative DNS provider for this zone."
+
+							if [ "${dns_provider_setup-null}" = "y" ]
+							then
+								ask_for_boolean_question="Would you like to automatically set this record on [one of] your previously specified DNS provider[s]?"
+					            dna-ask_for_boolean_def_yes
+					            if [ "$ask_for_boolean_output" = "y" ]
+					            then
+									dna-echo -m "Ok, automatically setting this DNS record."
+									outcome="autofix"
+									dna-set_dns_record [...]
+								else
+									read -rp "${b-}Ok, press enter after you've manually set the record and are ready to continue.${x-}"
+									echo
+									outcome="manualfix"
+								fi
 							else
-								read -rp "${b-}Ok, press enter after you've manually set the record and are ready to continue.${x-}"
+								read -rp "${b-}Press enter after you've set the record and are ready to continue...${x-}"
 								echo
 								outcome="manualfix"
 							fi
-						else
-							read -rp "${b-}Press enter after you've set the record and are ready to continue...${x-}"
-							echo
-							outcome="manualfix"
+
 						fi
 
-					fi
-
-				elif [ "${incorrect_iteration}" -le "4" ]
-				then
-
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered."
-
-					if [ "${outcome}" = "manualfix" ]
+					elif [ "${incorrect_iteration}" -le "4" ]
 					then
-						dna-echo -m "As we wait to ensure DNS propagation, ensure you've correctly set the record on your DNS provider."
+
+						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered."
+
+						if [ "${outcome}" = "manualfix" ]
+						then
+							dna-echo -m "As we wait to ensure DNS propagation, ensure you've correctly set the record on your DNS provider."
+						fi
+
+						wait="$[${incorrect_iteration}**2]"
+						tput sc
+						while [ "${wait}" -ge "0" ]
+						do
+						    case $((wait % 4)) in
+						        0 ) j="-" ;;
+						        1 ) j="/" ;;
+						        2 ) j="|" ;;
+						        3 ) j="\\" ;;
+						    esac
+						    tput rc
+						    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
+						    sleep 1
+						    ((wait=wait-1)) || true
+						done
+						echo
+						echo
+
+					else
+
+						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered after several lookups."
+						dna-echo -m "his could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
+						dna-echo -m "Also ensure you're applying the correct setting to the authoritative DNS provider for this zone."
+
+						until [ "${valid-null}" = "y" ]
+						do
+
+							read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
+							case $answer in
+								"")	echo
+									valid=y
+									accept=n
+									;;
+								y)	echo -e "\\n"
+									valid=y
+									accept=n
+									;;
+								s)	echo -e "\\n"
+									dna-echo -m "Ok, skipping DNS check for this record..."
+									valid=y
+									accept=y
+									;;
+								e)	echo -e "\\n"
+									dna-echo -m "Exiting..."
+									exit
+									;;
+								*)	echo -e "\\n"
+									dna-echo -m "${r-}Invalid option. Try again..."
+									valid=n
+									accept=n
+									;;
+							esac
+
+						done
+
+						unset incorrect_iteration outcome valid
+
 					fi
-
-					wait="$[${incorrect_iteration}**2]"
-					tput sc
-					while [ "${wait}" -ge "0" ]
-					do
-					    case $((wait % 4)) in
-					        0 ) j="-" ;;
-					        1 ) j="/" ;;
-					        2 ) j="|" ;;
-					        3 ) j="\\" ;;
-					    esac
-					    tput rc
-					    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
-					    sleep 1
-					    ((wait=wait-1)) || true
-					done
-					echo
-					echo
-
-				else
-
-					dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered after several lookups."
-					dna-echo -m "his could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
-					dna-echo -m "Also ensure you're applying the correct setting to the authoritative DNS provider for this zone."
-
-					until [ "${valid-null}" = "y" ]
-					do
-
-						read -n 1 -rp "${b-}Perform DNS check again from the beginning?${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip]/${b-}e${x-}[xit]) " answer;
-						case $answer in
-							"")	echo
-								valid=y
-								accept=n
-								;;
-							y)	echo -e "\\n"
-								valid=y
-								accept=n
-								;;
-							s)	echo -e "\\n"
-								dna-echo -m "Ok, skipping DNS check for this record..."
-								valid=y
-								accept=y
-								;;
-							e)	echo -e "\\n"
-								dna-echo -m "Exiting..."
-								exit
-								;;
-							*)	echo -e "\\n"
-								dna-echo -m "${r-}Invalid option. Try again..."
-								valid=n
-								accept=n
-								;;
-						esac
-
-					done
-
-					unset incorrect_iteration outcome valid
 
 				fi
 
-			fi
+			done
+
+			unset incorrect_iteration outcome valid accept
 
 		done
 
-		unset incorrect_iteration outcome valid accept
-
-	done
+	fi
 
 	############################################################################
 
