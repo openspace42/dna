@@ -84,8 +84,11 @@ dna-wait_for() {
 
     ### check_condition must be defined immediately prior to calling this function.
 
+    check_condition
+
     tput sc
     seconds=0
+
     while [ ! "${condition_verified-null}" = "y" ]
     do
 
@@ -112,8 +115,8 @@ dna-wait_for() {
         tput rc
         echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
         sleep 1
-        check_condition
         ((seconds=seconds+1)) || true
+        check_condition
 
     done
 
