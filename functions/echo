@@ -6,7 +6,10 @@ dna-echo() {
     then
         echo "${r-}${b-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
         echo
-        dna-exit
+        echo "${b-}Exiting...${x-}"
+        echo
+        sleep 1
+        exit
     fi
 
     while getopts ":m:e:" arguments; do
@@ -17,7 +20,10 @@ dna-echo() {
                 ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
                 echo
-                dna-exit
+                echo "${b-}Exiting...${x-}"
+                echo
+                sleep 1
+                exit
                 ;;
         esac
     done
@@ -27,14 +33,20 @@ dna-echo() {
 	then
 		echo "${r-}${b-}Argument | ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
         echo
-		dna-exit
+        echo "${b-}Exiting...${x-}"
+        echo
+        sleep 1
+        exit
 	fi
 
     if [ ! -z "${message-}" ] && [ ! -z "${error_message-}" ]
 	then
 		echo "${r-}${b-}Only one argument [| ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} |] can be supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
         echo
-		dna-exit
+        echo "${b-}Exiting...${x-}"
+        echo
+        sleep 1
+        exit
 	fi
 
     if [ ! -z "${message-}" ]
