@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-dna-validate_input_ipv4() {
+dna-validate_ipv4() {
 
     ############################################################################
 
@@ -55,7 +55,7 @@ dna-validate_input_ipv4() {
 
 }
 
-dna-validate_input_ipv6() {
+dna-validate_ipv6() {
 
     ############################################################################
 
