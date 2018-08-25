@@ -2,6 +2,12 @@
 
 dna-echo() {
 
+    if [ $# -eq 0 ]
+    then
+        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
     while getopts ":m:" arguments; do
         case $arguments in
             m)	message="$OPTARG"
@@ -13,6 +19,12 @@ dna-echo() {
         esac
     done
     OPTIND=1
+
+    if [ -z "${message-}" ]
+	then
+		dna-echo -m "${r-}Argument | ${n-}message [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
 
     if [ ! "${silent-null}" = "y" ]
     then
