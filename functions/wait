@@ -43,3 +43,5 @@ dna-wait() {
         sleep 1
         ((seconds=seconds-1)) || true
     done
+
+}
