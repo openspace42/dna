@@ -8,30 +8,45 @@ dna-echo() {
         dna-exit
     fi
 
-    while getopts ":m:" arguments; do
+    while getopts ":m:e:" arguments; do
         case $arguments in
             m)	message="$OPTARG"
-            ;;
+                ;;
+            e)  error_message="$OPTARG"
+                ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-            echo
-            dna-exit
-            ;;
+                echo
+                dna-exit
+                ;;
         esac
     done
     OPTIND=1
 
-    if [ -z "${message-}" ]
+    if [ -z "${message-}" ] && [ -z "${error_message-}" ]
 	then
-		dna-echo -m "${r-}Argument | ${n-}message [-m]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-echo -m "${r-}Argument | ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
 
-    if [ ! "${silent-null}" = "y" ]
+    if [ ! -z "${message-}" ] && [ ! -z "${error_message-}" ]
+	then
+		dna-echo -m "${r-}Only one argument [| ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} |] can be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+    if [ ! -z "${message-}" ]
     then
-        echo "${b-}${message}${x-}"
+        if [ ! "${silent-null}" = "y" ]
+        then
+            echo "${b-}${message}${x-}"
+            echo
+        fi
+    elif [ ! -z "${error_message-}" ]
+    then
+        echo "${r-}${b-}${error_message}${x-}"
         echo
     fi
 
-    unset message
+    unset message error_message
 
 }
