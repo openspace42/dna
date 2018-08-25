@@ -76,7 +76,7 @@ dna-validate_ipv6() {
         case $arguments in
             i)	ip="$OPTARG"
                 ;;
-            s)	export silent="y"
+            s)	silent="y"
                 ;;
             \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -171,11 +171,13 @@ dna-validate_ipv6() {
 
     if valid_ip "${ip}"
     then
-        dna-echo -m "${g-}The IPv4 address | ${n-}${ip}${g-} | is valid."
+        dna-echo -m "${g-}The IPv6 address | ${n-}${ip}${g-} | is valid."
         export ip_is_valid="y"
     else
-        dna-echo -m "${r-}The IPv4 address | ${n-}${ip}${r-} | is NOT valid."
+        dna-echo -m "${r-}The IPv6 address | ${n-}${ip}${r-} | is NOT valid."
         export ip_is_valid="n"
     fi
+
+    unset silent
 
 }
