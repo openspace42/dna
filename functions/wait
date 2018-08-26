@@ -140,7 +140,12 @@ dna-wait_for() {
 
     done
 
-    if [ ! -z "${wait_output-null}" ]
+    if [ ! -z "${wait_output-}" ]
+    then
+        echo
+    fi
+
+    if [ "${wait_output-null}" = "fixed" ]
     then
         echo
     fi
