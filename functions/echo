@@ -12,9 +12,21 @@ dna-echo() {
         exit
     fi
 
-    while getopts ":m:e:" arguments; do
+    if [ $# -gt 2 ]
+    then
+        echo "${r-}${b-}Only one argument can be specified for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
+        echo
+        echo "${b-}Exiting...${x-}"
+        echo
+        sleep 1
+        exit
+    fi
+
+    while getopts ":m:s:e:" arguments; do
         case $arguments in
             m)	message="$OPTARG"
+                ;;
+            s)  success_message="$OPTARG"
                 ;;
             e)  error_message="$OPTARG"
                 ;;
@@ -29,35 +41,19 @@ dna-echo() {
     done
     OPTIND=1
 
-    if [ -z "${message-}" ] && [ -z "${error_message-}" ]
-	then
-		echo "${r-}${b-}Argument | ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
-        echo
-        echo "${b-}Exiting...${x-}"
-        echo
-        sleep 1
-        exit
-	fi
-
-    if [ ! -z "${message-}" ] && [ ! -z "${error_message-}" ]
-	then
-		echo "${r-}${b-}Only one argument [| ${n-}message [-m]${r-} | or | ${n-}error_message [-e]${r-} |] can be supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
-        echo
-        echo "${b-}Exiting...${x-}"
-        echo
-        sleep 1
-        exit
-	fi
-
-    if [ ! -z "${message-}" ]
+    if [ -z "${error_message-}" ]
     then
         if [ ! "${silent-null}" = "y" ]
         then
-            echo "${b-}${message}${x-}"
+            if [ -n "${message-}"]
+            then
+                echo "${b-}${message}${x-}"
+            else
+                echo "${g-}${b-}${success_message}${x-}"
+            fi
             echo
         fi
-    elif [ ! -z "${error_message-}" ]
-    then
+    else
         echo "${r-}${b-}${error_message}${x-}"
         echo
     fi
