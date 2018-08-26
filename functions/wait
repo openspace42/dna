@@ -137,11 +137,15 @@ dna-wait_for() {
         fi
 
         wait_output="fixed"
-        echo
 
     done
 
-    if [ -z "${wait_output-null}" = "timeout" ]
+    if [ ! -z "${wait_output-null}" ]
+    then
+        echo
+    fi
+
+    if [ ! "${wait_output-null}" = "timeout" ]
     then
         wait_output="ok"
     fi
