@@ -45,7 +45,7 @@ dna-echo() {
     then
         if [ ! "${silent-null}" = "y" ]
         then
-            if [ -n "${message-}"]
+            if [ -n "${message-}" ]
             then
                 echo "${b-}${message}${x-}"
             else
