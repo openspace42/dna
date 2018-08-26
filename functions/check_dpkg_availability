@@ -12,6 +12,6 @@ dna-check_dpkg_availability() {
     }
 
     dna-wait_for -d "Now waiting for other package managers to complete operations..."
-    dna-echo -s "DPKG is now available. Continuing..."
+    dna-echo -s "DPKG is available. Continuing..."
 
 }
