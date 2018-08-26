@@ -129,7 +129,7 @@ dna-wait() {
             3 ) j="\\" ;;
         esac
         tput rc
-        if [ -n "${description}" ]
+        if [ -n "${description-}" ]
         then
             echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${seconds}${n-} more seconds]"
         else

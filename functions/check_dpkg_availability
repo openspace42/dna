@@ -2,24 +2,16 @@
 
 dna-check_dpkg_availability() {
 
-    dna-echo -m "Now ensuring DPKG is available..."
-    sleep 3
-    i=0
-    tput sc
-    while fuser /var/lib/dpkg/lock >/dev/null 2>&1
-    do
-        case $((i % 4)) in
-            0 ) j="-" ;;
-            1 ) j="\\" ;;
-            2 ) j="|" ;;
-            3 ) j="/" ;;
-        esac
-        tput rc
-        echo -en "\\r[$j] ${r-}${b-}Waiting for other software managers to finish...${x-}"
-        echo
-        sleep 0.5
-        ((i=i+1))
-    done
-    dna-echo -m "${g-}DPKG available. Continuing..."
+    check_condition() {
+
+        if ! fuser /var/lib/dpkg/lock &> /dev/null
+        then
+            condition_verified=y
+        fi
+
+    }
+
+    dna-wait -d "Now waiting for other package managers to complete operations..."
+    dna-echo -s "DPKG is now available. Continuing..."
 
 }
