@@ -58,6 +58,6 @@ dna-echo() {
         echo
     fi
 
-    unset message error_message
+    unset message success_message error_message
 
 }

@@ -1,5 +1,93 @@
 #!/usr/bin/env bash
 
+: ' Intro and documentation:
+
+    ----------------------------------------------------------------------------
+
+    dna-wait():
+
+        This function pauses the code execution for a specified amount of time.
+
+        These are the possible arguments to be passed to this function:
+
+        seconds [required]:
+
+            must be a numerical value
+
+        description [optional]:
+
+            must be a short text motivating the wait
+
+    ----------------------------------------------------------------------------
+
+    dna-wait_for():
+
+        This function pauses the code execution until a certain condition is verified.
+
+        These are the possible functions to be declared prior to calling this function:
+
+        check_condition [required]:
+
+            a function that will perform a test to see if the condition has been verified.
+            if and when that occurs, it will exit after having set "condition_verified=y",
+            therefore informing this function that it too can exit.
+
+            Examples:
+
+            check_condition() {
+
+                ### Test to see if a file has been created
+
+                    if [ -f "/tmp/install/installation_complete" ]
+                    then
+                        condition_verified=y
+                    fi
+
+                }
+
+            check_condition() {
+
+                ### Test to see if an SSH connection to a server succeeds
+
+                if ssh -p42022 -o "LogLevel=ERROR" -o "StrictHostKeyChecking no" -o \
+                    "UserKnownHostsFile=/dev/null" -i "/root/.ssh/hello_world" "root@${server_ipv4}" \
+                    exit &> /dev/null
+                then
+                    condition_verified=y
+                fi
+
+            }
+
+        These are the possible arguments to be passed to this function:
+
+        description [required]:
+
+            must be a short text motivating the wait
+
+        max_seconds [optional]:
+
+            must be a numerical value
+
+            if this threshold is reached, the script exits with "wait_output=timeout"
+
+        error_message [optional]:
+
+            must be a short text explaining that the timeout has occurred while waiting for [...]
+
+            if supplied, it will be displayed if "$max_seconds" is supplied and the timeout is reached, otherwise the timeout will occurr silently.
+
+        check_interval [optional]:
+
+            must be a numerical value
+
+            by default, the check_condition function is run every second, but you
+            can set this variable to indicate it should only be run every x number of seconds,
+            for example for resource-intensive or rate-limited operations.
+
+    ----------------------------------------------------------------------------
+
+# '
+
 dna-wait() {
 
 	############################################################################
@@ -10,9 +98,11 @@ dna-wait() {
         dna-exit
     fi
 
-	while getopts ":s:" arguments; do
+	while getopts ":s:d:" arguments; do
 		case $arguments in
 			s)	seconds="$OPTARG"
+                ;;
+            d)  description="$OPTARG"
                 ;;
 			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
@@ -39,7 +129,12 @@ dna-wait() {
             3 ) j="\\" ;;
         esac
         tput rc
-        echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${seconds}${n-} more seconds to allow for DNS propagation...${x-}"
+        if [ -n "${description}" ]
+        then
+            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${seconds}${n-} more seconds]"
+        else
+            echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting... [for ${y-}${seconds}${n-} more seconds]"
+        fi
         sleep 1
         ((seconds=seconds-1)) || true
     done
@@ -59,15 +154,15 @@ dna-wait_for() {
         dna-exit
     fi
 
-	while getopts ":i:d:m:e:" arguments; do
+	while getopts ":d:m:e:i:" arguments; do
 		case $arguments in
-            i)  interval="$OPTARG"
-                ;;
             d)  description="$OPTARG"
                 ;;
             m)  max_seconds="$OPTARG"
                 ;;
             e)  error_message="$OPTARG"
+                ;;
+            i)  check_interval="$OPTARG"
                 ;;
 			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
@@ -126,9 +221,9 @@ dna-wait_for() {
         sleep 1
         ((seconds=seconds+1))
 
-        if [ ! -z "${interval-}" ]
+        if [ ! -z "${check_interval-}" ]
         then
-            if [ ! "${seconds}" = "0" ] && (( $seconds % $interval == 0 ))
+            if [ ! "${seconds}" = "0" ] && (( $seconds % $check_interval == 0 ))
             then
                 check_condition
             fi
@@ -155,6 +250,6 @@ dna-wait_for() {
         wait_output="ok"
     fi
 
-    unset seconds interval description max_seconds error_message check_condition condition_verified
+    unset seconds check_interval description max_seconds error_message check_condition condition_verified
 
 }
