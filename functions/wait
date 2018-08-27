@@ -139,6 +139,7 @@ dna-wait() {
         ((seconds=seconds-1)) || true
     done
     echo
+    echo
 
     unset seconds
 
