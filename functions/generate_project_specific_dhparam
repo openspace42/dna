@@ -6,6 +6,9 @@ dna-generate_project_specific_dhparam() {
     then
         echo "${g-}${b-}DHparam file found. Skipping generation...${x-}"
         echo
+        export dh_param_outcome=found
+        export dh_param_status=ok
+
     else
         echo "${b-}One last thing: to make your TLS connections even more secure, you can generate a file called DH parameters file.${x-}"
         echo
@@ -17,7 +20,11 @@ dna-generate_project_specific_dhparam() {
         then
             echo "${b-}Ok, proceeding with DHparams file generation...${x-}"
             echo
+            export dh_param_outcome=generating
+            export dh_param_status=no
             openssl dhparam -out $tls_dir/dh.pem.incomplete 4096
+            export dh_param_outcome=generated
+            export dh_param_status=ok
             mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem
             echo
         else
@@ -32,6 +39,8 @@ dna-generate_project_specific_dhparam() {
             echo
             echo "${b-}mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem${x-}"
             echo
+            export dh_param_outcome=generation_skipped
+            export dh_param_status=no
         fi
         echo "${b-}Finished generating DHparams.${x-}"
         echo
