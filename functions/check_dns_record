@@ -431,7 +431,7 @@ dna-check_dns_record() {
 
 	}
 
-	if [ ! "${dns_checks_outcome-null}" = "skip" ]
+	if [ ! "${dns_checks_outcome-null}" = "skip" ] && [ ! "${dns_checks_outcome-null}" = "exit" ]
 	then
 
 		lookup_name
@@ -558,7 +558,12 @@ dna-check_dns_record() {
 
 	############################################################################
 
-	dna-echo -s "All | ${n-}${type_name}${g-} | DNS checks for name | ${n-}${name}${g-} | completed successfully."
+	if [ ! "${dns_checks_outcome-null}" = "skip" ] && [ ! "${dns_checks_outcome-null}" = "exit" ]
+	then
+
+		dna-echo -s "All | ${n-}${type_name}${g-} | DNS checks for name | ${n-}${name}${g-} | completed successfully."
+
+	fi
 
 	rm -rf "${dns_checks_dir}"
 
