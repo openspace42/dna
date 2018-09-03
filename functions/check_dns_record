@@ -66,6 +66,13 @@ dna-check_dns_record() {
 		return 0
 	fi
 
+	### Unset any previously set "skip" choice
+
+	if [ "${dns_checks_outcome-null}" = "skip" ]
+	then
+		unset dns_checks_outcome
+	fi
+
 	############################################################################
 
 	if [ $# -eq 0 ]
