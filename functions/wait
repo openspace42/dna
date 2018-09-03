@@ -6,7 +6,11 @@
 
     dna-wait():
 
+        ------------------------------------------------------------------------
+
         This function pauses the code execution for a specified amount of time.
+
+        ------------------------------------------------------------------------
 
         These are the possible arguments to be passed to this function:
 
@@ -18,11 +22,15 @@
 
             must be a short text motivating the wait
 
+        ------------------------------------------------------------------------
+
     ----------------------------------------------------------------------------
 
     dna-wait_for():
 
         This function pauses the code execution until a certain condition is verified.
+
+        ------------------------------------------------------------------------
 
         These are the possible functions to be declared prior to calling this function:
 
@@ -58,6 +66,8 @@
 
             }
 
+        ------------------------------------------------------------------------
+
         These are the possible arguments to be passed to this function:
 
         description [required]:
@@ -83,6 +93,8 @@
             by default, the check_condition function is run every second, but you
             can set this variable to indicate it should only be run every x number of seconds,
             for example for resource-intensive or rate-limited operations.
+
+        ------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
 
