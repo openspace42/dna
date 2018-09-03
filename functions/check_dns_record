@@ -395,6 +395,10 @@ dna-check_dns_record() {
 						dna-echo -m "Also ensure you're applying the correct setting to the authoritative DNS provider for this zone."
 
 						read_choice -m "Perform checks for this DNS record once again from the beginning?"
+						if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
+						then
+							return 0
+						fi
 
 						unset incorrect_iteration dns_checks_outcome
 
@@ -505,9 +509,17 @@ dna-check_dns_record() {
 									else
 										dna-echo -m "Ok, therefore you must manually remove this DNS record."
 										read_choice -m "Are you ready to check this DNS record again now?"
+										if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
+										then
+											return 0
+										fi
 									fi
 								else
 									read_choice -m "Are you ready to check this DNS record again now?"
+									if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
+									then
+										return 0
+									fi
 								fi
 
 							fi
@@ -547,6 +559,10 @@ dna-check_dns_record() {
 							dna-echo -m "Also ensure you're removing the record from the authoritative DNS provider for this zone."
 
 							read_choice -m "Perform checks for this DNS record once again from the beginning?"
+							if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
+							then
+								return 0
+							fi
 
 							unset incorrect_iteration dns_checks_outcome
 
