@@ -345,9 +345,17 @@ dna-check_dns_record() {
 								else
 									dna-echo -m "Ok, therefore you must manually set this DNS record."
 									read_choice -m "Are you ready to check this DNS record again now?"
+									if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
+									then
+										return 0
+									fi
 								fi
 							else
 								read_choice -m "Are you ready to check this DNS record again now?"
+								if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
+								then
+									return 0
+								fi
 							fi
 
 						fi
