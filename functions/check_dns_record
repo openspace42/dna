@@ -376,6 +376,7 @@ dna-check_dns_record() {
 									read_choice -m "Are you ready to check this DNS record again now?"
 									if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
 									then
+										unset name type version reference incorrect_iteration valid accept
 										return 0
 									fi
 								fi
@@ -383,6 +384,7 @@ dna-check_dns_record() {
 								read_choice -m "Are you ready to check this DNS record again now?"
 								if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
 								then
+									unset name type version reference incorrect_iteration valid accept
 									return 0
 								fi
 							fi
@@ -426,6 +428,7 @@ dna-check_dns_record() {
 						read_choice -m "Perform checks for this DNS record once again from the beginning?"
 						if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
 						then
+							unset name type version reference incorrect_iteration valid accept
 							return 0
 						fi
 
@@ -540,6 +543,7 @@ dna-check_dns_record() {
 										read_choice -m "Are you ready to check this DNS record again now?"
 										if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
 										then
+											unset name type version reference incorrect_iteration valid accept
 											return 0
 										fi
 									fi
@@ -547,6 +551,7 @@ dna-check_dns_record() {
 									read_choice -m "Are you ready to check this DNS record again now?"
 									if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
 									then
+										unset name type version reference incorrect_iteration valid accept
 										return 0
 									fi
 								fi
@@ -590,6 +595,7 @@ dna-check_dns_record() {
 							read_choice -m "Perform checks for this DNS record once again from the beginning?"
 							if [ "${dns_checks_outcome}" = "skip" ] || [ "${dns_checks_outcome}" = "exit" ]
 							then
+								unset name type version reference incorrect_iteration valid accept
 								return 0
 							fi
 
