@@ -564,7 +564,7 @@ dna-check_dns_record() {
 
 	unset name type version reference
 
-	if [ ! "${dns_checks_outcome}" = "exit" ]
+	if [ ! "${dns_checks_outcome-null}" = "exit" ]
 	then
 		unset dns_checks_outcome
 	fi
