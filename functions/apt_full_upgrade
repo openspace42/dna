@@ -22,6 +22,8 @@ dna-apt_full_upgrade() {
 
     dna-apt_update
 
+    dna-check_dpkg_availability
+
     apt-get -y upgrade
     apt-get -y dist-upgrade
     apt-get -y autoremove
