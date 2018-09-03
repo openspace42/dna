@@ -14,6 +14,7 @@ dna-setup_backup_restore_s3() {
 	done
     OPTIND=1
 
+	dna-install_duplicity
 	dna-install_dependencies -p "s3cmd"
 
 	mkdir -p "$conf_backups_s3_dir"
