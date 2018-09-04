@@ -35,8 +35,8 @@ dna-generate_ssh_keypair() {
     ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}"
     echo
     chmod 600 "/root/.ssh/${name}"
-    ssk_keypair_privkey_path="/root/.ssh/${name}"
-    ssk_keypair_pubkey_path="/root/.ssh/${name}.pub"
+    ssh_keypair_privkey_path="/root/.ssh/${name}"
+    ssh_keypair_pubkey_path="/root/.ssh/${name}.pub"
     echo "${b-}Finished generating SSH keypair and stored it in | ${y-}/root/.ssh/${name}[.pub]${x-}${b-} |.${x-}"
     echo
 
