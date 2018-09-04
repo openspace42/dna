@@ -148,7 +148,7 @@ dna-wait() {
             3 ) j="\\" ;;
         esac
 
-        seconds_name="$(echo ${seconds} | xargs printf %0${number}d)"
+        seconds_name="$(echo ${seconds} | xargs printf %0${seconds_decimals}d)"
 
         tput rc
 
@@ -203,6 +203,15 @@ dna-wait_for() {
 		dna-exit
 	fi
 
+    ############################################################################
+
+    ### Calculate seconds decimal plates for padding in printed messsage.
+
+    if [ -n "${max_seconds-}" ]
+    then
+        seconds_decimals="${#max_seconds}"
+    fi
+
 	############################################################################
 
     ### check_condition must be defined immediately prior to calling this function.
@@ -236,14 +245,20 @@ dna-wait_for() {
             2 ) j="|" ;;
             3 ) j="/" ;;
         esac
+
         tput rc
+
         if [ ! -z "${max_seconds-}" ]
         then
             remaining_seconds=$((max_seconds-seconds))
-            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${remaining_seconds}${n-} more seconds]"
+
+            remaining_seconds_name="$(echo ${remaining_seconds} | xargs printf %0${seconds_decimals}d)"
+
+            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${remaining_seconds_name}${n-} more seconds]"
         else
             echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
         fi
+
         sleep 1
         ((seconds=seconds+1))
 

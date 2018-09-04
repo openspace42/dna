@@ -41,6 +41,18 @@ dna-echo() {
     done
     OPTIND=1
 
+    if [ -z "${message-}" ] && [ -z "${success_message-}" ] && [ -z "${error_message-}" ]
+    then
+        echo "${r-}${b-}At least one message of any type must specified for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
+        echo
+        echo "${b-}Exiting...${x-}"
+        echo
+        sleep 1
+        exit
+    fi
+
+    ############################################################################
+
     if [ -z "${error_message-}" ]
     then
         if [ ! "${silent-null}" = "y" ]
