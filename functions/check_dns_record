@@ -298,7 +298,7 @@ dna-check_dns_record() {
 					dns_checks_outcome="skip"
 					;;
 				e)	echo -e "\\n"
-					dna-echo -m "Ok, exiting DNS checks..."
+					dna-echo -m "Ok, exiting this and all subsequent DNS checks..."
 					valid=y
 					accept=y
 					dns_checks_outcome="exit"
