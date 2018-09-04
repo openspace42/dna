@@ -131,24 +131,37 @@ dna-wait() {
 
 	############################################################################
 
+    ### Calculate seconds decimal plates for padding in printed messsage.
+
+    seconds_decimals="${#seconds}"
+
+    ############################################################################
+
     tput sc
     while [ "${seconds}" -ge "0" ]
     do
+
         case $((seconds % 4)) in
             0 ) j="-" ;;
             1 ) j="/" ;;
             2 ) j="|" ;;
             3 ) j="\\" ;;
         esac
+
+        seconds_name="$(echo ${seconds} | xargs printf %0${number}d)"
+
         tput rc
+
         if [ -n "${description-}" ]
         then
-            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${seconds}${n-} more seconds]"
+            echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${seconds_name}${n-} more seconds]"
         else
-            echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting... [for ${y-}${seconds}${n-} more seconds]"
+            echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting... [for ${y-}${seconds_name}${n-} more seconds]"
         fi
+
         sleep 1
         ((seconds=seconds-1)) || true
+
     done
     echo
     echo
