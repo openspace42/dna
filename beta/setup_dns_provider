@@ -410,15 +410,14 @@ dna-setup_backup_restore() {
 
 					case $input in
 						y)	s3_monthly_uploads=y
-						valid=y
-						;;
+							valid=y
+							;;
 						n)	s3_monthly_uploads=s3
-						valid=y
-						;;
-						*)	echo "${r-}${b-}Invalid setting for | s3_monthly_uploads | in function | ${FUNCNAME[0]} |.${x-}"
-						echo
-						valid=n
-						;;
+							valid=y
+							;;
+						*)	dna-echo -e "Invalid setting for | ${n-}s3_monthly_uploads${r-} | in function | ${n-}${FUNCNAME[0]}${r-} |."
+							valid=n
+							;;
 					esac
 
 				}
