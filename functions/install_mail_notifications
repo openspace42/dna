@@ -4,6 +4,8 @@ dna-install_mail_notifications() {
 
     hostname="$(cat /etc/hostname)"
 
+    dna-get_distro_name
+
     if [ $distro_name = "Ubuntu" ]
 	then
         echo "${g-}${b-}Detected Ubuntu distro. Proceeding with full install...${x-}"
