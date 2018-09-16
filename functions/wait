@@ -94,7 +94,7 @@
             can set this variable to indicate it should only be run every x number of seconds,
             for example for resource-intensive or rate-limited operations.
 
-        ------------------------------------------------------------------------
+		------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
 
@@ -213,6 +213,12 @@ dna-wait_for() {
     fi
 
 	############################################################################
+
+    ### Unset any previous wait_output
+
+    unset wait_output
+
+    ############################################################################
 
     ### check_condition must be defined immediately prior to calling this function.
 
