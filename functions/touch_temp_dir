@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+dna-create_temp_dir() {
+
+	if [ -f "${temp_dir}" ]
+	then
+		rm -r "${temp_dir}"
+	fi
+
+	mkdir -p "${temp_dir}"
+
+}
