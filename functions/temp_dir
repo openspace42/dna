@@ -10,3 +10,12 @@ dna-touch_temp_dir() {
 	mkdir -p "${temp_dir}"
 
 }
+
+dna-remove_temp_dir() {
+
+	if [ -f "${temp_dir}" ]
+	then
+		rm -r "${temp_dir}"
+	fi
+
+}
