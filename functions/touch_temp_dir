@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-dna-create_temp_dir() {
+dna-touch_temp_dir() {
 
 	if [ -f "${temp_dir}" ]
 	then
