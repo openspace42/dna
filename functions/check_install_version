@@ -66,10 +66,12 @@ dna-check_install_version() {
         echo
         if [[ ! $REPLY =~ ^[Nn]$ ]]
         then
+            clear
             echo "${b-}Ok, continuing...${x-}"
             echo
             skip_intro=y
         else
+            clear
             echo
             skip_intro=n
         fi
