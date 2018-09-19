@@ -12,16 +12,6 @@ dna-echo() {
         exit
     fi
 
-    if [ $# -gt 2 ]
-    then
-        echo "${r-}${b-}Only one argument can be specified for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
-        echo
-        echo "${b-}Exiting...${x-}"
-        echo
-        sleep 1
-        exit
-    fi
-
     while getopts ":m:s:e:n" arguments; do
         case $arguments in
             m)	message="$OPTARG"
@@ -42,6 +32,30 @@ dna-echo() {
         esac
     done
     OPTIND=1
+
+    display_error() {
+
+        echo "${r-}${b-}Only one message argument can be specified for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
+        echo
+        echo "${b-}Exiting...${x-}"
+        echo
+        sleep 1
+        exit
+
+    }
+
+    if [ -z "${no_newline-}" ]
+    then
+        if [ $# -gt 2 ]
+        then
+            display_error
+        fi
+    else
+        if [ $# -gt 4 ]
+        then
+            display_error
+        fi
+    fi
 
     if [ -z "${message-}" ] && [ -z "${success_message-}" ] && [ -z "${error_message-}" ]
     then
