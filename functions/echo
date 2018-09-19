@@ -22,13 +22,15 @@ dna-echo() {
         exit
     fi
 
-    while getopts ":m:s:e:" arguments; do
+    while getopts ":m:s:e:n" arguments; do
         case $arguments in
             m)	message="$OPTARG"
                 ;;
             s)  success_message="$OPTARG"
                 ;;
             e)  error_message="$OPTARG"
+                ;;
+            n)  no_newline="y"
                 ;;
             \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
                 echo
@@ -63,13 +65,16 @@ dna-echo() {
             else
                 echo "${g-}${b-}${success_message}${x-}"
             fi
-            echo
         fi
     else
         echo "${r-}${b-}${error_message}${x-}"
+    fi
+
+    if [ -z "${no_newline-}" ]
+    then
         echo
     fi
 
-    unset message success_message error_message
+    unset message success_message error_message no_newline
 
 }
