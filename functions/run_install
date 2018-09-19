@@ -42,7 +42,7 @@ dna-run_install() {
         ### Remove installer directory
 
         dna-echo -m "Now removing installer directory..."
-        dna-echo "Run | ${y-}git clone ${git_host}/${author_name}/${proj_name}${n-} | once again to download the latest installer."
+        dna-echo -m "Run | ${y-}git clone ${git_host}/${author_name}/${proj_name}${n-} | once again to download the latest installer."
 
         rm -r $source_dir
 

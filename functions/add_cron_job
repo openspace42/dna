@@ -54,8 +54,7 @@ dna-add_cron_job() {
 
     ########################################################################
 
-    echo "${b-}Now adding job to crontab...${x-}"
-    echo
+    dna-echo -m "Now adding job to crontab..."
     job_path="/etc/cron.d/$name"
     touch "$job_path"
     chmod 755 "$job_path"
@@ -64,7 +63,6 @@ dna-add_cron_job() {
     echo "MAILTO=$admin_mail" >> "$job_path"
     echo >> "$job_path"
     echo "$time root cronic $content" >> "$job_path"
-    echo "${b-}Finished adding backup script to daily crontab...${x-}"
-    echo
+    dna-echo -s "Finished adding backup script to daily crontab..."
 
 }

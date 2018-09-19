@@ -499,13 +499,14 @@ dna-setup_backup_restore() {
 
 	else
 
-		echo
 		echo "${b-}Ok, keeping backups local. Remember to periodically copy your backups from the backups directory over to your backup storage machine!${x-}"
 		echo
 
 		read -rp "${b-}[press enter to continue reading...]${x-}"
 
 	fi
+
+	clear
 
 
 }
