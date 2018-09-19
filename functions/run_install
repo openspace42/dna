@@ -13,23 +13,18 @@ dna-run_install() {
     ### Define latest version
     export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags | cut -f1 -d"-")"
 
-    base_dir=/root/$author_name
-    install_dir=$base_dir/$short_name
-    conf_dir=$install_dir/conf
+    base_dir="/root/${author_name}"
+    install_dir="${base_dir}/${short_name}"
+    conf_dir="${install_dir}/conf"
 
     ### Launch the installer
 
     if [ ${custom_project_version-null} = "b" ]
     then
-        echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
-        echo
-        echo "Installing bleeding-edge version of $short_name up to latest git commit as per | -e |."
-        echo
-        echo "- * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! - * - !!! -"
+        dna-echo -e "Installing bleeding-edge version of ${short_name} up to latest git commit as per | ${n-}-p b${r-} |."
         ( cd $source_dir && bash ./install --return-check )
     else
-        echo "Installing $short_name $latest_vers"
-        echo
+        dna-echo -m "Installing ${short_name} ${latest_vers}"
         ( cd $source_dir && git checkout tags/$latest_vers && bash ./install --return-check )
     fi
 
@@ -38,8 +33,7 @@ dna-run_install() {
     if [ -f $source_dir/install_complete ]
     then
 
-        echo "${g-}${b-}Installation complete.${x-}"
-        echo
+        dna-echo -s "Installation complete."
 
         ### Set installation complete checkfile with installed version
 
@@ -47,22 +41,17 @@ dna-run_install() {
 
         ### Remove installer directory
 
-        echo "${b-}Now removing installer directory...${x-}"
-        echo
-        echo "${b-}Run | ${g-}git clone https://github.com/$author_name/$proj_name${x-}${b-} | once again to download the latest installer."
-        echo
+        dna-echo -m "Now removing installer directory..."
+        dna-echo "Run | ${y-}git clone ${git_host}/${author_name}/${proj_name}${n-} | once again to download the latest installer."
 
         rm -r $source_dir
 
-        echo "${b-}Exiting installer.${x-}"
-        echo
+        dna-echo -m "Exiting installer."
 
     else
 
-        echo "${r-}${b-}The installation has encountered an error.${x-}"
-        echo
-        echo "${b-}Please inspect the any error messages above and try the installation again or open an issue on GitHub. Thank you.${x-}"
-        echo
+        dna-echo -e "The installation has encountered an error."
+        dna-echo -m "Please inspect the any error messages above and try the installation again or open an issue. Thank you."
 
         dna-exit
 

@@ -254,6 +254,8 @@ dna-set_option() {
 
 	fi
 
+	clear
+
 	value="$(cat ${opt_path})"
 	export "${option}"="${value}"
 
