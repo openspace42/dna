@@ -66,15 +66,11 @@ dna-check_install_version() {
         echo
         if [[ ! $REPLY =~ ^[Nn]$ ]]
         then
-            clear
-            echo "${b-}Ok, continuing...${x-}"
-            echo
             skip_intro=y
         else
-            clear
-            echo
             skip_intro=n
         fi
+        clear
 
     else
 
@@ -184,6 +180,7 @@ dna-check_install_version() {
             echo "${b-}Thank you in advance!${x-}"
             echo
             read -rp "${b-}[press enter to continue reading...]${x-}"
+            clear
         fi
 
         ### In any event, since there is a previous installation, at least partial, prompt for a backup.
