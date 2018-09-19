@@ -106,7 +106,6 @@ dna-setup_backup_restore_s3() {
 			echo "${b-}This is your only chance to save this passphrase. If you don't do it now and this machine's data is lost, so will be your backups.${x-}"
 			echo
 			read -rp "${b-}[press enter to continue reading...]${x-}"
-			clear
 
 		fi
 
@@ -212,7 +211,6 @@ dna-setup_backup_restore_s3() {
 					backup_archival_location=local
 					echo "local" > $conf_backups_dir/backup_archival_location
 					read -rp "${b-}[press enter to continue reading...]${x-}"
-					clear
 				fi
 			fi
 			set -e
@@ -225,7 +223,6 @@ dna-setup_backup_restore_s3() {
 		fi
 
 	done
-	clear
 
 	unset skip_questions
 
@@ -235,12 +232,8 @@ dna-setup_backup_restore() {
 
 	mkdir -p $conf_backups_local_dir
 
-	clear
-
-
 	echo "${b-}$short_name performs nightly backups and stores them locally for safekeeping.${x-}"
 	echo
-
 
 	echo "${b-}By default $short_name stores local backups in the | ${g-}$install_dir/backups${x-}${b-} | directory.${x-}"
 	echo
@@ -444,7 +437,6 @@ dna-setup_backup_restore() {
 				echo "local" > $conf_dir/backup_archival_location
 
 				read -rp "${b-}[press enter to continue reading...]${x-}"
-				clear
 
 			fi
 
@@ -512,7 +504,6 @@ dna-setup_backup_restore() {
 		echo
 
 		read -rp "${b-}[press enter to continue reading...]${x-}"
-		clear
 
 	fi
 

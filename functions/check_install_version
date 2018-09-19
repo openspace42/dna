@@ -124,7 +124,6 @@ dna-check_install_version() {
                         echo "${b-}This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
                         echo
                         read -rp "${b-}[press enter to continue...]${x-}"
-                        clear
                     else
 
                         ### if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))
@@ -151,7 +150,6 @@ dna-check_install_version() {
                     echo "${r-}${b-}If you want to save any customizations you have made, exit this script and do so now.${x-}"
                     echo
                     read -rp "${b-}[press enter to continue reading...]${x-}"
-                    clear
 
                 fi
 
@@ -173,7 +171,6 @@ dna-check_install_version() {
 
         if [ ${prev_install_incomplete-null} = "y" ]
         then
-            clear
             echo "${r-}${b-}It appears you have a previous incomplete installation of $short_name.${x-}"
             echo
             echo "${b-}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x-}"
@@ -185,7 +182,6 @@ dna-check_install_version() {
             echo "${b-}Thank you in advance!${x-}"
             echo
             read -rp "${b-}[press enter to continue reading...]${x-}"
-            clear
         fi
 
         ### In any event, since there is a previous installation, at least partial, prompt for a backup.

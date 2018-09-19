@@ -24,7 +24,6 @@ dna-check_inception_run() {
                 rm -r "/root/inception"
             fi
             git clone https://github.com/openspace42/inception
-            clear
             bash inception/setup
             exit
         else
