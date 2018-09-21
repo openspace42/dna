@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+: ' Intro and documentation:
+
+    ----------------------------------------------------------------------------
+
+    dna-send_mail():
+
+		This function verifies DNS records [A/AAAA/SRV].
+
+		------------------------------------------------------------------------
+
+        These are the possible arguments to be passed to this function:
+
+		name [required]:
+
+			must be a DNS name [e.g. ae.os.vu]
+
+		type [required]:
+
+			must be either:
+
+				a
+				aaaa
+				srv
+
+		reference [required]:
+
+			must be either:
+
+				1] A string with a comma-separated list of values [no spaces] [e.g.: "1.1.1.1,2.2.2.2,4.4.4.4,8.8.8.8"]
+				2] An absolute path to a file with a newline-separated list of IPs
+
+			the reference can be "delete" to indicate that the record must NOT be set at all.
+
+			the reference can include a "null" value that will be ignored as if it were a comment.
+
+				For example: -r "1.1.1.1, 2.2.2.2, null, 4.4.4.4"
+
+		------------------------------------------------------------------------
+
+		These are the operations to be run after having called this function:
+
+		unset dns_checks_outcome [recommended]:
+
+			This will unset any choice made by the user to skip "all" DNS checks,
+			including ones to come. If your code has several, logically unrelated
+			DNS checks blocks, remember to include this operation after one block
+			if the one coming after it should ignore any "exit" choice made by the
+			user.
+
+		------------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
+
+# '
+
+dna-send_mail() {
+
+	############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+	while getopts ":s:b:r:" arguments; do
+		case $arguments in
+            s)  subject="$OPTARG"
+                ;;
+            b)  body="$OPTARG"
+                ;;
+            r)  recipients="$OPTARG"
+                ;;
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	done
+	OPTIND=1
+
+    if [ -z "${subject-}" ]
+	then
+		dna-echo -e "Argument | ${n-}subject [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+    if [ -z "${body-}" ]
+	then
+		dna-echo -e "Argument | ${n-}body [-b]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+    if [ -z "${recipients-}" ]
+	then
+		dna-echo -e "Argument | ${n-}recipients [-r]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-exit
+	fi
+
+    ############################################################################
+
+    echo "From: ${HOSTNAME} <mailer@${HOSTNAME}>" > "/tmp/send_mail"
+    echo "To: ${recipients}" >> "/tmp/send_mail"
+    echo "Subject: ${subject}" >> "/tmp/send_mail"
+    echo "" >> "/tmp/send_mail"
+    echo "${body}" >> "/tmp/send_mail"
+    cat "/tmp/send_mail" | /usr/sbin/sendmail -t
+    rm "/tmp/send_mail"
+
+}
