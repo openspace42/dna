@@ -84,9 +84,12 @@ dna-echo() {
         echo "${r-}${b-}${error_message}${x-}"
     fi
 
-    if [ -z "${no_newline-}" ]
+    if [ ! "${silent-null}" = "y" ]
     then
-        echo
+        if [ -z "${no_newline-}" ]
+        then
+            echo
+        fi
     fi
 
     unset message success_message error_message no_newline
