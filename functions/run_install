@@ -2,27 +2,44 @@
 
 dna-run_install() {
 
-    ### Set bash environment error management
+    ############################################################################
 
-    set -eu
+    ### Add padding to output
 
     echo
 
+    ############################################################################
+
+    ### Store current date and time into a var
+
     now="$(date +"%Y-%m-%d_%H-%M-%S")"
 
+    ############################################################################
+
     ### Define latest version
+
     export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags | cut -f1 -d"-")"
+
+    ############################################################################
 
     ### Launch the installer
 
     if [ ${custom_project_version-null} = "b" ]
     then
+
         dna-echo -e "Installing bleeding-edge version of ${short_name} up to latest git commit as per | ${n-}-p b${r-} |."
+
         ( cd $source_dir && bash ./install --return-check )
+
     else
+
         dna-echo -m "Installing ${short_name} ${latest_vers}"
+
         ( cd $source_dir && git checkout tags/$latest_vers && bash ./install --return-check )
+
     fi
+
+    ############################################################################
 
     ### Read the installer exit code and exit the script
 
@@ -38,6 +55,7 @@ dna-run_install() {
         ### Remove installer directory
 
         dna-echo -m "Now removing installer directory..."
+
         dna-echo -m "Run | ${y-}git clone ${git_host}/${author_name}/${proj_name}${n-} | once again to download the latest installer."
 
         rm -r $source_dir
@@ -47,10 +65,13 @@ dna-run_install() {
     else
 
         dna-echo -e "The installation has encountered an error."
+    
         dna-echo -m "Please inspect the any error messages above and try performing the installation again or open an issue. Thank you."
 
         dna-exit
 
     fi
+
+    ############################################################################
 
 }
