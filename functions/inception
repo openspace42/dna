@@ -2,65 +2,7 @@
 
 dna-set_hostname() {
 
-    read -rp "${b}1] Set machine hostname. It's currently | $currhostname |. Change it? (Y/n): ${x}" -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Nn]$ ]]
-    then
-    	defined=n
-    	until [ $defined = "y" ]
-    	do
-    		hostname=""
-    		until [ ! $hostname = "" ]
-    		do
-    			read -rp "${b}Ok, changing hostname. Set it in the format: xm01.hello.world: ${x}" hostname
-    			echo
-    		done
-    		valid=n
-    		until [ $valid = "y" ]
-    		do
-    			read -n 1 -p "${b}Is | $hostname | correct? (Y/n/e[xit]) ${x}" answer;
-    			case $answer in
-    			"")
-    				echo
-    				valid=y
-    				defined=y
-    				;;
-    			y)
-    				echo -e "\n"
-    				valid=y
-    				defined=y
-    				;;
-    			n)
-    				echo -e "\n"
-    				echo "${b}Ok, then please try again...${x}"
-    				echo
-    				valid=y
-    				defined=n
-    				;;
-    			e)
-    				echo -e "\n"
-    				echo "${b}Exiting...${x}"
-    				echo
-    				exit
-    				;;
-    			*)
-    				echo -e "\n"
-    				echo "${r}${b}Invalid option. Retry...${x}"
-    				echo
-    				valid=n
-    				defined=n
-    				;;
-    			esac
-    		done
-    	done
-    	echo $hostname > /etc/hostname
-    	echo "${b}New hostname set to | $hostname |.${x}"
-    	echo
-    else
-    	echo
-    	echo "${b}Leaving hostname set to | $currhostname |.${x}"
-    	echo
-    fi
+    os-set_option -o "hostname" -p "/etc" -d "y" -v "n"
 
 }
 
@@ -489,6 +431,26 @@ dna-install_basic_packages() {
 dna-inception() {
 
     ############################################################################
+
+    while getopts ":h" arguments; do
+        case $arguments in
+            h)	skip_hostname="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    ############################################################################
+
+    if [ ! "${skip_hostname-}" = "y" ]
+    then
+
+        dna-set_hostname
+
+    fi
 
     dna-set_locale
 
