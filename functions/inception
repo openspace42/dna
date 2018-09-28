@@ -8,7 +8,7 @@ dna-set_hostname() {
 
 dna-set_locale() {
 
-    dna-echo -m "Now setting locale | ${y-}en_US.UTF-8${n-} |...${x-}"
+    dna-echo -m "Now setting locale to | ${y-}en_US.UTF-8${n-} |...${x-}"
     export LC_ALL="en_US.UTF-8"
     echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
     dna-echo -s "Locale set."
@@ -289,7 +289,7 @@ dna-prompt_ssh_connection_test() {
 
 dna-set_timezone() {
 
-    read -rp "Now setting timezone. Do so at the next screen. Press enter to continue."
+    read -rp "${b-}Now setting timezone. Do so at the next screen. Press enter to continue.${x-}"
     dpkg-reconfigure tzdata
 
 }
@@ -430,6 +430,11 @@ dna-install_basic_packages() {
 
 dna-inception() {
 
+    if [ -f "${os_conf_dir}/inception_run_ok" ]
+    then
+        return 0
+    fi
+
     ############################################################################
 
     while getopts ":h" arguments; do
@@ -473,6 +478,9 @@ dna-inception() {
     dna-apt_full_upgrade
 
     ############################################################################
+
+    mkdir -p "${os_conf_dir}"
+    touch "${os_conf_dir}/inception_run_ok"
 
     dna-echo -s "All done with inception operations."
 
