@@ -3,6 +3,7 @@
 dna-set_locale() {
 
     dna-echo -m "Now setting locale | ${y-}en_US.UTF-8${n-} |...${x-}"
+    export LC_ALL="en_US.UTF-8"
     echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
     dna-echo -s "Locale set."
 
@@ -16,7 +17,7 @@ dna-set_ssh_pubkey() {
     then
         dna-echo -s "SSH Authorized Keys file found."
         ssh_auth_keys_contents="$(cat ${ssh_auth_keys_file})"
-        dna-echo "Its content is currently:"
+        dna-echo -m "Its content is currently:"
         echo "${ssh_auth_keys_contents}"
         echo
     else
@@ -102,7 +103,7 @@ dna-harden_ssh() {
     if grep -Fq "Port " "${ssh_config_file}"
     then
 
-    	dna-echo -m " | ${o-}Port${n-} | line found, checking syntax"
+    	dna-echo -m " | ${o-}Port${n-} | line found."
 
     	if grep -Eq '^ *Port ' "${ssh_config_file}"
     	then
@@ -222,13 +223,13 @@ dna-initialize_ufw() {
 
     dna-read_conf_settings
 
-    dna-echo "Now installing UFW, setting | ${y-}limit ${ssh_port}${n-} |, and enabling."
+    dna-echo -m "Now installing UFW, setting | ${y-}limit ${ssh_port}${n-} |, and enabling."
 
     dna-install_dependencies -p "ufw"
 
-    dna-echo "Allowing port | ${y-}${ssh_port}${n-} |."
+    dna-echo -m "Allowing port | ${y-}${ssh_port}${n-} |."
 
-    ufw limit "${sshport}"
+    ufw limit "${ssh_port}"
     echo
 
     if [ ! "${ssh_port}" = "22" ]
@@ -268,7 +269,8 @@ dna-prompt_ssh_connection_test() {
     then
 
         dna-echo -m "Ok, you can now close the other test session, and come back to this one."
-        read -rp "${b-}[press enter to continue reading...]${x-}"
+        read -rp "${b-}[press enter to continue...]${x-}"
+        echo
 
     else
 
@@ -282,9 +284,7 @@ dna-prompt_ssh_connection_test() {
 dna-set_timezone() {
 
     read -rp "Now setting timezone. Do so at the next screen. Press enter to continue."
-    echo
     dpkg-reconfigure tzdata
-    echo
 
 }
 
@@ -366,7 +366,6 @@ dna-create_non_root_user() {
     		echo
     	fi
     else
-    	echo
     	echo "${b}Skipping non-root user creation.${x}"
     	echo
     fi
@@ -449,8 +448,6 @@ dna-inception() {
 
     ############################################################################
 
-    dna-echo -s "All done with inception operations. Now rebooting..."
-
-    reboot
+    dna-echo -s "All done with inception operations."
 
 }
