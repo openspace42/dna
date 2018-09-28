@@ -33,7 +33,10 @@ dna-install_dependencies() {
     echo "${b-}Now installing dependencies...${x-}"
     echo
 
+    dna-check_dpkg_availability
+
     dna-apt_update
+
     if ! apt-get -y install $packages
     then
         if [ "${allow_errors-null}" = "y" ]
