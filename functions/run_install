@@ -27,13 +27,13 @@ dna-run_install() {
     if [ ${custom_project_version-null} = "b" ]
     then
 
-        dna-echo -e "Installing bleeding-edge version of ${short_name} up to latest git commit as per | ${n-}-p b${r-} |."
+        dna-echo -e "Installing bleeding-edge version of ${proj_name} up to latest git commit as per | ${n-}-p b${r-} |."
 
         ( cd $source_dir && bash ./install --return-check )
 
     else
 
-        dna-echo -m "Installing ${short_name} ${latest_vers}"
+        dna-echo -m "Installing ${proj_name} ${latest_vers}"
 
         ( cd $source_dir && git checkout tags/$latest_vers && bash ./install --return-check )
 
@@ -65,7 +65,7 @@ dna-run_install() {
     else
 
         dna-echo -e "The installation has encountered an error."
-    
+
         dna-echo -m "Please inspect the any error messages above and try performing the installation again or open an issue. Thank you."
 
         dna-exit

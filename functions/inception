@@ -1,0 +1,219 @@
+#!/usr/bin/env bash
+
+dna-set_locale() {
+
+    dna-echo -m "Now setting locale | ${y-}en_US.UTF-8${n-} |...${x-}"
+    echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
+    dna-echo -s "Locale set."
+
+}
+
+dna-set_ssh_pubkey() {
+
+    dna-echo -m "Now installing your SSH public key."
+
+    if [ -f "${ssh_auth_keys_file}" ]
+    then
+        dna-echo -s "SSH Authorized Keys file found."
+        ssh_auth_keys_contents="$(cat ${ssh_auth_keys_file})"
+        dna-echo "Its content is currently:"
+        echo "${ssh_auth_keys_contents}"
+        echo
+    else
+    	dna-echo -m "SSH Authorized Keys file NOT found. Creating it now..."
+    	mkdir -p "/root/.ssh/"
+        touch "${ssh_auth_keys_file}"
+    fi
+
+    chown "root:root" "${ssh_auth_keys_file}"
+    chmod "600" "${ssh_auth_keys_file}"
+
+    read -rp "${b-}Set public key now? (Y/n): ${x-}" -n 1 -r
+    echo
+
+    if [[ ! $REPLY =~ ^[Nn]$ ]]
+    then
+    	defined=n
+    	until [ "${defined}" = "y" ]
+    	do
+    		new_ssh_pub_key=""
+    		until [ ! "${new_ssh_pub_key}" = "" ]
+    		do
+    			read -rp "${b-}Ok, now paste the ssh public key you copied from your local workstation here: ${x-}" new_ssh_pub_key
+    			echo
+    		done
+    		valid=n
+    		until [ $valid = "y" ]
+    		do
+    			read -n 1 -p "${b-}Is it correct? (Y/n/e[xit]) ${x-}" answer;
+    			case $answer in
+                "") echo
+                    valid=y
+    				defined=y
+    				;;
+    			y)
+    				echo -e "\n"
+    				valid=y
+    				defined=y
+    				;;
+    			n)
+    				echo -e "\n"
+    				dna-echo -m "Ok, then please try again..."
+    				valid=y
+    				defined=n
+    				;;
+    			e)
+    				echo -e "\n"
+    				dna-exit
+    				;;
+    			*)
+    				echo -e "\n"
+    				dna-echo -e "Invalid option. Retry..."
+    				valid=n
+    				defined=n
+    				;;
+    			esac
+    		done
+    	done
+    	chmod 600 "${ssh_auth_keys_file}"
+    	echo "${new_ssh_pub_key}" > "${ssh_auth_keys_file}"
+    	dna-echo -s "SSH Public key set."
+    else
+    	echo
+    	dna-echo -m "Skipping SSH key setting."
+    fi
+
+}
+
+dna-harden_ssh() {
+
+    dna-echo -m "Now setting SSH hardened values..."
+
+    sed -i "/PermitRootLogin/c\PermitRootLogin without-password" "${ssh_config_file}"
+
+    dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to ${y-}without-password${n-} |."
+
+    sed -i "/PasswordAuthentication/c\PasswordAuthentication no" "${ssh_config_file}"
+
+    dna-echo -m "Set | ${o-}PasswordAuthentication${n-} | to | ${y-}no${n-} |."
+
+    dna-echo -m "Now checking current SSH port setting..."
+
+    if grep -Fq "Port " "${ssh_config_file}"
+    then
+
+    	dna-echo -m " | ${o-}Port${n-} | line found, checking syntax"
+
+    	if grep -Eq '^ *Port ' "${ssh_config_file}"
+    	then
+
+    		dna-echo -m " | ${o-}Port${n-} | syntax correct."
+
+    		if grep -Eq '^ *Port 42022' "${ssh_config_file}"
+    		then
+
+    			dna-echo -m " | ${o-}Port${n-} | already set to | ${y-}42022${n-} |."
+    			ssh_port="42022"
+
+    		else
+
+    			curr_ssh_port="$(grep '^ *Port *' ${ssh_config_file} | sed 's|Port ||g')"
+
+    			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
+
+    			read -rp "${b-}Change it to 42022? (Y/n): ${x-}" -n 1 -r
+    			echo
+
+    			if [[ ! $REPLY =~ ^[Nn]$ ]]
+    			then
+
+    				dna-echo -m "Ok, changing SSH Port to 42022"
+
+    				sed -i "/Port /c\Port 42022" "${ssh_config_file}"
+
+    				dna-echo -s "SSH Port changed to 42022"
+
+    				ssh_port="42022"
+
+    			else
+
+    				dna-echo -m "Leaving SSH port set to: | ${y-}${curr_ssh_port}${x-} |."
+
+    				ssh_port="${curr_ssh_port}"
+
+    			fi
+
+    		fi
+
+    	else
+
+            dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]. Fixing it now."
+
+    		read -rp "${b-}Also set it to 42022? (Y/n): ${n-}" -n 1 -r
+    		echo
+
+    		if [[ ! $REPLY =~ ^[Nn]$ ]]
+            then
+
+                dna-echo -m "Ok, fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
+
+                sed -i "/Port /c\Port 42022" "${ssh_config_file}"
+
+    			dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}42022${n-} |."
+
+    			ssh_port="42022"
+
+    		else
+
+    			echo
+
+    			dna-echo "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+
+                sed -i "/Port /c\Port 22" "${ssh_config_file}"
+
+    			dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+
+    			ssh_port="22"
+
+	        fi
+
+    	fi
+
+    else
+
+        dna-echo -e " | ${n-}Port${r-} | line not found. Adding it now."
+
+    	read -rp "${b-}Also set it to 42022? (Y/n): ${x-}" -n 1 -r
+        echo
+
+        if [[ ! $REPLY =~ ^[Nn]$ ]]
+        then
+
+            dna-echo -m "Ok, adding | ${o-}Port${n-} | line and setting it to | ${y-}42022${n-} |."
+
+    		sed -i '1iPort 42022' "${ssh_config_file}"
+
+            dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+
+    		ssh_port="42022"
+
+        else
+
+    		echo
+
+            dna-echo -m "Ok, adding | ${o-}Port${n-} | line but leaving it set to | ${y-}22${n-} [standard] |."
+
+    		sed -i '1iPort 22' "${ssh_config_file}"
+
+            dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+
+    		ssh_port="22"
+
+        fi
+
+    fi
+
+    mkdir -p "${os_conf_dir}"
+    echo "${ssh_port}" > "${os_conf_dir}/ssh-port"
+
+}

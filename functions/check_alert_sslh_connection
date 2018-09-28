@@ -19,7 +19,7 @@ dna-check_sslh_connection() {
         echo
         echo "${b-}This is usually perfectly fine, but not during installation, as we will be terminating SSLH during one of the steps.${x-}"
         echo
-        echo "${b-}Please connect via your normal SSH port until you're finished re-installing $short_name${x-}"
+        echo "${b-}Please connect via your normal SSH port until you're finished re-installing $proj_name${x-}"
         echo
         echo "${b-}Exiting...${x-}"
         echo

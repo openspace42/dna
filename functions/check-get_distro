@@ -15,7 +15,7 @@ dna-check_distro_ubuntu() {
         dna-echo -m "${r-}Detected distro is NOT Ubuntu. It appears instead to be:"
         lsb_release -i
         echo
-        dna-echo -m "${short_name} only runs on Ubuntu."
+        dna-echo -m "${proj_name} only runs on Ubuntu."
         dna-exit
     fi
 
@@ -32,7 +32,7 @@ dna-check_distro_ubuntu_lts() {
         dna-echo -m "${r-}Detected Ubuntu version is NOT an LTS version. It appears instead to be:"
         lsb_release -d
         echo
-        dna-echo -m "${short_name} only runs on Ubuntu LTS versions."
+        dna-echo -m "${proj_name} only runs on Ubuntu LTS versions."
         dna-exit
     fi
 
@@ -47,7 +47,7 @@ dna-check_distro_ubuntu_18() {
         dna-echo -m "${r-}Detected distro is NOT Ubuntu 18.04 LTS. It appears instead to be:"
         lsb_release -d
         echo
-        dna-echo -m "${short_name} only runs on Ubuntu 18.04 LTS."
+        dna-echo -m "${proj_name} only runs on Ubuntu 18.04 LTS."
         dna-exit
     fi
 

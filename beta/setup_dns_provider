@@ -131,7 +131,7 @@ dna-setup_dns_provider() {
 				else
 					s3_setup_accepted=y
 					echo
-					echo "${b-}Ok, skipping S3 setup and REMOVING S3 setting from $short_name...${x-}"
+					echo "${b-}Ok, skipping S3 setup and REMOVING S3 setting from $proj_name...${x-}"
 					echo
 					backup_archival_location=local
 					echo "local" > $conf_backups_dir/backup_archival_location
@@ -162,21 +162,21 @@ dna-setup_backup_restore() {
 	clear
 
 
-	echo "${b-}$short_name performs nightly backups and stores them locally for safekeeping.${x-}"
+	echo "${b-}$proj_name performs nightly backups and stores them locally for safekeeping.${x-}"
 	echo
 
 
-	echo "${b-}By default $short_name stores local backups in the | ${g-}$install_dir/backups${x-}${b-} | directory.${x-}"
+	echo "${b-}By default $proj_name stores local backups in the | ${g-}$install_dir/backups${x-}${b-} | directory.${x-}"
 	echo
 	echo "${b-}If and only if your machine doesn't have sufficient local storage space available, you may specify another location.${x-}"
 	echo
-	echo "${b-}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $short_name at the filesystem level.${x-}"
+	echo "${b-}Bare in mind this location is intented to store local backups in real time as they're being produced, and therefore must always be directly accessible to $proj_name at the filesystem level.${x-}"
 	echo
 	echo "${b-}If you decide not to use the default location, be sure so specify a highly available and high performance location.${x-}"
 	echo
 	echo "${b-}Do not use a custom location for backup security / resilience purposes, but rather only if your machine has storage space limitations.${x-}"
 	echo
-	echo "${b-}$short_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x-}"
+	echo "${b-}$proj_name already has a built-in S3 backup archival function, which you can set up in a few steps after this one independently of this setting, and which easily supports low performance and low bandwith destinations.${x-}"
 	echo
 
 	### If option "backup_local_storage_location" is set and is currently "default", delete the "backup_local_storage_path" option to start fresh
@@ -313,7 +313,7 @@ dna-setup_backup_restore() {
 
 	describe_setting() {
 
-		echo "${b-}$short_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x-}"
+		echo "${b-}$proj_name can store your backups on an S3 storage server for safe, offsite recovery in case of need.${x-}"
 		echo
 		echo "${b-}Now specify your desired backup storage location [local/s3]:${x-}"
 		echo

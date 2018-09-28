@@ -4,19 +4,15 @@ dna-define_vars() {
 
 	### Define variables [Don't change these! | No trailing slash!]
 
-	### Define these in the project itself
-	### proj_name="kitty heartbeat checker"
-	### short_name="khc"
-	### author_name="aurora"
-
-	### Projects will be installed in this location: | /root/$proj_author/$short_name |.
+	### Projects will be installed in this location: | /root/${proj_author}/${proj_name} |.
 
 	export source_dir="/root/${proj_name}"
 	export base_dir="/root/${author_name}"
-	export install_dir="${base_dir}/${short_name}"
+	export install_dir="${base_dir}/${proj_name}"
 	export modules_dir="${install_dir}/modules"
 
 	export os_base_dir="/root/openspace42"
+	export os_conf_dir="${os_base_dir}/conf"
 
 	export conf_dir="${install_dir}/conf"
 
@@ -28,9 +24,12 @@ dna-define_vars() {
 
 	export tools_dir="${install_dir}/tools"
 
-	export tls_dir="/etc/ssl/${short_name}"
-	export temp_dir="/tmp/${short_name}"
+	export tls_dir="/etc/ssl/${proj_name}"
+	export temp_dir="/tmp/${proj_name}"
 
 	export www_dir="/var/www"
+
+	export ssh_auth_keys_file="/root/.ssh/authorized_keys"
+	export ssh_config_file="/etc/ssh/sshd_config"
 
 }

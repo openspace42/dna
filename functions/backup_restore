@@ -216,11 +216,11 @@ dna-br_backup_locally() {
 
 		if [ $install_complete = "n" ]
 		then
-			echo "${r-}${b-}It appears $short_name is not currently installed or there is an incomplete installation on this machine.${x-}"
+			echo "${r-}${b-}It appears $proj_name is not currently installed or there is an incomplete installation on this machine.${x-}"
 	        echo
-	        echo "${b-}This backup script only works on a fully installed $short_name instance.${x-}"
+	        echo "${b-}This backup script only works on a fully installed $proj_name instance.${x-}"
 	        echo
-	        echo "${b-}Please finish installing $short_name before running this script.${x-}"
+	        echo "${b-}Please finish installing $proj_name before running this script.${x-}"
 	        echo
 			dna-exit
 		fi
@@ -279,7 +279,7 @@ dna-br_backup_locally() {
 
 dna-br_last_local_backup() {
 
-    echo "${b-}Now performing a last backup [locally - no S3 of course] this machine's currently running $short_name installation just in case...${x-}"
+    echo "${b-}Now performing a last backup [locally - no S3 of course] this machine's currently running $proj_name installation just in case...${x-}"
 	echo
 
 	dna-br_create_dirs backup
@@ -346,7 +346,7 @@ dna-br_restore_from_here() {
 
 	echo "${b-}These are the backup dates available for restore:${x-}"
 	echo
-	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${short_name}-backup-//g" | sed -e 's/.tar//g' | sed -e 's/.bz2//g'
+	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${proj_name}-backup-//g" | sed -e 's/.tar//g' | sed -e 's/.bz2//g'
 	echo
 	read -rp "${b-}[press enter to continue...]${x-}"
 	clear
@@ -445,10 +445,10 @@ dna-br_restore_from_here() {
 
 dna-br_restore_from_standalone() {
 
-	echo "${b-}Ok, restoring from a standalone $short_name backup file.${x-}"
+	echo "${b-}Ok, restoring from a standalone $proj_name backup file.${x-}"
 	echo
-	mkdir -p "/root/$short_name-restore/"
-	read -p "${b-}Do you have a file called | $short_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x-}" -n 1 -r
+	mkdir -p "/root/$proj_name-restore/"
+	read -p "${b-}Do you have a file called | $proj_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x-}" -n 1 -r
 	echo
 	if [[ ! $REPLY =~ ^[Nn]$ ]]
 	then
@@ -515,17 +515,17 @@ dna-br_restore_from_standalone() {
 		echo
 		if [ ${standalone_backup_file: -4} == ".bz2" ]
 		then
-			tar -xvjf "$standalone_backup_file" -C "/root/$short_name-restore/"
+			tar -xvjf "$standalone_backup_file" -C "/root/$proj_name-restore/"
 		else
-			tar -xvf "$standalone_backup_file" -C "/root/$short_name-restore/"
+			tar -xvf "$standalone_backup_file" -C "/root/$proj_name-restore/"
 		fi
-		subdir=("/root/$short_name-restore/"*/)
-		restoresubdir="$(echo "$subdir" | sed "s|/root/${short_name}-restore/||" | tr -d '/')"
-		mv "/root/$short_name-restore/$restoresubdir"/* "/root/$short_name-restore/"
-		rm -r "/root/$short_name-restore/$restoresubdir"
+		subdir=("/root/$proj_name-restore/"*/)
+		restoresubdir="$(echo "$subdir" | sed "s|/root/${proj_name}-restore/||" | tr -d '/')"
+		mv "/root/$proj_name-restore/$restoresubdir"/* "/root/$proj_name-restore/"
+		rm -r "/root/$proj_name-restore/$restoresubdir"
 	else
 		echo
-		echo "${b-}Ok, no problem. Make sure you populate the | /root/$short_name-restore/ | directory with the following files/directories from your standalone backup:${x-}"
+		echo "${b-}Ok, no problem. Make sure you populate the | /root/$proj_name-restore/ | directory with the following files/directories from your standalone backup:${x-}"
 		echo
 		restore_from_standalone_content_description
 		echo
@@ -554,7 +554,7 @@ dna-br_duplicity_loop() {
 	#GPG_KEY= # Insert GPG key here if using GPG
 
 	# The S3 destination followed by bucket name
-	DEST="s3://$s3_endpoint/$s3_bucket_name/$short_name/latest/"
+	DEST="s3://$s3_endpoint/$s3_bucket_name/$proj_name/latest/"
 
 	HOST=$(hostname)
 	DATE=$(date +%Y-%m-%d)
@@ -569,7 +569,7 @@ dna-br_duplicity_loop() {
 	fi
 
 
-	duplicity_base_dir=/root/logs/$short_name-duplicity
+	duplicity_base_dir=/root/logs/$proj_name-duplicity
 	duplicity_log_dir=$duplicity_base_dir/$duplicity_type
 
 	# Set up some variables for logging
@@ -705,7 +705,7 @@ dna-br_backup_to_S3() {
     then
         echo "${r-}${b-}NOT performing backup as | $conf_backups_s3_dir/block_s3_backups | file found.${x-}"
         echo
-        echo "${b-}This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of $short_name backed up on S3.${x-}"
+        echo "${b-}This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of $proj_name backed up on S3.${x-}"
         echo
         echo "${b-}If this is the case, simply run the restore script right away. If it is not, and you want to use this machine for a new installation and OVERWRITE all backups currently on S3, erase this file.${x-}"
         echo
@@ -753,7 +753,7 @@ dna-br_backup_to_S3() {
 		}
 
 		( cd "$backup_local_storage_path/archive/" && encrypt "$output_file_name" )
-		putS3 "$backup_local_storage_path/temp/" "$output_file_name.gpg" "/$short_name/archive/" 2> /dev/null
+		putS3 "$backup_local_storage_path/temp/" "$output_file_name.gpg" "/$proj_name/archive/" 2> /dev/null
 
 	fi
 
@@ -789,7 +789,7 @@ dna-br_restore_from_S3() {
 			# No backups found on server, something's wrong.
 			echo "${r-}${b-}Restore from S3 failed.${x-}"
 			echo
-			echo "${b-}It appears there are no backups on the S3 server under the path: | $short_name/latest | [check the above output for messages like: | ${r-}No backup chains found${x-}${b-} |].${x-}"
+			echo "${b-}It appears there are no backups on the S3 server under the path: | $proj_name/latest | [check the above output for messages like: | ${r-}No backup chains found${x-}${b-} |].${x-}"
 			echo
 			echo "${b-}Exiting...${x-}"
 			echo
@@ -805,7 +805,7 @@ dna-br_restore_from_S3() {
 			then
 				echo "${r-}${b-}Testing restore from S3 failed.${x-}"
 				echo
-				echo "${b-}Is appears this instance of $short_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${x-}${b-} |].${x-}"
+				echo "${b-}Is appears this instance of $proj_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${x-}${b-} |].${x-}"
 				echo
 				echo "${b-}If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one.${x-}"
 				echo
@@ -840,7 +840,7 @@ dna-br_restore_from_S3() {
 			else
 				echo "${r-}${b-}Restore from S3 failed.${x-}"
 				echo
-				echo "${b-}Is appears this instance of $short_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${x-}${b-} |].${x-}"
+				echo "${b-}Is appears this instance of $proj_name has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${x-}${b-} |].${x-}"
 				echo
 				echo "${b-}Edit the file | $conf_backups_s3_dir/backups_passphrase | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script.${x-}"
 				echo
@@ -888,7 +888,7 @@ dna-br_launch_restore() {
 	if [ ! ${skip_questions-null} = "y" ]
 	then
 
-	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $short_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
+	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $proj_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
 	    echo "$choice"
 	    echo
 	    options=("backup file stored locally" "backup file stored elsewhere" "exit")
@@ -927,7 +927,7 @@ dna-br_launch_restore() {
 	    	then
 	    		echo "${b-}You've previously set up an S3 file storage server connection on this machine.${x-}"
 	    		echo
-	    		choice="${b-}Do you want to restore from S3 or from a standalone $short_name backup file you have stored individually? ${x-}"
+	    		choice="${b-}Do you want to restore from S3 or from a standalone $proj_name backup file you have stored individually? ${x-}"
 	    		echo "$choice"
 	    		echo
 	    		options=("S3" "standalone" "exit")
@@ -987,7 +987,7 @@ dna-br_launch_restore() {
     	then
     		export restore_file_path="$backup_local_storage_path/restores/s3"
     	else
-    		export restore_file_path="/root/$short_name-restore"
+    		export restore_file_path="/root/$proj_name-restore"
     	fi
     fi
 
