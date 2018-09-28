@@ -2,7 +2,7 @@
 
 dna-set_hostname() {
 
-    os-set_option -o "hostname" -p "/etc" -d "y" -v "n"
+    dna-set_option -o "hostname" -p "/etc" -d "y" -v "n"
 
 }
 
