@@ -398,7 +398,6 @@ dna-secure_root_pw() {
 
     else
 
-    	echo
     	dna-echo -m "Ok, skipping | ${o-}root${n-} | user password generation."
 
         ask_for_boolean_question="Would you instead like to entirely unset the password for | ${o-}root${n-} |?"
@@ -411,9 +410,7 @@ dna-secure_root_pw() {
     		sudo passwd -dl root
     		echo
     	else
-    		echo
     		dna-echo -m "Ok, not taking any action on | ${o-}root${n-} | password."
-    		echo
     	fi
 
     fi
