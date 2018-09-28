@@ -2,13 +2,29 @@
 
 dna-read_conf_settings() {
 
-    conf_files="$(find $conf_dir -type f | xargs)"
+    conf_files="$(find ${conf_dir} -type f | xargs)"
 
-    for conf_file in $conf_files
+    for conf_file in ${conf_files}
     do
-        conf_file_name="$(basename $conf_file)"
-        export $conf_file_name="$(cat $conf_file)"
+
+        conf_file_name="$(basename ${conf_file})"
+        export $conf_file_name="$(cat ${conf_file})"
+
     done
 
+    if [ -d "${os_conf_dir}" ]
+    then
+
+        os_conf_files="$(find ${os_conf_dir} -type f | xargs)"
+
+        for os_conf_file in ${os_conf_files}
+        do
+
+            os_conf_file_name="$(basename ${os_conf_file})"
+            export $conf_file_name="$(cat ${os_conf_file})"
+
+        done
+
+    fi
 
 }

@@ -217,3 +217,240 @@ dna-harden_ssh() {
     echo "${ssh_port}" > "${os_conf_dir}/ssh-port"
 
 }
+
+dna-initialize_ufw() {
+
+    dna-read_conf_settings
+
+    dna-echo "Now installing UFW, setting | ${y-}limit ${ssh_port}${n-} |, and enabling."
+
+    dna-install_dependencies -p "ufw"
+
+    dna-echo "Allowing port | ${y-}${ssh_port}${n-} |."
+
+    ufw limit "${sshport}"
+    echo
+
+    if [ ! "${ssh_port}" = "22" ]
+    then
+
+    	dna-echo -m "Also allowing port | ${y-}22${n-} | [for existing SSH sessions]."
+
+    	ufw limit 22
+    	echo
+
+    fi
+
+    dna-echo -m "Enabling UFW."
+
+    ufw --force enable
+    echo
+
+    dna-echo -s "Finished installing and enabling UFW"
+
+}
+
+dna-prompt_ssh_connection_test() {
+
+    ### Restart SSH
+
+    /usr/sbin/service ssh restart
+
+    ### Prompt for test SSH connection
+
+    dna-echo -m "It's now time to ensure that your SSH configuration on this machine is correct."
+    dna-echo -m "Now open a new SSH session to this machine from your workstation with the SSH keypair and SSH port you previously entered and chose."
+
+    ask_for_boolean_question="Has the new SSH session worked?"
+    dna-ask_for_boolean_def_no
+
+    if [ "$ask_for_boolean_output" = "y" ]
+    then
+
+        dna-echo -m "Ok, you can now close the other test session, and come back to this one."
+        read -rp "${b-}[press enter to continue reading...]${x-}"
+
+    else
+
+        dna-echo -m "Ok, aborting this script now to allow you to perform the SSH configuration once again."
+        dna-exit
+
+    fi
+
+}
+
+dna-set_timezone() {
+
+    read -rp "Now setting timezone. Do so at the next screen. Press enter to continue."
+    echo
+    dpkg-reconfigure tzdata
+    echo
+
+}
+
+dna-create_non_root_user() {
+
+    dna-echo -m "It's now time to create a user on this machine other than root."
+    dna-echo -m "The current non-root full users with a home directory are:"
+
+    currusers="$(cat /etc/passwd | cut -d: -f 1,3,6 | grep "[1-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1)"
+
+    dna-echo -m "${currusers}"
+
+    ask_for_boolean_question="Add non-root user now?"
+    dna-ask_for_boolean_def_yes
+
+    if [ "$ask_for_boolean_output" = "y" ]
+    then
+    	defined="n"
+    	until [ "${defined}" = "y" ]
+    	do
+    		new_user=""
+    		until [ ! "${new_user}" = "" ]
+    		do
+    			read -rp "${b-}Ok, adding user now. Specify the new user's username: ${x-}" new_user
+    			echo
+    		done
+    		valid=n
+    		until [ $valid = "y" ]
+    		do
+    			read -n 1 -p "${b-}Is | ${new_user} | correct? (Y/n/e[xit]) ${x-}" answer;
+    			case $answer in
+    			"")
+    				echo
+    				valid=y
+    				defined=y
+    				;;
+    			y)
+    				echo -e "\n"
+    				valid=y
+    				defined=y
+    				;;
+    			n)
+    				echo -e "\n"
+    				echo "${b}Ok, then please try again...${x}"
+    				echo
+    				valid=y
+    				defined=n
+    				;;
+    			e)
+    				echo -e "\n"
+    	        		echo "${b}Exiting...${x}"
+    	        		echo
+    	        		exit
+    	        		;;
+    			*)
+    				echo -e "\n"
+    				echo "${r}${b}Invalid option. Retry...${x}"
+    	        		echo
+    				valid=n
+    			defined=n
+    		        ;;
+    			esac
+    		done
+    	done
+    	adduser --disabled-password --gecos "" $new_user
+    	usermod -aG sudo $new_user
+    	echo
+    	read -rp "${b}Also generate random password for | $new_user |? (Y/n): ${x}" -n 1 -r
+    	echo
+    	if [[ ! $REPLY =~ ^[Nn]$ ]]
+    	then
+    		non_root_user_pw="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)"
+    		echo "${b}Ok. Assigning user | $new_user | the following password:${x}"
+    		echo
+    		echo "${b} | ${g}${non_root_user_pw}${x}${b} |${x}"
+    		echo
+    		echo "${new_user}:${non_root_user_pw}" | chpasswd
+    		read -rp "${b}Press enter to continue...${x}"
+    		echo
+    	fi
+    else
+    	echo
+    	echo "${b}Skipping non-root user creation.${x}"
+    	echo
+    fi
+
+}
+
+dna-secure_root_pw() {
+
+    ask_for_boolean_question="Would you like to generate a random password for | ${o-}root${n-} |?"
+    dna-ask_for_boolean_def_yes
+
+    if [ "$ask_for_boolean_output" = "y" ]
+    then
+
+    	root_user_pw="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)"
+
+    	dna-echo -m "Ok. Assigning user | ${o-}root${n-} | the following password:"
+    	dna-echo -m " | ${y-}${root_user_pw}${n-} | "
+
+    	echo "root:${root_user_pw}" | chpasswd
+
+    	read -rp "${b-}Press enter to continue...${x-}"
+    	echo
+
+    else
+
+    	echo
+    	dna-echo -m "Ok, skipping | ${o-}root${n-} | user password generation."
+
+        ask_for_boolean_question="Would you instead like to entirely unset the password for | ${o-}root${n-} |?"
+        dna-ask_for_boolean_def_yes
+
+        if [ "$ask_for_boolean_output" = "y" ]
+        then
+
+    		dna-echo -m "Ok, unsetting | ${o-}root${n-} | password."
+    		sudo passwd -dl root
+    		echo
+    	else
+    		echo
+    		dna-echo -m "Ok, not taking any action on | ${o-}root${n-} | password."
+    		echo
+    	fi
+
+    fi
+
+}
+
+dna-install_basic_packages() {
+
+    dna-install_dependencies -p "sudo software-properties-common curl ntp dnsutils haveged cronic fail2ban git glances htop pwgen pv bc"
+
+    dna-install_mail_notifications
+
+}
+
+dna-inception() {
+
+    ############################################################################
+
+    dna-set_locale
+
+    dna-set_ssh_pubkey
+
+    dna-harden_ssh
+
+    dna-initialize_ufw
+
+    dna-prompt_ssh_connection_test
+
+    dna-set_timezone
+
+    dna-create_non_root_user
+
+    dna-secure_root_pw
+
+    dna-install_basic_packages
+
+    dna-apt_full_upgrade
+
+    ############################################################################
+
+    dna-echo -s "All done with inception operations. Now rebooting..."
+
+    reboot
+
+}
