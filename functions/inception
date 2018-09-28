@@ -1,5 +1,69 @@
 #!/usr/bin/env bash
 
+dna-set_hostname() {
+
+    read -rp "${b}1] Set machine hostname. It's currently | $currhostname |. Change it? (Y/n): ${x}" -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]
+    then
+    	defined=n
+    	until [ $defined = "y" ]
+    	do
+    		hostname=""
+    		until [ ! $hostname = "" ]
+    		do
+    			read -rp "${b}Ok, changing hostname. Set it in the format: xm01.hello.world: ${x}" hostname
+    			echo
+    		done
+    		valid=n
+    		until [ $valid = "y" ]
+    		do
+    			read -n 1 -p "${b}Is | $hostname | correct? (Y/n/e[xit]) ${x}" answer;
+    			case $answer in
+    			"")
+    				echo
+    				valid=y
+    				defined=y
+    				;;
+    			y)
+    				echo -e "\n"
+    				valid=y
+    				defined=y
+    				;;
+    			n)
+    				echo -e "\n"
+    				echo "${b}Ok, then please try again...${x}"
+    				echo
+    				valid=y
+    				defined=n
+    				;;
+    			e)
+    				echo -e "\n"
+    				echo "${b}Exiting...${x}"
+    				echo
+    				exit
+    				;;
+    			*)
+    				echo -e "\n"
+    				echo "${r}${b}Invalid option. Retry...${x}"
+    				echo
+    				valid=n
+    				defined=n
+    				;;
+    			esac
+    		done
+    	done
+    	echo $hostname > /etc/hostname
+    	echo "${b}New hostname set to | $hostname |.${x}"
+    	echo
+    else
+    	echo
+    	echo "${b}Leaving hostname set to | $currhostname |.${x}"
+    	echo
+    fi
+
+}
+
 dna-set_locale() {
 
     dna-echo -m "Now setting locale | ${y-}en_US.UTF-8${n-} |...${x-}"
@@ -215,7 +279,7 @@ dna-harden_ssh() {
     fi
 
     mkdir -p "${os_conf_dir}"
-    echo "${ssh_port}" > "${os_conf_dir}/ssh-port"
+    echo "${ssh_port}" > "${os_conf_dir}/ssh_port"
 
 }
 
