@@ -33,6 +33,7 @@ dna-validate_ipv4() {
     ############################################################################
 
     valid_ip () {
+
         local  ip=$1
         local  stat=1
 
@@ -46,6 +47,8 @@ dna-validate_ipv4() {
             stat=$?
         fi
         return $stat
+        unset IFS
+
     }
 
     if valid_ip "${ip}"

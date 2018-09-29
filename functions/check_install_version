@@ -5,6 +5,7 @@ dna-check_install_version() {
     ### From https://stackoverflow.com/a/4025065
 
     vercomp () {
+
         if [[ $1 == $2 ]]
         then
             return 0
@@ -33,6 +34,8 @@ dna-check_install_version() {
             fi
         done
         return 0
+        unset IFS
+
     }
 
     testvercomp () {
