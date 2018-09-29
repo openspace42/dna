@@ -267,6 +267,8 @@ dna-br_backup_locally() {
 
     fi
 
+	echo
+
 	mv "${output_file_path}.incomplete" "${output_file_path}"
 
 	echo "${g-}${b-}Finished archiving backup and storing it in: | $backup_local_storage_path/archive/ | ${x-}"

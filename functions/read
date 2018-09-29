@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+dna-read() {
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":m:" arguments; do
+        case $arguments in
+            m)	message="$OPTARG"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${message-}" ]
+    then
+        dna-echo -e "Message [option | ${n-}-m${r-} |] must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    read -rp "${b-}${message}${x-}"
+
+}
+
+dna-press_to_continue() {
+
+    dna-read -m "Press enter to continue..."
+
+}
