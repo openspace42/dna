@@ -47,7 +47,7 @@ dna-validate_ipv4() {
             stat=$?
         fi
         return $stat
-        unset IFS
+        unset IFS ### Test
 
     }
 
