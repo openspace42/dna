@@ -477,7 +477,7 @@ dna-inception() {
     ############################################################################
 
     mkdir -p "${os_conf_dir}"
-    touch "${os_conf_dir}/inception_run_ok"
+    echo "completed" > "${os_conf_dir}/inception_run_status"
 
     dna-echo -s "All done with inception operations."
 

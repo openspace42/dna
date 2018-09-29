@@ -2,6 +2,10 @@
 
 dna-read_conf_settings() {
 
+    ############################################################################
+
+    ### Read project-specific settings
+
     conf_files="$(find ${conf_dir} -type f | xargs)"
 
     for conf_file in ${conf_files}
@@ -12,6 +16,12 @@ dna-read_conf_settings() {
 
     done
 
+    unset conf_files conf_file conf_file_name
+
+    ############################################################################
+
+    ### Read os global settings if present
+
     if [ -d "${os_conf_dir}" ]
     then
 
@@ -21,10 +31,14 @@ dna-read_conf_settings() {
         do
 
             os_conf_file_name="$(basename ${os_conf_file})"
-            export $conf_file_name="$(cat ${os_conf_file})"
+            export $os_conf_file_name="$(cat ${os_conf_file})"
 
         done
 
+        unset os_conf_files os_conf_file os_conf_file_name
+
     fi
+
+    ############################################################################
 
 }
