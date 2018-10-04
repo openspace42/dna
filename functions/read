@@ -32,5 +32,6 @@ dna-read() {
 dna-press_to_continue() {
 
     dna-read -m "Press enter to continue..."
+    echo
 
 }
