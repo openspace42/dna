@@ -63,11 +63,9 @@ dna-check_install_version() {
         prev_install_initiated=y
         prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
 
-        echo "${g-}${b-}Found a previous install of $proj_name.${x-}"
-        echo
-        read -rp "${b-}Skip the introduction on how it works? (Y/n): ${x-}" -n 1
-        echo
-        if [[ ! $REPLY =~ ^[Nn]$ ]]
+        dna-echo -s "Found a previous install of ${proj_name}."
+        dna-ask_for_boolean -d "y" -q "Skip the introduction on how it works?"
+        if [ "${boolean_output}" = "y" ]
         then
             skip_intro=y
         else
@@ -120,37 +118,28 @@ dna-check_install_version() {
 
                     if grep -q "bleeding-edge" "$conf_dir/version/version_installed"
                     then
-                        echo "${b-}You're now installing stable version | ${g-}$latest_vers${x-}${b-} | over a previously | ${r-}bleeding-edge${x-}${b-} | version of $proj_name.${x-}"
-                        echo
-                        echo "${b-}This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version.${x-}"
-                        echo
-                        read -rp "${b-}[press enter to continue...]${x-}"
+                        dna-echo -m "You're now installing stable version | ${c-}$latest_vers${x-}${b-} | over a previously | ${r-}bleeding-edge${x-}${b-} | version of $proj_name."
+                        dna-echo -m "This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
+                        dna-press_to_continue
                     else
 
                         ### if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))
                         if testvercomp "${latest_vers//v}" "${prev_version_installed//v}" '<'
                         then
-                            echo "${r-}${b-}You have previously installed a newer version of $proj_name.${x-}"
-                            echo
-                            echo "${b-}This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check.${x-}"
-                            echo
+                            dna-echo -e "You have previously installed a newer version of $proj_name."
+                            dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check."
                             dna-exit
                         fi
                     fi
 
                     ### In any event, alert about the re-install
 
-                    echo "${b-}You're now re-running the $proj_name installer.${x-}"
-                    echo
-                    echo "${g-}${b-}This is perfectly fine as $proj_name is meant to be re-installed as many times as you'd like [also to update your current installation].${x-}"
-                    echo
-                    echo "${r-}${b-}Keep in mind though that all customizations external to $proj_name you might have made will be permanently deleted.${x-}"
-                    echo
-                    echo "${b-}This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds.${x-}"
-                    echo
-                    echo "${r-}${b-}If you want to save any customizations you have made, exit this script and do so now.${x-}"
-                    echo
-                    read -rp "${b-}[press enter to continue reading...]${x-}"
+                    dna-echo -m "You're now re-running the $proj_name installer."
+                    dna-echo -s "This is perfectly fine as $proj_name is meant to be re-installed as many times as you'd like [also to update your current installation]."
+                    dna-echo -e "Keep in mind though that all customizations external to $proj_name you might have made will be permanently deleted."
+                    dna-echo -m "This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds."
+                    dna-echo -e "If you want to save any customizations you have made, exit this script and do so now."
+                    dna-press_to_continue
 
                 fi
 
@@ -158,7 +147,7 @@ dna-check_install_version() {
 
                 ### It appears the previous install was not completed successfully, as version_initiated is different from version_installed.
 
-                prev_install_incomplete=y
+                prev_install_incomplete="y"
 
             fi
 
@@ -166,23 +155,16 @@ dna-check_install_version() {
 
             ### It appears the previous install was not completed successfully, as there is no version_installed file, only the version_initiated one.
 
-            prev_install_incomplete=y
+            prev_install_incomplete="y"
 
         fi
 
         if [ ${prev_install_incomplete-null} = "y" ]
         then
-            echo "${r-}${b-}It appears you have a previous incomplete installation of $proj_name.${x-}"
-            echo
-            echo "${b-}Either you intentionally aborted the install or the script got somehow terminated before it finished.${x-}"
-            echo
-            echo "${b-}In either case, if you're having any issues, simply file an issue report at:${x-}"
-            echo
-            echo "${b-} | https://github.com/$author_name/$proj_name/issues | ${x-}"
-            echo
-            echo "${b-}Thank you in advance!${x-}"
-            echo
-            read -rp "${b-}[press enter to continue reading...]${x-}"
+            dna-echo -e "It appears you have a previous incomplete installation of $proj_name."
+            dna-echo -m "Either you intentionally aborted the install or the script got somehow terminated before it finished."
+            dna-echo -m "In either case, if you're having any trouble, please open an issue. Thanks!"
+            dna-press_to_continue
             clear
         fi
 
@@ -191,13 +173,12 @@ dna-check_install_version() {
         if [ ! ${skip_install_time_backup-null} = "y" ]
         then
 
-            echo "${b-}It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run.${x-}"
-            echo
-            read -rp "${b-}Do you want to run the backup now [without exiting this script] (Y/n): ${x-}" -n 1
-            echo
-            if [[ ! $REPLY =~ ^[Nn]$ ]]
+            dna-echo -m "It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run."
+            dna-ask_for_boolean -d "y" -q "Do you want to run the backup now [without exiting this script]?"
+            if [ "${boolean_output}" = "y" ]
             then
-                echo "${b-}Ok, proceeding with backup...${x-}"
+
+                dna-echo -m "Ok, proceeding with backup..."
                 if bash $source_dir/tools/$proj_name-backup -s
                 then
                     backup_output=ok
@@ -207,28 +188,23 @@ dna-check_install_version() {
                 sleep 1
                 if [ $backup_output = "ok" ]
                 then
-                    echo "${g-}${b-}Backup complete. Continuing installation...${x-}"
-                    echo
+                    dna-echo -s "Backup complete. Continuing installation..."
                 else
-                    echo "${r-}${b-}Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk.${x-}"
-                    echo
-                    read -rp "${b-}Continue anyway even without a backup? (Y/n): ${x-}" -n 1
-                    echo
-                    if [[ ! $REPLY =~ ^[Nn]$ ]]
+                    dna-echo -e "Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk."
+                    dna-ask_for_boolean -d "y" -q "Continue anyway even without a backup?"
+                    if [ "${boolean_output}" = "y" ]
                     then
-                        echo "${b-}Ok, continuing...${x-}"
-                        echo
+                        dna-echo -m "Ok, continuing..."
                     else
-                        echo
-                        echo "${b-}Ok, aborting...${x-}"
-                        echo
+                        dna-echo -m "Ok, aborting..."
                         dna-exit
                     fi
                 fi
+
             else
-                echo
-                echo "${b-}Ok, skipping backup...${x-}"
-                echo
+
+                dna-echo -m "Ok, skipping backup..."
+
             fi
 
         fi
