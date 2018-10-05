@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+dna-abort_on_sslh_session() {
+
+    # Determine if user is connected via SSH on SSLH port 443
+
+    printenvssh443="$(printenv | grep SSH | grep "::1" | wc -l)"
+
+    if [ ! "${printenvssh443}" = 0 ]
+    then
+        sessiontype="sslh"
+    else
+        sessiontype="other"
+    fi
+
+    if [ "${sessiontype}" = "sslh" ]
+    then
+
+        dna-echo -e "You appear to be connected via SSH on port 443 thanks to SSLH."
+        dna-echo -m "This is usually perfectly fine, but not during installation, as we will be terminating SSLH during one of the steps."
+        dna-echo -m "Please connect via your normal SSH port until you're finished re-installing ${proj_name}."
+        dna-exit
+
+    fi
+
+}

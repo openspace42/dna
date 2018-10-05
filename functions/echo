@@ -95,3 +95,57 @@ dna-echo() {
     unset message success_message error_message no_newline
 
 }
+
+dna-echo_operation() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":ht" arguments; do
+        case $arguments in
+            h)	status="head"
+                ;;
+            t)	status="tail"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${status-}" ]
+    then
+        dna-echo -e "Status flag | ${n-}head [-h] || tail [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ -z "${operation_message-}" ]
+    then
+        dna-echo -e "The variable | ${n-}operation_message${r-} | must be exported before calling the function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    if [ "${status}" = "head" ]
+    then
+
+        dna-echo -m "Now ${operation_message}..."
+
+    elif [ "${status}" = "tail" ]
+    then
+
+        dna-echo -s "Finished ${operation_message}."
+        unset operation_message
+
+    fi
+
+    ############################################################################
+
+}

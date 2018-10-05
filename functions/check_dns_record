@@ -75,21 +75,21 @@ dna-check_dns_record() {
 
 	############################################################################
 
-	if [ $# -eq 0 ]
+	if [ $# -eq "0" ]
     then
-        dna-echo -m "${r-}No argument supplied for function | ${FUNCNAME[0]} |."
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     while getopts ":n:t:r:" arguments; do
         case $arguments in
-            n)	name="$OPTARG"
+            n)	name="${OPTARG}"
 	            ;;
-			t)	type="$OPTARG"
+			t)	type="${OPTARG}"
 	            ;;
-			r)	reference="$OPTARG"
+			r)	reference="${OPTARG}"
 	            ;;
-            \?)	dna-echo -m "${r-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |."
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 	            dna-exit
 	            ;;
         esac
@@ -98,19 +98,19 @@ dna-check_dns_record() {
 
     if [ -z "${name-}" ]
     then
-        dna-echo -m "${r-}Name [option | -n |] must be supplied for function | ${FUNCNAME[0]} |."
+        dna-echo -e "Option | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
 	if [ -z "${type-}" ]
     then
-        dna-echo -m "${r-}Type [option | -t |] must be supplied for function | ${FUNCNAME[0]} |."
+        dna-echo -e "Option | ${n-}type [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
 	if [ -z "${reference-}" ]
     then
-        dna-echo -m "${r-}Reference [option | -r |] must be supplied for function | ${FUNCNAME[0]} |."
+        dna-echo -e "Option | ${n-}reference [-r]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
@@ -364,9 +364,8 @@ dna-check_dns_record() {
 
 							if [ "${dns_provider_setup-null}" = "y" ]
 							then
-								ask_for_boolean_question="Would you like to automatically set this record on [one of] your previously specified DNS provider[s]?"
-					            dna-ask_for_boolean_def_yes
-					            if [ "$ask_for_boolean_output" = "y" ]
+					            dna-ask_for_boolean -d "y" -q "Would you like to automatically set this record on [one of] your previously specified DNS provider[s]?"
+					            if [ "${boolean_output}" = "y" ]
 					            then
 									dna-echo -m "Ok, automatically setting this DNS record."
 									dns_checks_outcome="autofix"
@@ -531,9 +530,8 @@ dna-check_dns_record() {
 
 								if [ "${dns_provider_setup-null}" = "y" ]
 								then
-									ask_for_boolean_question="Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
-						            dna-ask_for_boolean_def_yes
-						            if [ "$ask_for_boolean_output" = "y" ]
+						            dna-ask_for_boolean -d "y" -q "Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
+						            if [ "${boolean_output}" = "y" ]
 						            then
 										dna-echo -m "Ok, automatically removing this DNS record."
 										dns_checks_outcome="autofix"

@@ -35,10 +35,9 @@ dna-set_ssh_pubkey() {
     chown "root:root" "${ssh_auth_keys_file}"
     chmod "600" "${ssh_auth_keys_file}"
 
-    ask_for_boolean_question="Set public key now?"
-    dna-ask_for_boolean_def_yes
+    dna-ask_for_boolean -d "y" -q "Set public key now?"
 
-    if [ "$ask_for_boolean_output" = "y" ]
+    if [ "${boolean_output}" = "y" ]
     then
 
     	defined=n
@@ -132,10 +131,9 @@ dna-harden_ssh() {
 
     			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
 
-                ask_for_boolean_question="Change it to 42022?"
-                dna-ask_for_boolean_def_yes
+                dna-ask_for_boolean -d "y" -q "Change it to 42022?"
 
-                if [ "$ask_for_boolean_output" = "y" ]
+                if [ "${boolean_output}" = "y" ]
                 then
 
     				dna-echo -m "Ok, changing SSH Port to 42022"
@@ -160,10 +158,9 @@ dna-harden_ssh() {
 
             dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]. Fixing it now."
 
-            ask_for_boolean_question="Also set it to 42022?"
-            dna-ask_for_boolean_def_yes
+            dna-ask_for_boolean -d "y" -q "Also set it to 42022?"
 
-            if [ "$ask_for_boolean_output" = "y" ]
+            if [ "${boolean_output}" = "y" ]
             then
 
                 dna-echo -m "Ok, fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
@@ -194,10 +191,9 @@ dna-harden_ssh() {
 
         dna-echo -e " | ${n-}Port${r-} | line not found. Adding it now."
 
-        ask_for_boolean_question="Also set it to 42022?"
-        dna-ask_for_boolean_def_yes
+        dna-ask_for_boolean -d "y" -q "Also set it to 42022?"
 
-        if [ "$ask_for_boolean_output" = "y" ]
+        if [ "${boolean_output}" = "y" ]
         then
 
             dna-echo -m "Ok, adding | ${o-}Port${n-} | line and setting it to | ${y-}42022${n-} |."
@@ -272,10 +268,9 @@ dna-prompt_ssh_connection_test() {
     dna-echo -m "It's now time to ensure that your SSH configuration on this machine is correct."
     dna-echo -m "Now open a new SSH session to this machine from your workstation with the SSH keypair and SSH port you previously entered and chose."
 
-    ask_for_boolean_question="Has the new SSH session worked?"
-    dna-ask_for_boolean_def_no
+    dna-ask_for_boolean -d "n" -q "Has the new SSH session worked?"
 
-    if [ "$ask_for_boolean_output" = "y" ]
+    if [ "${boolean_output}" = "y" ]
     then
 
         dna-echo -m "Ok, you can now close the other test session, and come back to this one."
@@ -306,10 +301,9 @@ dna-create_non_root_user() {
 
     dna-echo -m "${currusers}"
 
-    ask_for_boolean_question="Add non-root user now?"
-    dna-ask_for_boolean_def_yes
+    dna-ask_for_boolean -d "y" -q "Add non-root user now?"
 
-    if [ "$ask_for_boolean_output" = "y" ]
+    if [ "${boolean_output}" = "y" ]
     then
 
     	defined="n"
@@ -363,10 +357,9 @@ dna-create_non_root_user() {
     	usermod -aG sudo $new_user
     	echo
 
-        ask_for_boolean_question="Also generate random password for | ${new_user} |?"
-        dna-ask_for_boolean_def_yes
+        dna-ask_for_boolean -d "y" -q "Also generate random password for | ${c-}${new_user}${n-} |?"
 
-        if [ "$ask_for_boolean_output" = "y" ]
+        if [ "${boolean_output}" = "y" ]
         then
 
     		non_root_user_pw="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)"
@@ -390,10 +383,9 @@ dna-create_non_root_user() {
 
 dna-secure_root_pw() {
 
-    ask_for_boolean_question="Would you like to generate a random password for | ${o-}root${n-} |?"
-    dna-ask_for_boolean_def_yes
+    dna-ask_for_boolean -d "y" -q "Would you like to generate a random password for | ${c-}root${n-} |?"
 
-    if [ "$ask_for_boolean_output" = "y" ]
+    if [ "${boolean_output}" = "y" ]
     then
 
     	root_user_pw="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)"
@@ -409,10 +401,9 @@ dna-secure_root_pw() {
 
     	dna-echo -m "Ok, skipping | ${o-}root${n-} | user password generation."
 
-        ask_for_boolean_question="Would you instead like to entirely unset the password for | ${o-}root${n-} |?"
-        dna-ask_for_boolean_def_yes
+        dna-ask_for_boolean -d "y" -q "Would you instead like to entirely unset the password for | ${c-}root${n-} |?"
 
-        if [ "$ask_for_boolean_output" = "y" ]
+        if [ "${boolean_output}" = "y" ]
         then
 
     		dna-echo -m "Ok, unsetting | ${o-}root${n-} | password."

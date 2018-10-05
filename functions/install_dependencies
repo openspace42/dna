@@ -45,9 +45,9 @@ dna-install_dependencies() {
             echo
             echo "${b-}If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be fixed automatically.${x-}"
             echo
-            ask_for_boolean_question="Would you like to continue the installation anyway?"
+            boolean_question="Would you like to continue the installation anyway?"
             dna-ask_for_boolean_def_no
-            if [ "$ask_for_boolean_output" = "n" ]
+            if [ "$boolean_output" = "n" ]
             then
                 dna-exit
             else

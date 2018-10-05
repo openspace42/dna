@@ -1,33 +1,84 @@
 #!/usr/bin/env bash
 
-dna-ask_for_boolean_def_yes() {
+set -eu
 
-    unset ask_for_boolean_output
-    read -p "${b-}${ask_for_boolean_question} (Y/n): ${x-}" -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Nn]$ ]]
+dna-ask_for_boolean() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
     then
-        ask_for_boolean_output=y
-    else
-        echo
-        ask_for_boolean_output=n
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
     fi
-    unset ask_for_boolean_question
 
-}
+    while getopts ":d:q:" arguments
+    do
+        case $arguments in
+            d)	default="${OPTARG}"
+                ;;
+            q)	question="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
 
-dna-ask_for_boolean_def_no() {
-
-    unset ask_for_boolean_output
-    read -p "${b-}${ask_for_boolean_question} (y/N): ${x-}" -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]
+    if [ -z "${default-}" ]
     then
-        echo
-        ask_for_boolean_output=y
-    else
-        ask_for_boolean_output=n
+        dna-echo -e "Option | ${n-}default [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
     fi
-    unset ask_for_boolean_question
+
+    if [ -z "${question-}" ]
+    then
+        dna-echo -e "Option | ${n-}question [-q]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ ! "${default}" = "y" ] && [ ! "${default}" = "n" ]
+    then
+        dna-echo -e "Invalid value | ${n-}-${default}${r-} | for option | ${n-}-d [default]${r-} | in function | ${n-}${FUNCNAME[0]}${r-} |."
+    fi
+
+    ############################################################################
+
+    unset boolean_output
+
+    if [ "${default}" = "y" ]
+    then
+        read -p "${b-}${question} (Y/n): ${x-}" -n 1 -r
+    else
+        read -p "${b-}${question} (y/N): ${x-}" -n 1 -r
+    fi
+    echo
+
+    if [ "${default}" = "y" ]
+    then
+
+        if [[ ! $REPLY =~ ^[Nn]$ ]]
+        then
+            boolean_output="y"
+        else
+            echo
+            boolean_output="n"
+        fi
+
+    elif [ "${default}" = "n" ]
+    then
+
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            echo
+            boolean_output="y"
+        else
+            boolean_output="n"
+        fi
+
+    fi
+
+    unset default question
 
 }

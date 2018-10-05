@@ -6,7 +6,7 @@ dna-check_dpkg_availability() {
 
         if ! fuser /var/lib/dpkg/lock &> /dev/null
         then
-            condition_verified=y
+            condition_verified="y"
         fi
 
     }

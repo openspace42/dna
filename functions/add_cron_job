@@ -1,68 +1,76 @@
 #!/usr/bin/env bash
 
+set -eu
+
 dna-add_cron_job() {
 
-    curl https://habilis.net/cronic/cronic > /usr/bin/cronic
-    chmod +x /usr/bin/cronic
-    echo
-
-    ########################################################################
+    ############################################################################
 
     if [ $# -eq 0 ]
     then
-        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    while getopts ":n:t:c:" arguments; do
+    while getopts ":n:t:c:" arguments
+    do
         case $arguments in
             n)	name="$OPTARG"
-            ;;
+                ;;
             t)	time="$OPTARG"
-            ;;
+                ;;
             c)	content="$OPTARG"
-            ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-            echo
-            dna-exit
-            ;;
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
         esac
     done
     OPTIND=1
 
     if [ -z "${name-}" ]
     then
-        echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "Option | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     if [ -z "${time-}" ]
     then
-        echo "${r-}${b-}Time | option [-t] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "Option | ${n-}time [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     if [ -z "${content-}" ]
     then
-        echo "${r-}${b-}Content | option [-c] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "Option | ${n-}content [-c]${r-} | must be supplied for function | ${r-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    ########################################################################
+    ############################################################################
 
-    dna-echo -m "Now adding job to crontab..."
-    job_path="/etc/cron.d/$name"
-    touch "$job_path"
-    chmod 755 "$job_path"
-    echo "SHELL=/bin/bash" > "$job_path"
-    echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "$job_path"
-    echo "MAILTO=$admin_mail" >> "$job_path"
-    echo >> "$job_path"
-    echo "$time root cronic $content" >> "$job_path"
-    dna-echo -s "Finished adding backup script to daily crontab..."
+    if [ -f ! "/usr/bin/cronic" ]
+    then
+
+        curl https://habilis.net/cronic/cronic > /usr/bin/cronic
+        chmod +x /usr/bin/cronic
+        echo
+
+    fi
+
+    ############################################################################
+
+    export operation_message="adding job to daily crontab via cronic"
+    dna-echo_operation -h
+
+    job_path="/etc/cron.d/${name}"
+    touch "${job_path}"
+    chmod 755 "${job_path}"
+    echo "SHELL=/bin/bash" > "${job_path}"
+    echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "${job_path}"
+    echo "MAILTO=${admin_mail}" >> "${job_path}"
+    echo >> "${job_path}"
+    echo "${time} root cronic ${content}" >> "${job_path}"
+
+    dna-echo_operation -t
 
 }

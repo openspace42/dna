@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+set -eu
+
+dna-apt_update() {
+
+    apt_update_stamp_path="/var/lib/apt/periodic/update-success-stamp"
+
+    if [ -f "${apt_update_stamp_path}" ]
+    then
+        # Input file
+        FILE="${apt_update_stamp_path}"
+        # How many seconds before file is deemed "older"
+        OLDTIME=6480
+        # Get current and file times
+        CURTIME=$(date +%s)
+        FILETIME=$(stat ${FILE} -c %Y)
+        TIMEDIFF=$(expr ${CURTIME} - ${FILETIME})
+
+        # Check if file older
+        if [ ${TIMEDIFF} -gt ${OLDTIME} ]
+        then
+            dna-echo -m "APT cache out of date. Updating now..."
+            apt-get update
+            dna-echo -s "APT cache updated."
+            echo
+        else
+            dna-echo -s "APT cache already up to date."
+        fi
+
+    fi
+
+}
+
+dna-apt_full_upgrade() {
+
+    ############################################################################
+
+    while getopts ":e" arguments
+    do
+        case $arguments in
+            e)	allow_errors="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    ############################################################################
+
+    export operation_message="performing APT upgrade, dist-upgrade, and autoremove"
+    dna-echo_operation -h
+
+    if [ "${allow_errors-null}" = "y" ]
+    then
+        set +e
+    fi
+
+    dna-apt_update
+
+    dna-check_dpkg_availability
+
+    apt-get -y upgrade
+    apt-get -y dist-upgrade
+    apt-get -y autoremove
+
+    echo
+
+    set -e
+
+    dna-echo_operation -t
+
+}

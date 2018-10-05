@@ -131,10 +131,10 @@ dna-setup_backup_restore_s3() {
 	do
 
 		declare -A s3_options_array=(
-		[s3_access_key_id]="AWS Access Key ID"
-		[s3_secret_access_key]="AWS Secret Access Key"
-		[s3_endpoint]="S3 Endpoint URL"
-		[s3_bucket_name]="S3 Bucket Name"
+			[s3_access_key_id]="AWS Access Key ID"
+			[s3_secret_access_key]="AWS Secret Access Key"
+			[s3_endpoint]="S3 Endpoint URL"
+			[s3_bucket_name]="S3 Bucket Name"
 		)
 
 		for i in "${!s3_options_array[@]}"
