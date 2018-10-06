@@ -15,15 +15,12 @@ dna-define_vars() {
 	export os_conf_dir="${os_base_dir}/conf"
 
 	export conf_dir="${install_dir}/conf"
-
 	export conf_backups_dir="${conf_dir}/backups"
 	export conf_backups_local_dir="${conf_backups_dir}/local"
 	export conf_backups_s3_dir="${conf_backups_dir}/s3"
-
 	export conf_dns_dir="${conf_dir}/dns"
 
 	export tools_dir="${install_dir}/tools"
-
 	export tls_dir="/etc/ssl/${proj_name}"
 	export temp_dir="/tmp/${proj_name}"
 

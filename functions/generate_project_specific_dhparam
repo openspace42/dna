@@ -4,46 +4,49 @@ dna-generate_project_specific_dhparam() {
 
     if [ -f $tls_dir/dh.pem ]
     then
-        echo "${g-}${b-}DHparam file found. Skipping generation...${x-}"
-        echo
+
+        dna-echo -s "DHparam file found. Skipping generation."
         export dh_param_outcome=found
         export dh_param_status=ok
 
     else
-        echo "${b-}One last thing: to make your TLS connections even more secure, you can generate a file called DH parameters file.${x-}"
-        echo
-        echo "${b-}To do so, simply answer yes, but be aware that this is a very time consuming cryptographic operation, although it must only be performed once.${x-}"
-        echo
-        read -rp "${b-}Generate openssl DHparams file? (Y/n): ${x-}" -n 1
-        echo
-        if [[ ! $REPLY =~ ^[Nn]$ ]]
+
+        dna-echo -m "To make your TLS connections even more secure, it is necessary to generate a DH parameters file."
+        dna-echo -m "To do so, simply answer yes, but be aware that this is a very time consuming cryptographic operation, although it must only be performed once."
+        dna-ask_for_boolean -d "y" -q "Generate openssl DHparams file?"
+
+        if [ "${boolean_output}" = "y" ]
         then
-            echo "${b-}Ok, proceeding with DHparams file generation...${x-}"
+
+            export operation_message="generating DHparams file"
+
+            dna-echo_operation -h
+
+            export dh_param_outcome="generating"
+            export dh_param_status="no"
+
+            openssl dhparam -out "${tls_dir}/dh.pem.incomplete" "4096"
             echo
-            export dh_param_outcome=generating
-            export dh_param_status=no
-            openssl dhparam -out $tls_dir/dh.pem.incomplete 4096
-            export dh_param_outcome=generated
-            export dh_param_status=ok
-            mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem
-            echo
+
+            export dh_param_outcome="generated"
+            export dh_param_status="ok"
+
+            mv "${tls_dir}/dh.pem.incomplete" "${tls_dir}/dh.pem"
+
         else
-            echo
-            echo "${b-}Skipping DHparams generation.${x-}"
-            echo
-            echo "${b-}You can always generate them at a later time by executing:${x-}"
-            echo
-            echo "${b-}openssl dhparam -out $tls_dir/dh.pem.incomplete 4096${x-}"
-            echo
-            echo "${b-}[and making sure you let the command run until it exits]. Once it's done, execute:${x-}"
-            echo
-            echo "${b-}mv $tls_dir/dh.pem.incomplete $tls_dir/dh.pem${x-}"
-            echo
-            export dh_param_outcome=generation_skipped
-            export dh_param_status=no
+
+            dna-echo -m "Skipping DHparams generation."
+            dna-echo -m "You can always generate them at a later time by executing:"
+            dna-echo -m " | ${o-}openssl dhparam -out ${tls_dir}/dh.pem.incomplete 4096${n-} |. "
+            dna-echo -m "[and making sure you let the command run until it exits]."
+            dna-echo -m "Once it's done, execute:"
+            dna-echo -m " | ${o-}mv ${tls_dir}/dh.pem.incomplete ${tls_dir}/dh.pem${n-} |. "
+
+            export dh_param_outcome="generation_skipped"
+            export dh_param_status="no"
+
         fi
-        echo "${b-}Finished generating DHparams.${x-}"
-        echo
+
     fi
 
 }

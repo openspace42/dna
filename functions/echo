@@ -2,6 +2,10 @@
 
 dna-echo() {
 
+    ############################################################################
+
+    ### Do NOT use dna-exit as it depends on this.
+
     if [ $# -eq 0 ]
     then
         echo "${r-}${b-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
@@ -12,17 +16,18 @@ dna-echo() {
         exit
     fi
 
-    while getopts ":m:s:e:n" arguments; do
+    while getopts ":m:s:e:n" arguments
+    do
         case $arguments in
-            m)	message="$OPTARG"
+            m)	message="${OPTARG}"
                 ;;
-            s)  success_message="$OPTARG"
+            s)  success_message="${OPTARG}"
                 ;;
-            e)  error_message="$OPTARG"
+            e)  error_message="${OPTARG}"
                 ;;
             n)  no_newline="y"
                 ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
+            \?)	echo "${r-}${b-}Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |.${x-}"
                 echo
                 echo "${b-}Exiting...${x-}"
                 echo
@@ -46,12 +51,12 @@ dna-echo() {
 
     if [ -z "${no_newline-}" ]
     then
-        if [ $# -gt 2 ]
+        if [ $# -gt "2" ]
         then
             display_error
         fi
     else
-        if [ $# -gt 4 ]
+        if [ $# -gt "4" ]
         then
             display_error
         fi

@@ -2,42 +2,45 @@
 
 dna-generate_ssh_keypair() {
 
+    ########################################################################
+
     if [ $# -eq 0 ]
     then
-        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     while getopts ":n:" arguments; do
         case $arguments in
-            n)	name="$OPTARG"
-            ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-            echo
-            dna-exit
-            ;;
+            n)	name="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
         esac
     done
     OPTIND=1
 
     if [ -z "${name-}" ]
     then
-        echo "${r-}${b-}Name | option [-n] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "Option | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     ########################################################################
 
-    echo "${b-}Now generating SSH keypair for | ${y-}${name}${x-}${b-} |...${x-}"
-    echo
+    operation_message="generating SSH keypair for | ${y-}${name}${n-} |"
+
+    dna-echo_operation -h
+
     ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}"
     echo
     chmod 600 "/root/.ssh/${name}"
     ssh_keypair_privkey_path="/root/.ssh/${name}"
     ssh_keypair_pubkey_path="/root/.ssh/${name}.pub"
-    echo "${b-}Finished generating SSH keypair and stored it in | ${y-}/root/.ssh/${name}[.pub]${x-}${b-} |.${x-}"
-    echo
+
+    dna-echo -m "Stored DHparam file in: | ${y-}/root/.ssh/${name}[.pub]${n-} |."
+
+    dna-echo_operation -t
 
 }

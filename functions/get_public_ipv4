@@ -2,21 +2,25 @@
 
 dna-get_public_ipv4() {
 
-    while getopts ":s" arguments; do
+    ############################################################################
+
+    while getopts ":s" arguments
+    do
         case $arguments in
             s)	export silent="y"
-            ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-            echo
-            dna-exit
-            ;;
-        esac
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+            esac
     done
     OPTIND=1
 
+    ############################################################################
+
     this_ipv4="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
-    dna-echo -m "Your IPv4 public address appears to be: | ${this_ipv4} |."
+    dna-echo -m "Your IPv4 public address appears to be: | ${y-}${this_ipv4}${n-} |."
 
     unset silent
 
