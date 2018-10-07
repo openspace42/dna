@@ -4,12 +4,6 @@ dna-check_ipv6_connectivity() {
 
     ############################################################################
 
-    if [ $# -eq 0 ]
-    then
-        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
-        dna-exit
-    fi
-
     while getopts ":s" arguments; do
         case $arguments in
             s)	export silent="y"

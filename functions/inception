@@ -50,7 +50,7 @@ dna-set_ssh_pubkey() {
 				valid="n"
 			fi
 
-		fi
+		}
 
         dna-set_value -d "Ok, now paste the ssh public key you copied from your local workstation:" -v "y"
 

@@ -138,7 +138,7 @@ dna-set_option() {
 
 			dna-ask_for_boolean -d "y" -q "Is this still correct?"
 
-			if [ "${boolean_output}" "y" ]
+			if [ "${boolean_output}" = "y" ]
 			then
 
 				dna-echo -m "Ok, keeping | ${y-}${previous_value}${n-} | as your value for option | ${o-}${option}${n-} |."

@@ -147,7 +147,6 @@ dna-echo_operation() {
     then
 
         dna-echo -s "Finished ${operation_message}."
-        unset operation_message
 
     fi
 

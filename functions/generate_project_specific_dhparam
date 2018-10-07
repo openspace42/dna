@@ -18,7 +18,7 @@ dna-generate_project_specific_dhparam() {
         if [ "${boolean_output}" = "y" ]
         then
 
-            export operation_message="generating DHparams file"
+            operation_message="generating DHparams file"
 
             dna-echo_operation -h
 
