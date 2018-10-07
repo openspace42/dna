@@ -6,7 +6,7 @@ dna-install_certbot() {
 
 	dna-get_distro_name
 
-	if [ $distro_name = "Ubuntu" ]
+	if [ "${distro_name}" = "Ubuntu" ]
 	then
 		dna-install_dependencies -p "software-properties-common"
 		apt-add-repository -yu ppa:certbot/certbot
@@ -16,6 +16,6 @@ dna-install_certbot() {
 	dna-install_dependencies -p "certbot"
 	certbot &> /dev/null || true
 
-	dna-echo -m "${g-}Finished installing certbot/letsencrypt."
+	dna-echo -s "Finished installing certbot/letsencrypt."
 
 }

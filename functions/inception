@@ -10,14 +10,12 @@ dna-set_locale() {
 
     dna-echo -m "Now setting locale to | ${y-}en_US.UTF-8${n-} |...${x-}"
     export LC_ALL="en_US.UTF-8"
-    echo "LC_ALL=en_US.UTF-8" > /etc/default/locale
+    echo "LC_ALL=en_US.UTF-8" > "/etc/default/locale"
     dna-echo -s "Locale set."
 
 }
 
 dna-set_ssh_pubkey() {
-
-    dna-echo -m "Now installing your SSH public key."
 
     if [ -f "${ssh_auth_keys_file}" ]
     then
@@ -35,60 +33,40 @@ dna-set_ssh_pubkey() {
     chown "root:root" "${ssh_auth_keys_file}"
     chmod "600" "${ssh_auth_keys_file}"
 
-    dna-ask_for_boolean -d "y" -q "Set public key now?"
+    dna-ask_for_boolean -d "y" -q "Set your public SSH key now?"
 
     if [ "${boolean_output}" = "y" ]
     then
 
-    	defined=n
-    	until [ "${defined}" = "y" ]
-    	do
-    		new_ssh_pub_key=""
-    		until [ ! "${new_ssh_pub_key}" = "" ]
-    		do
-    			read -rp "${b-}Ok, now paste the ssh public key you copied from your local workstation here: ${x-}" new_ssh_pub_key
-    			echo
-    		done
-    		valid=n
-    		until [ $valid = "y" ]
-    		do
-    			read -n 1 -p "${b-}Is it correct? (Y/n/e[xit]) ${x-}" answer;
-    			case $answer in
-                "") echo
-                    valid=y
-    				defined=y
-    				;;
-    			y)
-    				echo -e "\n"
-    				valid=y
-    				defined=y
-    				;;
-    			n)
-    				echo -e "\n"
-    				dna-echo -m "Ok, then please try again..."
-    				valid=y
-    				defined=n
-    				;;
-    			e)
-    				echo -e "\n"
-    				dna-exit
-    				;;
-    			*)
-    				echo -e "\n"
-    				dna-echo -e "Invalid option. Retry..."
-    				valid=n
-    				defined=n
-    				;;
-    			esac
-    		done
-    	done
+        validate_input() {
+
+			dna-validate_ssh_pubkey -s -k "${input}"
+
+			if [ "${key_is_valid}" = "y" ]
+			then
+				valid="y"
+			else
+				dna-echo -e "The key you specified does NOT appear to be a valid SSH Public Key."
+				valid="n"
+			fi
+
+		fi
+
+        dna-set_value -d "Ok, now paste the ssh public key you copied from your local workstation:" -v "y"
+
+        if ! grep -q "${value}" "${ssh_auth_keys_file}"
+		then
+			echo "$value" >> "${ssh_auth_keys_file}"
+		fi
+
     	chmod 600 "${ssh_auth_keys_file}"
-    	echo "${new_ssh_pub_key}" > "${ssh_auth_keys_file}"
+
     	dna-echo -s "SSH Public key set."
+
+        unset value
 
     else
 
-    	echo
     	dna-echo -m "Skipping SSH key setting."
 
     fi
@@ -287,7 +265,7 @@ dna-prompt_ssh_connection_test() {
 
 dna-set_timezone() {
 
-    read -rp "${b-}Now setting timezone. Do so at the next screen. Press enter to continue.${x-}"
+    dna-read -m "Now setting timezone. Do so at the next screen. Press enter to continue."
     dpkg-reconfigure tzdata
 
 }
@@ -306,76 +284,33 @@ dna-create_non_root_user() {
     if [ "${boolean_output}" = "y" ]
     then
 
-    	defined="n"
-    	until [ "${defined}" = "y" ]
-    	do
-    		new_user=""
-    		until [ ! "${new_user}" = "" ]
-    		do
-    			read -rp "${b-}Ok, adding user now. Specify the new user's username: ${x-}" new_user
-    			echo
-    		done
-    		valid=n
-    		until [ $valid = "y" ]
-    		do
-    			read -n 1 -p "${b-}Is | ${new_user} | correct? (Y/n/e[xit]) ${x-}" answer;
-    			case $answer in
-    			"")
-    				echo
-    				valid=y
-    				defined=y
-    				;;
-    			y)
-    				echo -e "\n"
-    				valid=y
-    				defined=y
-    				;;
-    			n)
-    				echo -e "\n"
-    				echo "${b}Ok, then please try again...${x}"
-    				echo
-    				valid=y
-    				defined=n
-    				;;
-    			e)
-    				echo -e "\n"
-    	        		echo "${b}Exiting...${x}"
-    	        		echo
-    	        		exit
-    	        		;;
-    			*)
-    				echo -e "\n"
-    				echo "${r}${b}Invalid option. Retry...${x}"
-    	        		echo
-    				valid=n
-    			defined=n
-    		        ;;
-    			esac
-    		done
-    	done
-    	adduser --disabled-password --gecos "" $new_user
-    	usermod -aG sudo $new_user
+        dna-set_value -d "Ok, adding user now. Specify the new user's username:" -v "n"
+
+    	adduser --disabled-password --gecos "" "${value}"
+    	usermod -aG sudo "${value}"
     	echo
 
-        dna-ask_for_boolean -d "y" -q "Also generate random password for | ${c-}${new_user}${n-} |?"
+        dna-ask_for_boolean -d "y" -q "Also generate random password for | ${c-}${value}${n-} |?"
 
         if [ "${boolean_output}" = "y" ]
         then
 
     		non_root_user_pw="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)"
-    		echo "${b}Ok. Assigning user | $new_user | the following password:${x}"
-    		echo
-    		echo "${b} | ${g}${non_root_user_pw}${x}${b} |${x}"
-    		echo
+
+            dna-echo -m "Ok. Assigning user | ${o-}${new_user}${n-} | the following password:"
+    		dna-echo -m " | ${y-}${non_root_user_pw}${n-} | "
+
     		echo "${new_user}:${non_root_user_pw}" | chpasswd
+
     		dna-press_to_continue
 
     	fi
 
+        unset value
+
     else
 
-    	echo "${b}Skipping non-root user creation.${x}"
-    	echo
+    	dna-echo -m "Skipping non-root user creation."
 
     fi
 

@@ -10,13 +10,14 @@ dna-set_value() {
         dna-exit
     fi
 
-	while getopts ":d:v:" arguments; do
-		case $arguments in
-			d)	description="$OPTARG"
+	while getopts ":d:v:" arguments
+    do
+		case "${arguments}" in
+			d)	description="${OPTARG}"
 				;;
-			v)	validate="$OPTARG"
+			v)	validate="${OPTARG}"
 				;;
-			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
 				;;
 		esac
@@ -25,18 +26,18 @@ dna-set_value() {
 
 	if [ -z "${description-}" ]
 	then
-		dna-echo -m "${r-}Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+		dna-echo -e "Argument | ${n-}description [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
 
 	if [ ! -z "${validate-}" ]
 	then
-		case $validate in
-			y)	validate_input=y
+		case "${validate}" in
+			y)	validate_input="y"
 				;;
-			n)	validate_input=n
+			n)	validate_input="n"
 				;;
-			*)	dna-echo -m "${r-}Invalid content for argument | ${n-}validate${r-} | in function | ${n-}${FUNCNAME[0]}${r-} |."
+			*)	dna-echo -e "Invalid content for argument | ${n-}validate${r-} | in function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
 				;;
 		esac
@@ -64,7 +65,7 @@ dna-set_value() {
 					### validate_input must be defined immediately prior to calling this function.
 					validate_input
 				else
-					valid=y
+					valid="y"
 				fi
 			done
 			unset acceptable
