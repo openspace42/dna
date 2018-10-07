@@ -2,33 +2,39 @@
 
 dna-provision_le_wildcard_cert() {
 
+    ############################################################################
+
     if [ $# -eq 0 ]
     then
-        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    while getopts ":d:" arguments; do
-        case $arguments in
-            d)	domain="$OPTARG"
-            ;;
-            \?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-            echo
-            dna-exit
-            ;;
+    while getopts ":d:" arguments
+    do
+        case "${arguments}" in
+            d)	domain="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
         esac
     done
     OPTIND=1
 
     if [ -z "${domain-}" ]
     then
-        echo "${r-}${b-}Domain [option | -d |] must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "Argument | ${n-}domain [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
+    ############################################################################
+
     dna-install_certbot
+
+    operation_message="provisiong a wildcard LetsEncrypt TLS [SSL] certificate for: | ${c-}${domain}${n-} |."
+
+    dna-echo_operation -h
 
     if [ ! -z "${admin_mail-}" ]
     then
@@ -36,5 +42,7 @@ dna-provision_le_wildcard_cert() {
     else
         certbot certonly --manual -d "$domain, *.$domain" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
     fi
+
+    dna-echo_operation -t
 
 }

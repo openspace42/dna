@@ -23,7 +23,7 @@ dna-generate_ssh_keypair() {
 
     if [ -z "${name-}" ]
     then
-        dna-echo -e "Option | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 

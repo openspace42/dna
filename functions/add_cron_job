@@ -30,19 +30,19 @@ dna-add_cron_job() {
 
     if [ -z "${name-}" ]
     then
-        dna-echo -e "Option | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     if [ -z "${time-}" ]
     then
-        dna-echo -e "Option | ${n-}time [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}time [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     if [ -z "${content-}" ]
     then
-        dna-echo -e "Option | ${n-}content [-c]${r-} | must be supplied for function | ${r-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}content [-c]${r-} | must be supplied for function | ${r-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 

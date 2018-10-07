@@ -26,9 +26,11 @@ dna-install_dependencies() {
 
     if [ -z "${packages-}" ]
     then
-        dna-echo -e "Option | ${n-}packages [-p]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}packages [-p]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
+
+    ############################################################################
 
     operation_message="installing dependencies"
 
@@ -40,11 +42,14 @@ dna-install_dependencies() {
 
     if ! apt-get -y install "${packages}"
     then
+
         echo
+
         if [ "${allow_errors-null}" = "y" ]
         then
+
             dna-echo -e "An error occured performing APT operations."
-            dna-echo -m "If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be fixed automatically."
+            dna-echo -m "If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be naturally resolved."
 
             dna-ask_for_boolean -d "n" -q "Would you like to continue the installation anyway?"
 
@@ -55,10 +60,14 @@ dna-install_dependencies() {
                 dna-echo -m "Ok, aborting..."
                 dna-exit
             fi
+
         else
+
             dna-echo -e "An error occured performing APT operations."
             dna-exit
+
         fi
+
     fi
 
     echo

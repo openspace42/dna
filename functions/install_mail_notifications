@@ -6,33 +6,61 @@ dna-install_mail_notifications() {
 
     dna-get_distro_name
 
-    if [ $distro_name = "Ubuntu" ]
-	then
-        echo "${g-}${b-}Detected Ubuntu distro. Proceeding with full install...${x-}"
-		echo
-        read -p "${b-}[Purge and re-]install the local mailserver for task notifications? (Y/n): ${x-}" -n 1 -r
-		echo
-		if [[ ! $REPLY =~ ^[Nn]$ ]]
-		then
-            echo "${b-}Ok, [purging and re-]installing the local mailserver...${x-}"
-            echo
-			apt-get -y purge mailutils postfix || true
-			debconf-set-selections <<< "postfix postfix/mailname string $hostname"
-			debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-			apt-get install -y mailutils
-			/etc/init.d/postfix reload
-            echo
-        else
-            echo
-            echo "${b-}Skipping local mailserver [purge and re-]installation.${x-}"
-            echo
-		fi
-    else
-        echo "${r-}${b-}Detected NON-Ubuntu distro [mail notifications might not work]. Proceeding...${x-}"
-		echo
+    install_mailutils() {
+
+        ### [re-]Install mailutils
+
         debconf-set-selections <<< "postfix postfix/mailname string $hostname"
-		debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-		apt-get install -y mailutils
+        debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+        dna-install_dependencies -p "mailutils"
+
+        ### Reload postfix
+
+        /etc/init.d/postfix reload
+        echo
+
+    }
+
+    if [ "${distro_name}" = "Ubuntu" ]
+	then
+
+        dna-echo -s "Detected Ubuntu distro. Proceeding with full install..."
+
+        dna-ask_for_boolean -d "y" -q "[Purge and re-]install the local mailserver for task notifications?"
+
+		if [ "${boolean_output}" = "y" ]
+		then
+
+            dna-echo -m "Ok, proceeding..."
+
+            operation_message="[purging and re-]installing the local mailserver"
+
+            dna-echo_operation -h
+
+            ### Purge any existing local server installation
+
+			apt-get -y purge mailutils postfix || true
+
+            install_mailutils
+
+            dna-echo_operation -t
+
+        else
+
+            dna-echo -m "Ok, skipping."
+
+		fi
+
+        unset boolean_output
+
+    else
+
+        dna-echo -m "Detected NON-Ubuntu distro [mail notifications might not work]. Proceeding..."
+
+        install_mailutils
+
     fi
+
+    unset install_mailutils
 
 }

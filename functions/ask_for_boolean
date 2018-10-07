@@ -28,13 +28,13 @@ dna-ask_for_boolean() {
 
     if [ -z "${default-}" ]
     then
-        dna-echo -e "Option | ${n-}default [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}default [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     if [ -z "${question-}" ]
     then
-        dna-echo -e "Option | ${n-}question [-q]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}question [-q]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 

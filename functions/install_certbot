@@ -2,7 +2,9 @@
 
 dna-install_certbot() {
 
-	dna-echo -m "Now installing certbot/letsencrypt..."
+	operation_message="installing certbot/letsencrypt"
+
+	dna-echo_operation -h
 
 	dna-get_distro_name
 
@@ -14,8 +16,9 @@ dna-install_certbot() {
 	fi
 
 	dna-install_dependencies -p "certbot"
+
 	certbot &> /dev/null || true
 
-	dna-echo -s "Finished installing certbot/letsencrypt."
+	dna-echo_operation -t
 
 }

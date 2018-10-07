@@ -6,7 +6,7 @@ dna-set_value() {
 
     if [ $# -eq 0 ]
     then
-        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
@@ -47,56 +47,78 @@ dna-set_value() {
 
 	if [ -z "${value-}" ]
 	then
+
 		unset defined
+
 		until [ "${defined-null}" = "y" ]
 		do
+
 			unset valid
+
 			until [ "${valid-null}" = "y" ]
 			do
+
 				unset new_val
+
 				until [ ! -z "${new_val-}" ]
 				do
+
 					read -rp "${b-}${description} ${x-}" new_val
 					echo
+
 				done
+
 				if [ "${validate_input-null}" = "y" ]
 				then
+
 					input="$new_val"
+
 					### validate_input must be defined immediately prior to calling this function.
+
 					validate_input
+
 				else
+
 					valid="y"
+
 				fi
+
 			done
+
 			unset acceptable
+
 			until [ "${acceptable-null}" = "y" ]
 			do
+
 				read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;
-				case $answer in
+				case "${answer}" in
 					"")	echo
-						acceptable=y
-						defined=y
+						acceptable="y"
+						defined="y"
 						;;
 					y)	echo -e "\\n"
-						acceptable=y
-						defined=y
+						acceptable="y"
+						defined="y"
 						;;
 					n)	echo -e "\\n"
-						dna-echo -m "Ok, then please try again..."
-						acceptable=y
-						defined=n
+						dna-echo -m "Ok, try again."
+						acceptable="y"
+						defined="n"
 						;;
 					e)	echo -e "\\n"
 						dna-exit
 						;;
 					*)	echo -e "\\n"
-						dna-echo "${r-}Invalid option. Retry..."
-						acceptable=n
-						defined=n
+						dna-echo -e "Invalid option. Retry."
+						acceptable="n"
+						defined="n"
 						;;
 				esac
+
 			done
+
 		done
+
 	fi
 
 	export value="${new_val}"

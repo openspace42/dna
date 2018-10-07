@@ -6,25 +6,26 @@ dna-set_option() {
 
 	if [ $# -eq 0 ]
     then
-        dna-echo "${r-}No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-	while getopts ":o:p:d:c:v:s:" arguments; do
-		case $arguments in
-			o)	option="$OPTARG"
+	while getopts ":o:p:d:c:v:s:" arguments
+	do
+		case "${arguments}" in
+			o)	option="${OPTARG}"
 				;;
-			p)	path="$OPTARG"
+			p)	path="${OPTARG}"
 				;;
-			d)	describe="$OPTARG"
+			d)	describe="${OPTARG}"
 				;;
-			c)	choices="$OPTARG"
+			c)	choices="${OPTARG}"
 				;;
-			v)	validate="$OPTARG"
+			v)	validate="${OPTARG}"
 				;;
-			s)	setting="$OPTARG"
+			s)	setting="${OPTARG}"
 				;;
-			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
 				;;
 		esac
@@ -33,22 +34,20 @@ dna-set_option() {
 
 	if [ -z "${option-}" ]
 	then
-		echo "${r-}${b-}Argument | option [-o] | must be supplied for function | ${FUNCNAME[0]} |.${x-}"
-		echo
+		dna-echo -e "Argument | ${n-}option [-o]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
 	fi
 
 	if [ ! -z "${describe-}" ]
 	then
-		case $describe in
+		case "${describe}" in
 			y)	describe_setting=y
-			;;
+				;;
 			n)	describe_setting=n
-			;;
-			*)	echo "${r-}${b-}Invalid content for describe argument in function | ${FUNCNAME[0]} |.${x-}"
-			echo
-			dna-exit
-			;;
+				;;
+			*)	dna-echo -e "Invalid content for describe argument in function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
 		esac
 	fi
 
@@ -56,45 +55,44 @@ dna-set_option() {
 	then
 		case $validate in
 			y)	validate_input=y
-			;;
+				;;
 			n)	validate_input=n
-			;;
-			*)	echo "${r-}${b-}Invalid content for validate argument in function | ${FUNCNAME[0]} |.${x-}"
-			echo
-			dna-exit
-			;;
+				;;
+			*)	dna-echo -e "Invalid content for validate argument in function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
 		esac
 	fi
 
 	########################################################################
 
-	mkdir -p $conf_dir
+	mkdir -p "${conf_dir}"
 
 	if [ ! -z "${path-}" ]
 	then
 
 		path_leading_char="$(echo $path | cut -c1-1)"
 
-		if [ $path_leading_char = "/" ]
+		if [ "${path_leading_char}" = "/" ]
 		then
-			path_type=absolute
+			path_type="absolute"
 		else
-			path_type=relative
+			path_type="relative"
 		fi
 
-		if [ $path_type = "absolute" ]
+		if [ "${path_type}" = "absolute" ]
 		then
-			opt_base_path="$path"
+			opt_base_path="${path}"
 		else
-			opt_base_path="$conf_dir/$path"
-			mkdir -p "$opt_base_path"
+			opt_base_path="${conf_dir}/${path}"
+			mkdir -p "${opt_base_path}"
 		fi
 
-		opt_path="$opt_base_path/$option"
+		opt_path="${opt_base_path}/${option}"
 
 	else
 
-		opt_path="$conf_dir/$option"
+		opt_path="${conf_dir}/${option}"
 
 	fi
 
@@ -104,12 +102,12 @@ dna-set_option() {
 		if [ -f "$opt_path" ]
 		then
 
-			previous_value="$(cat $opt_path)"
+			previous_value="$(cat ${opt_path})"
 
 			if [ "${validate_input-null}" = "y" ]
 			then
 
-				input="$previous_value"
+				input="${previous_value}"
 
 				### If | -v y | then | validate_input | must be defined immediately prior to calling this function.
 
@@ -117,40 +115,45 @@ dna-set_option() {
 
 			else
 
-				valid=y
+				valid="y"
 
 			fi
 
 		else
 
-			touch $opt_path
-			valid=n
+			touch "${opt_path}"
+			valid="n"
 
 		fi
 
-		if [ $valid = "y" ]
+		if [ "${valid}" = "y" ]
 		then
-			echo "${b-}Your previous value for option | ${g-}$option${n-} | was: | ${y-}$previous_value${n-} |. ${x-}"
-			echo
+
+			dna-echo -m "Your previous value for option | ${o-}$option${n-} | was: | ${y-}$previous_value${n-} |."
+
 			if [ ! -z "${choices-}" ]
 			then
-				echo "${b-}The possible choices for this value are: | ${y-}${choices}${n-} |."
-				echo
+				dna-echo -m "The possible choices for this value are: | ${y-}${choices}${n-} |."
 			fi
-			read -rp "${b-}Is this still correct? (Y/n): ${x-}" -n 1
-			echo
-			if [[ ! $REPLY =~ ^[Nn]$ ]]
+
+			dna-ask_for_boolean -d "y" -q "Is this still correct?"
+
+			if [ "${boolean_output}" "y" ]
 			then
-				echo "${b-}Ok, keeping | ${y-}${previous_value}${n-} | as your value for option | ${o-}${option}${n-} |.${x-}"
-				echo
+
+				dna-echo -m "Ok, keeping | ${y-}${previous_value}${n-} | as your value for option | ${o-}${option}${n-} |."
+
 				value="${previous_value}"
 				previous_value_outcome="kept"
+
 			else
-				echo
+
 				skip_descr="y"
 				unset valid
 				previous_value_outcome="not-kept"
+
 			fi
+
 			unset valid
 
 		else
@@ -161,20 +164,30 @@ dna-set_option() {
 
 		if [ -z "${value-}" ]
 		then
+
 			unset defined
+
 			until [ "${defined-null}" = "y" ]
 			do
+
 				unset valid
+
 				until [ "${valid-null}" = "y" ]
 				do
+
 					unset new_val
+
 					until [ ! -z "${new_val-}" ]
 					do
+
 						if [ "${skip_descr-null}" = "y" ]
 						then
+
 							read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
 							echo
+
 						else
+
 							if [ "${describe_setting-null}" = "y" ]
 							then
 
@@ -183,14 +196,18 @@ dna-set_option() {
 								describe_setting
 
 							fi
+
 							read -rp "${b-}Now specify your value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
 							echo
+
 						fi
+
 					done
+
 					if [ "${validate_input-null}" = "y" ]
 					then
 
-						input="$new_val"
+						input="${new_val}"
 
 						### validate_input must be defined immediately prior to calling this function.
 
@@ -201,56 +218,55 @@ dna-set_option() {
 						valid=y
 
 					fi
+
 				done
+
 				unset acceptable
+
 				until [ "${acceptable-null}" = "y" ]
 				do
+
 					read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;
 					case $answer in
-						"")
-						echo
-						acceptable=y
-						defined=y
-						;;
-						y)
-						echo -e "\\n"
-						acceptable=y
-						defined=y
-						;;
-						n)
-						echo -e "\\n"
-						echo "${b-}Ok, then please try again...${x-}"
-						echo
-						acceptable=y
-						defined=n
-						;;
-						e)
-						echo -e "\\n"
-						echo "${b-}Exiting...${x-}"
-						echo
-						exit
-						;;
-						*)
-						echo -e "\\n"
-						echo "${r-}${b-}Invalid option. Retry...${x-}"
-						echo
-						acceptable=n
-						defined=n
-						;;
+						"")	echo
+							acceptable="y"
+							defined="y"
+							;;
+						y)	echo -e "\\n"
+							acceptable="y"
+							defined="y"
+							;;
+						n)	echo -e "\\n"
+							dna-echo -m "Ok, try again."
+							acceptable="y"
+							defined="n"
+							;;
+						e)	echo -e "\\n"
+							dna-exit
+							;;
+						*)	echo -e "\\n"
+							dna-echo -e "Invalid option. Retry."
+							acceptable="n"
+							defined="n"
+							;;
 					esac
+
 				done
+
 			done
-			echo "$new_val" > "$opt_path"
-			echo "${b-}Option | ${g-}${option}${n-} | set to value | ${y-}${new_val}${n-} |. ${x-}"
-			echo
+
+			echo "${new_val}" > "${opt_path}"
+
+			dna-echo -m "Option | ${o-}${option}${n-} | set to value | ${y-}${new_val}${n-} |."
+
 		fi
 
 	else
 
-		touch $opt_path
+		touch "${opt_path}"
 		echo "${setting}" > "${opt_path}"
-		echo "${b-}Option | ${g-}${option}${n-} | set to value | ${y-}${setting}${n-} |. ${x-}"
-		echo
+
+		dna-echo -m "Option | ${o-}${option}${n-} | set to value | ${y-}${setting}${n-} |."
 
 	fi
 
@@ -261,4 +277,15 @@ dna-set_option() {
 
 	unset arguments option path describe choices validate setting validate_input describe_setting valid value skip_descr defined new_val
 
+}
+
+dna-set_admin_email() {
+
+	describe_setting() {
+
+		dna-echo -m "${proj_name} sends you email notifications for any scheduled job runtime errors and / or failures."
+
+	}
+
+	dna-set_option -o "admin_mail" -d "y" -v "n"
 }

@@ -6,18 +6,18 @@ dna-validate_ipv4() {
 
     if [ $# -eq 0 ]
     then
-        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    while getopts ":i:s" arguments; do
-        case $arguments in
-            i)	ip="$OPTARG"
+    while getopts ":i:s" arguments
+    do
+        case "${arguments}" in
+            i)	ip="${OPTARG}"
                 ;;
             s)	export silent="y"
                 ;;
-            \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
                 ;;
         esac
@@ -26,7 +26,7 @@ dna-validate_ipv4() {
 
     if [ -z "${ip-}" ]
     then
-        dna-echo -m "${r-}IP [option | ${n-}-i${r-} |] must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}ip [-i]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
@@ -53,10 +53,10 @@ dna-validate_ipv4() {
 
     if valid_ip "${ip}"
     then
-        dna-echo -m "${g-}The IPv4 address | ${n-}${ip}${g-} | is valid."
+        dna-echo -s "The IPv4 address | ${n-}${ip}${g-} | is valid."
         export ip_is_valid="y"
     else
-        dna-echo -m "${r-}The IPv4 address | ${n-}${ip}${r-} | is NOT valid."
+        dna-echo -e "The IPv4 address | ${n-}${ip}${r-} | is NOT valid."
         export ip_is_valid="n"
     fi
 
@@ -70,18 +70,18 @@ dna-validate_ipv6() {
 
     if [ $# -eq 0 ]
     then
-        echo "${r-}${b-}No argument supplied for function | ${FUNCNAME[0]} |.${x-}"
-        echo
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    while getopts ":i:s" arguments; do
-        case $arguments in
-            i)	ip="$OPTARG"
+    while getopts ":i:s" arguments
+    do
+        case "${arguments}" in
+            i)	ip="${OPTARG}"
                 ;;
             s)	silent="y"
                 ;;
-            \?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
                 ;;
         esac
@@ -90,7 +90,7 @@ dna-validate_ipv6() {
 
     if [ -z "${ip-}" ]
     then
-        dna-echo -m "${r-}IP [option | ${n-}-i${r-} |] must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Argument | ${n-}ip [-i]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
@@ -174,12 +174,63 @@ dna-validate_ipv6() {
 
     if valid_ip "${ip}"
     then
-        dna-echo -m "${g-}The IPv6 address | ${n-}${ip}${g-} | is valid."
+        dna-echo -s "The IPv6 address | ${n-}${ip}${g-} | is valid."
         export ip_is_valid="y"
     else
-        dna-echo -m "${r-}The IPv6 address | ${n-}${ip}${r-} | is NOT valid."
+        dna-echo -e "The IPv6 address | ${n-}${ip}${r-} | is NOT valid."
         export ip_is_valid="n"
     fi
+
+    unset silent
+
+}
+
+dna-validate_ssh_pubkey() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":k:s" arguments
+    do
+        case "${arguments}" in
+            k)	key="${OPTARG}"
+                ;;
+            s)	export silent="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${key-}" ]
+    then
+        dna-echo -e "Argument | ${n-}key [-k]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    dna-touch_temp_dir
+
+    echo "${key}" > "${temp_dir}/validate_ssh_pubkey"
+
+    if ssh-keygen -l -f "${temp_dir}/validate_ssh_pubkey" &> /dev/null
+    then
+        dna-echo -s "The SSH public key you specified is valid."
+        export key_is_valid="y"
+    else
+        dna-echo -e "The SSH public key you specified is NOT valid."
+        export key_is_valid="n"
+    fi
+
+    rm "${temp_dir}/validate_ssh_pubkey"
 
     unset silent
 

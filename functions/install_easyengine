@@ -2,8 +2,9 @@
 
 dna-install_easyengine() {
 
-	echo "${b-}Now [re-]installing and updating EasyEngine...${x-}"
-	echo
+	operation_message="[re-]installing and updating EasyEngine..."
+
+	dna-echo_operation -h
 
 	wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
 	bash ee || true
@@ -20,31 +21,6 @@ dna-install_easyengine() {
 	ufw allow 443 || true
 	echo
 
-	#dna-get_distro_name
-	#
-	#if [ $distro_name = "Ubuntu" ]
-	#then
-	#	read -p "${b-}Also install full EasyEngine stack and PhpMyAdmin? (Y/n): ${x-}" -n 1 -r
-	#	echo
-	#	if [[ ! $REPLY =~ ^[Nn]$ ]]
-	#	then
-	#		echo "${b-}Ok, installing full EE stack...${x-}"
-	#		echo
-	#		dna-install_dependencies -p "composer"
-	#		ufw allow 22222 || true
-	#		echo
-	#		ee stack install --all || true
-	#		echo
-	#		( cd /var/www/22222/htdocs/db/pma && composer install && sudo chown www-data: * -R )
-	#		echo
-	#	else
-	#		echo
-	#		echo "${b-}Ok, skipping full EE stack installation...${x-}"
-	#		echo
-	#	fi
-	#fi
-
-	echo "${b-}Finished installing EasyEngine.${x-}"
-	echo
+	dna-echo_operation -t
 
 }

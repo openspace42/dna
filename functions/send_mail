@@ -65,13 +65,14 @@ dna-send_mail() {
         dna-exit
     fi
 
-	while getopts ":s:b:r:" arguments; do
-		case $arguments in
-            s)  subject="$OPTARG"
+	while getopts ":s:b:r:" arguments
+    do
+		case "${arguments}" in
+            s)  subject="${OPTARG}"
                 ;;
-            b)  body="$OPTARG"
+            b)  body="${OPTARG}"
                 ;;
-            r)  recipients="$OPTARG"
+            r)  recipients="${OPTARG}"
                 ;;
 			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit

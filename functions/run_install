@@ -24,7 +24,7 @@ dna-run_install() {
 
     ### Launch the installer
 
-    if [ ${custom_project_version-null} = "b" ]
+    if [ "${custom_project_version-null}" = "b" ]
     then
 
         dna-echo -e "Installing bleeding-edge version of ${proj_name} up to latest git commit as per | ${n-}-p b${r-} |."
@@ -43,14 +43,14 @@ dna-run_install() {
 
     ### Read the installer exit code and exit the script
 
-    if [ -f $source_dir/install_complete ]
+    if [ -f "${source_dir}/install_complete" ]
     then
 
         dna-echo -s "Installation complete."
 
         ### Set installation complete checkfile with installed version
 
-        cp $conf_dir/version/version_initiated $conf_dir/version/version_installed
+        cp "${conf_dir}/version/version_initiated" "${conf_dir}/version/version_installed"
 
         ### Remove installer directory
 
@@ -58,7 +58,7 @@ dna-run_install() {
 
         dna-echo -m "Run | ${y-}git clone ${git_host}/${author_name}/${proj_name}${n-} | once again to download the latest installer."
 
-        rm -r $source_dir
+        rm -r "${source_dir}"
 
         dna-echo -m "Exiting installer."
 

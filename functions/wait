@@ -110,13 +110,14 @@ dna-wait() {
         dna-exit
     fi
 
-	while getopts ":s:d:" arguments; do
-		case $arguments in
-			s)	seconds="$OPTARG"
+	while getopts ":s:d:" arguments
+    do
+		case "${arguments}" in
+			s)	seconds="${OPTARG}"
                 ;;
-            d)  description="$OPTARG"
+            d)  description="${OPTARG}"
                 ;;
-			\?)	dna-echo -m "${r-}Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
                 ;;
 		esac
@@ -180,15 +181,16 @@ dna-wait_for() {
         dna-exit
     fi
 
-	while getopts ":d:m:e:i:" arguments; do
-		case $arguments in
-            d)  description="$OPTARG"
+	while getopts ":d:m:e:i:" arguments
+    do
+		case "${arguments}" in
+            d)  description="${OPTARG}"
                 ;;
-            m)  max_seconds="$OPTARG"
+            m)  max_seconds="${OPTARG}"
                 ;;
-            e)  error_message="$OPTARG"
+            e)  error_message="${OPTARG}"
                 ;;
-            i)  check_interval="$OPTARG"
+            i)  check_interval="${OPTARG}"
                 ;;
 			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
@@ -232,17 +234,25 @@ dna-wait_for() {
 
         if [ ! -z "${max_seconds-}" ]
     	then
+
             if [ "${seconds}" -gt "${max_seconds-}" ]
             then
+
                 if [ ! -z "${error_message-}" ]
                 then
+
                     dna-echo -e "${error_message}"
                 else
+
                     echo
+
                 fi
+
                 wait_output="timeout"
                 break
+
             fi
+
         fi
 
         case $((seconds % 4)) in
@@ -256,13 +266,17 @@ dna-wait_for() {
 
         if [ ! -z "${max_seconds-}" ]
         then
+
             remaining_seconds=$((max_seconds-seconds))
 
             remaining_seconds_name="$(echo ${remaining_seconds} | xargs printf %0${seconds_decimals}d)"
 
             echo -en "\\r${b-}| ${o-}${j}${n-} | ${description} [for ${y-}${remaining_seconds_name}${n-} more seconds]"
+
         else
+
             echo -en "\\r${b-}| ${o-}${j}${n-} | ${description}${x-}"
+
         fi
 
         sleep 1
@@ -270,12 +284,18 @@ dna-wait_for() {
 
         if [ ! -z "${check_interval-}" ]
         then
+
             if [ ! "${seconds}" = "0" ] && (( $seconds % $check_interval == 0 ))
             then
+
                 check_condition
+
             fi
+
         else
+
             check_condition
+
         fi
 
         wait_output="fixed"
@@ -284,17 +304,23 @@ dna-wait_for() {
 
     if [ ! -z "${wait_output-}" ]
     then
+
         echo
+
     fi
 
     if [ "${wait_output-null}" = "fixed" ]
     then
+
         echo
+
     fi
 
     if [ ! "${wait_output-null}" = "timeout" ]
     then
+
         wait_output="ok"
+
     fi
 
     unset seconds check_interval description max_seconds error_message check_condition condition_verified
