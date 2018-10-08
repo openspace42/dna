@@ -22,6 +22,7 @@ dna-apt_update() {
         then
             dna-echo -m "APT cache out of date. Updating now..."
             apt-get update
+            echo
             dna-echo -s "APT cache updated."
             echo
         else

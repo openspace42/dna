@@ -48,7 +48,7 @@ dna-add_cron_job() {
 
     ############################################################################
 
-    if [ -f ! "/usr/bin/cronic" ]
+    if [ ! -f "/usr/bin/cronic" ]
     then
 
         curl https://habilis.net/cronic/cronic > /usr/bin/cronic
