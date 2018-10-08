@@ -79,7 +79,7 @@ dna-harden_ssh() {
 
     sed -i "/PermitRootLogin/c\PermitRootLogin without-password" "${ssh_config_file}"
 
-    dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to ${y-}without-password${n-} |."
+    dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to | ${y-}without-password${n-} |."
 
     sed -i "/PasswordAuthentication/c\PasswordAuthentication no" "${ssh_config_file}"
 
@@ -151,9 +151,7 @@ dna-harden_ssh() {
 
     		else
 
-    			echo
-
-    			dna-echo "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+    			dna-echo -m "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
                 sed -i "/Port /c\Port 22" "${ssh_config_file}"
 

@@ -40,7 +40,7 @@ dna-install_dependencies() {
 
     dna-apt_update
 
-    if ! apt-get -y install "${packages}"
+    if ! apt-get -y install $packages                                           ### Do NOT escape this variable
     then
 
         echo
