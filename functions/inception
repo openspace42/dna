@@ -277,12 +277,12 @@ dna-create_non_root_user() {
     if [ -n "${currusers-}" ]
     then
 
-        dna-echo -m "The current users are:"
+        dna-echo -m "The currently existing users are:"
         dna-echo -m "${currusers}"
 
     else
 
-        dna-echo -m "No users found."
+        dna-echo -m "No currently existing users found."
 
     fi
 
@@ -293,11 +293,13 @@ dna-create_non_root_user() {
 
         dna-set_value -d "Ok, adding user now. Specify the new user's username:" -v "n"
 
-    	adduser --disabled-password --gecos "" "${value}"
-    	usermod -aG sudo "${value}"
+        new_user="${value}"
+
+    	adduser --disabled-password --gecos "" "${new_user}"
+    	usermod -aG sudo "${new_user}"
     	echo
 
-        dna-ask_for_boolean -d "y" -q "Also generate random password for | ${c-}${value}${n-} |?"
+        dna-ask_for_boolean -d "y" -q "Also generate random password for | ${c-}${new_user}${n-} |?"
 
         if [ "${boolean_output}" = "y" ]
         then
@@ -313,7 +315,7 @@ dna-create_non_root_user() {
 
     	fi
 
-        unset value
+        unset value new_user non_root_user_pw
 
     else
 
