@@ -24,7 +24,6 @@ dna-apt_update() {
             apt-get update
             echo
             dna-echo -s "APT cache updated."
-            echo
         else
             dna-echo -s "APT cache already up to date."
         fi
