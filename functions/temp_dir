@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-dna-touch_temp_dir() {
+dna-touch_tmp_project_dir() {
 
-	if [ -f "${temp_dir}" ]
+	if [ -d "${tmp_project_dir}" ]
 	then
-		rm -r "${temp_dir}"
+		rm -r "${tmp_project_dir}"
 	fi
 
-	mkdir -p "${temp_dir}"
+	mkdir -p "${tmp_project_dir}"
 
 }
 
-dna-remove_temp_dir() {
+dna-remove_tmp_project_dir() {
 
-	if [ -f "${temp_dir}" ]
+	if [ -d "${tmp_project_dir}" ]
 	then
-		rm -r "${temp_dir}"
+		rm -r "${tmp_project_dir}"
 	fi
 
 }

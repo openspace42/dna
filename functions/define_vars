@@ -2,17 +2,43 @@
 
 dna-define_vars() {
 
+	############################################################################
+
 	### Define variables [Don't change these! | No trailing slash!]
 
 	### Projects will be installed in this location: | /root/${proj_author}/${proj_name} |.
+
+	############################################################################
+
+	### system
+
+	export ssl_dir="/etc/ssl"
+	export www_dir="/var/www"
+	export tmp_dir="/tmp"
+	export le_live_dir="/etc/letsencrypt/live"
+
+	### system ssh
+
+	export ssh_auth_keys_file="/root/.ssh/authorized_keys"
+	export ssh_config_file="/etc/ssh/sshd_config"
+
+	############################################################################
+
+	### os
+
+	export os_base_dir="/root/openspace42"
+	export os_conf_dir="${os_base_dir}/conf"
+
+	############################################################################
+
+	### synthia
 
 	export source_dir="/root/${proj_name}"
 	export base_dir="/root/${author_name}"
 	export install_dir="${base_dir}/${proj_name}"
 	export modules_dir="${install_dir}/modules"
 
-	export os_base_dir="/root/openspace42"
-	export os_conf_dir="${os_base_dir}/conf"
+	### synthia conf vars
 
 	export conf_dir="${install_dir}/conf"
 	export conf_backups_dir="${conf_dir}/backups"
@@ -20,13 +46,17 @@ dna-define_vars() {
 	export conf_backups_s3_dir="${conf_backups_dir}/s3"
 	export conf_dns_dir="${conf_dir}/dns"
 
+	### synthia tools vars
+
 	export tools_dir="${install_dir}/tools"
-	export tls_dir="/etc/ssl/${proj_name}"
-	export temp_dir="/tmp/${proj_name}"
 
-	export www_dir="/var/www"
+	############################################################################
 
-	export ssh_auth_keys_file="/root/.ssh/authorized_keys"
-	export ssh_config_file="/etc/ssh/sshd_config"
+	### system project-specific
+
+	export ssl_project_dir="${ssl_dir}/${proj_name}"
+	export tmp_project_dir="${tmp_dir}/${proj_name}"
+
+	############################################################################
 
 }
