@@ -54,16 +54,18 @@ dna-set_ssh_pubkey() {
 
         dna-set_value -d "Ok, now paste the ssh public key you copied from your local workstation:" -v "y"
 
-        if ! grep -q "${value}" "${ssh_auth_keys_file}"
+        new_key="${value}"
+
+        if ! grep -q "${new_key}" "${ssh_auth_keys_file}"
 		then
-			echo "$value" >> "${ssh_auth_keys_file}"
+			echo "${new_key}" >> "${ssh_auth_keys_file}"
 		fi
 
     	chmod 600 "${ssh_auth_keys_file}"
 
     	dna-echo -s "SSH Public key set."
 
-        unset value
+        unset value new_key
 
     else
 
@@ -378,7 +380,8 @@ dna-inception() {
 
     ############################################################################
 
-    while getopts ":h" arguments; do
+    while getopts ":h" arguments
+    do
         case $arguments in
             h)	skip_hostname="y"
                 ;;
