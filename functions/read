@@ -32,6 +32,8 @@ dna-read() {
 
     read -rp "${b-}${message}${x-}"
 
+    unset message
+
 }
 
 dna-press_to_continue() {
