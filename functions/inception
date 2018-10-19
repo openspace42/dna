@@ -394,38 +394,49 @@ dna-inception() {
 
     ############################################################################
 
-    if [ ! "${skip_hostname-}" = "y" ]
+    if [ ! -f "${os_conf_dir}/inception_run_status" ]
     then
 
-        dna-set_hostname
+        ########################################################################
+
+        if [ ! "${skip_hostname-}" = "y" ]
+        then
+
+            dna-set_hostname
+
+        fi
+
+        ########################################################################
+
+        dna-set_locale
+
+        dna-set_ssh_pubkey
+
+        dna-harden_ssh
+
+        dna-initialize_ufw
+
+        dna-prompt_ssh_connection_test
+
+        dna-set_timezone
+
+        dna-create_non_root_user
+
+        dna-secure_root_pw
+
+        dna-install_basic_packages
+
+        dna-apt_full_upgrade
+
+        ########################################################################
+
+        mkdir -p "${os_conf_dir}"
+        echo "completed" > "${os_conf_dir}/inception_run_status"
+
+        ########################################################################
+
+        dna-echo -s "All done with inception operations."
 
     fi
-
-    dna-set_locale
-
-    dna-set_ssh_pubkey
-
-    dna-harden_ssh
-
-    dna-initialize_ufw
-
-    dna-prompt_ssh_connection_test
-
-    dna-set_timezone
-
-    dna-create_non_root_user
-
-    dna-secure_root_pw
-
-    dna-install_basic_packages
-
-    dna-apt_full_upgrade
-
-    ############################################################################
-
-    mkdir -p "${os_conf_dir}"
-    echo "completed" > "${os_conf_dir}/inception_run_status"
-
-    dna-echo -s "All done with inception operations."
 
 }
