@@ -73,3 +73,15 @@ dna-apt_full_upgrade() {
     dna-echo_operation -t
 
 }
+
+dna-enable_debian_testing_repo() {
+
+    echo "deb http://http.us.debian.org/debian/ testing non-free contrib main" > "/etc/apt/sources.list.d/testing.list"
+
+}
+
+dna-enable_debian_backports_repo() {
+
+    echo "deb http://ftp.debian.org/debian stretch-backports main" > "/etc/apt/sources.list.d/backports.list"
+
+}

@@ -38,7 +38,7 @@ dna-define_vars() {
 	export install_dir="${base_dir}/${proj_name}"
 	export modules_dir="${install_dir}/modules"
 
-	### synthia conf vars
+	### synthia conf
 
 	export conf_dir="${install_dir}/conf"
 	export conf_backups_dir="${conf_dir}/backups"
@@ -46,7 +46,7 @@ dna-define_vars() {
 	export conf_backups_s3_dir="${conf_backups_dir}/s3"
 	export conf_dns_dir="${conf_dir}/dns"
 
-	### synthia tools vars
+	### synthia tools
 
 	export tools_dir="${install_dir}/tools"
 

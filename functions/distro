@@ -46,10 +46,25 @@ dna-check_distro_ubuntu_18() {
 
     if ! lsb_release -d | cut -f2 | grep "Ubuntu 18.04" >/dev/null
     then
-        dna-echo -e "Detected distro is NOT Ubuntu 18.04 LTS. It appears instead to be:"
+        dna-echo -e "Detected distro is NOT Ubuntu 18.04 LTS."
+        dna-echo -m "It appears instead to be:"
         lsb_release -d
         echo
         dna-echo -m "${proj_name} only runs on Ubuntu 18.04 LTS."
+        dna-exit
+    fi
+
+}
+
+dna-check_distro_debian_9() {
+
+    if ! lsb_release -d | cut -f2 | grep "Debian GNU/Linux 9" >/dev/null
+    then
+        dna-echo -e "Detected distro is NOT Debian 9 [stretch]."
+        dna-edcho -m "It appears instead to be:"
+        lsb_release -d
+        echo
+        dna-echo -m "${proj_name} only runs on Debian 9."
         dna-exit
     fi
 

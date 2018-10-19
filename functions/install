@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+dna-install_build_tools() {
+
+    dna-install_dependencies -p "build-essential libpcre3-dev"
+
+}
