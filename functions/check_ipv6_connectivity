@@ -45,7 +45,7 @@ dna-check_ipv6_connectivity() {
         else
             dna-echo -e "IPv6 connectivity not detected."
             ipv6_available="n"
-            this_ipv6="none"
+            this_ipv6="null"
         fi
     fi
     if [ "${ipv6_available}" = "y" ]
