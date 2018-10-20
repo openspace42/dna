@@ -15,11 +15,11 @@ dna-add_cron_job() {
     while getopts ":n:t:c:" arguments
     do
         case $arguments in
-            n)	name="$OPTARG"
+            n)	name="${OPTARG}"
                 ;;
-            t)	time="$OPTARG"
+            t)	time="${OPTARG}"
                 ;;
-            c)	content="$OPTARG"
+            c)	content="${OPTARG}"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit

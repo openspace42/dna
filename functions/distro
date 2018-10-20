@@ -12,13 +12,9 @@ dna-check_distro_ubuntu() {
 
     ### Check that the running distro is Ubuntu
 
-    if ! lsb_release --id | cut -f2 | grep Ubuntu >/dev/null
+    if ! lsb_release --id | cut -f2 | grep Ubuntu > /dev/null
     then
-        dna-echo -e "Detected distro is NOT Ubuntu. It appears instead to be:"
-        lsb_release -i
-        echo
-        dna-echo -m "${proj_name} only runs on Ubuntu."
-        dna-exit
+        false
     fi
 
 }
@@ -27,15 +23,11 @@ dna-check_distro_ubuntu_lts() {
 
     ### Check that the running distro is Ubuntu on an LTS version
 
-    dna-check_distro_ubuntu()
+    dna-check_distro_ubuntu
 
     if ! lsb_release -d | grep -q LTS
     then
-        dna-echo -e "Detected Ubuntu version is NOT an LTS version. It appears instead to be:"
-        lsb_release -d
-        echo
-        dna-echo -m "${proj_name} only runs on Ubuntu LTS versions."
-        dna-exit
+        false
     fi
 
 }
@@ -44,28 +36,27 @@ dna-check_distro_ubuntu_18() {
 
     ### Check that the running distro is Ubuntu
 
-    if ! lsb_release -d | cut -f2 | grep "Ubuntu 18.04" >/dev/null
+    if ! lsb_release -d | cut -f2 | grep "Ubuntu 18.04" > /dev/null
     then
-        dna-echo -e "Detected distro is NOT Ubuntu 18.04 LTS."
-        dna-echo -m "It appears instead to be:"
-        lsb_release -d
-        echo
-        dna-echo -m "${proj_name} only runs on Ubuntu 18.04 LTS."
-        dna-exit
+        false
+    fi
+
+}
+
+dna-check_distro_debian() {
+
+    if ! lsb_release -d | cut -f2 | grep "Debian" > /dev/null
+    then
+        false
     fi
 
 }
 
 dna-check_distro_debian_9() {
 
-    if ! lsb_release -d | cut -f2 | grep "Debian GNU/Linux 9" >/dev/null
+    if ! lsb_release -d | cut -f2 | grep "Debian GNU/Linux 9" > /dev/null
     then
-        dna-echo -e "Detected distro is NOT Debian 9 [stretch]."
-        dna-edcho -m "It appears instead to be:"
-        lsb_release -d
-        echo
-        dna-echo -m "${proj_name} only runs on Debian 9."
-        dna-exit
+        false
     fi
 
 }

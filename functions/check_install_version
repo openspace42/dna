@@ -94,29 +94,29 @@ dna-check_install_version() {
 
     ### If a previous installation was at the very least initiated...
 
-    if [ ${prev_install_initiated-null} = "y" ]
+    if [ "${prev_install_initiated-null}" = "y" ]
     then
 
         ### If a previous version was successfully finished installing...
 
-        if [ -f $conf_dir/version/version_installed ]
+        if [ -f "${conf_dir}/version/version_installed" ]
         then
 
             ### Check that version_initiated and version_installed match
 
             prev_version_installed="$(cat $conf_dir/version/version_installed)"
 
-            if [ "$prev_version_installed" = "$prev_version_initiated" ]
+            if [ "${prev_version_installed}" = "${prev_version_initiated}" ]
             then
 
                 ### Versions match, therefore previous install was completed successfully
                 ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed
                 ### If instead we're installing a bleeding-edge version, skip any checks as we're certainly intalling a newer version.
 
-                if [ ! ${custom_project_version-null} = "b" ]
+                if [ ! "${custom_project_version-null}" = "b" ]
                 then
 
-                    if grep -q "bleeding-edge" "$conf_dir/version/version_installed"
+                    if grep -q "bleeding-edge" "${conf_dir}/version/version_installed"
                     then
                         dna-echo -m "You're now installing stable version | ${c-}$latest_vers${x-}${b-} | over a previously | ${r-}bleeding-edge${x-}${b-} | version of $proj_name."
                         dna-echo -m "This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
@@ -159,7 +159,7 @@ dna-check_install_version() {
 
         fi
 
-        if [ ${prev_install_incomplete-null} = "y" ]
+        if [ "${prev_install_incomplete-null}" = "y" ]
         then
             dna-echo -e "It appears you have a previous incomplete installation of $proj_name."
             dna-echo -m "Either you intentionally aborted the install or the script got somehow terminated before it finished."
@@ -170,7 +170,7 @@ dna-check_install_version() {
 
         ### In any event, since there is a previous installation, at least partial, prompt for a backup.
 
-        if [ ! ${skip_install_time_backup-null} = "y" ]
+        if [ ! "${skip_install_time_backup-null}" = "y" ]
         then
 
             dna-echo -m "It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run."
@@ -179,14 +179,14 @@ dna-check_install_version() {
             then
 
                 dna-echo -m "Ok, proceeding with backup..."
-                if bash $source_dir/tools/$proj_name-backup -s
+                if bash "${source_dir}/tools/${proj_name}-backup" -s
                 then
-                    backup_output=ok
+                    backup_output="ok"
                 else
-                    backup_output=failed
+                    backup_output="failed"
                 fi
                 sleep 1
-                if [ $backup_output = "ok" ]
+                if [ "${backup_output}" = "ok" ]
                 then
                     dna-echo -s "Backup complete. Continuing installation..."
                 else

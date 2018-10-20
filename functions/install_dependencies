@@ -53,7 +53,7 @@ dna-install_dependencies() {
 
             dna-ask_for_boolean -d "n" -q "Would you like to continue the installation anyway?"
 
-            if [ "$boolean_output" = "y" ]
+            if [ "${boolean_output}" = "y" ]
             then
                 dna-echo -m "Ok, continuing installation anyway..."
             else

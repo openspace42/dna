@@ -15,11 +15,13 @@ dna-check_ipv6_connectivity() {
     done
     OPTIND=1
 
+    ############################################################################
+
     dna-echo -m "Now testing IPv6 connectivity..."
 
     ipv6_ping_test_addr="2001:4860:4860::8888"
 
-    if ping6 -q -c 1 -W 1 "${ipv6_ping_test_addr}" >/dev/null
+    if ping6 -q -c 1 -W 1 "${ipv6_ping_test_addr}" > /dev/null
     then
         dna-echo -s "IPv6 connectivity good."
         ipv6_available="y"
@@ -27,7 +29,7 @@ dna-check_ipv6_connectivity() {
         counter="4"
         ping_acquired="y"
         echo
-        until ping6 -c1 "${ipv6_ping_test_addr}" &>/dev/null
+        until ping6 -c1 "${ipv6_ping_test_addr}" &> /dev/null
         do
             dna-echo -m "Waiting ${counter} more seconds for IPv6 connectivity..."
             if [ "${counter}" = "0" ]
