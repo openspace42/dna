@@ -32,7 +32,7 @@ dna-provision_le_wildcard_cert() {
 
     dna-install_certbot
 
-    operation_message="provisiong a wildcard LetsEncrypt TLS [SSL] certificate for: | ${c-}${domain}${n-} |."
+    operation_message="provisioning a wildcard LetsEncrypt TLS [SSL] certificate for: | ${c-}${domain}${n-} |."
 
     dna-echo_operation -h
 
