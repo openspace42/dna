@@ -51,7 +51,7 @@ dna-run_install() {
 
         dna-echo -m "${c-}Installing | ${n-}version ${selected_vers}${c-} | of | ${n-}${proj_name}${c-} | as per | ${n-}-p ${selected_vers}${c-} |."
 
-        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${selected_vers}" && bash ./install --return-check )
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${selected_vers}" && echo && bash ./install --return-check )
 
     elif [ "${custom_project_version-null}" = "t" ]
     then
@@ -60,7 +60,7 @@ dna-run_install() {
 
         dna-echo -m "${o-}Installing | ${n-}latest-tagged version [${selected_vers}]${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p t${o-} |."
 
-        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_tagged}" && bash ./install --return-check )
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_tagged}" && echo && bash ./install --return-check )
 
     else
 
@@ -68,7 +68,7 @@ dna-run_install() {
 
         dna-echo -m "Installing | ${g-}latest-final version [${selected_vers}]${n-} | of | ${g-}${proj_name}${n-} |."
 
-        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_final}" && bash ./install --return-check )
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_final}" && echo && bash ./install --return-check )
 
     fi
 
