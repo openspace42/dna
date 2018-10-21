@@ -18,7 +18,10 @@ dna-run_install() {
 
     ### Define latest version
 
-    export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags | cut -f1 -d"-")"
+    #export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags | cut -f1 -d"-")"
+    export latest_vers_final="$(cd ${source_dir} && semtag getfinal)"
+    export latest_vers_tagged="$(cd ${source_dir} && semtag getlast)"
+    export latest_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
 
     ############################################################################
 
@@ -27,15 +30,28 @@ dna-run_install() {
     if [ "${custom_project_version-null}" = "b" ]
     then
 
-        dna-echo -e "Installing bleeding-edge version of ${proj_name} up to latest git commit as per | ${n-}-p b${r-} |."
+        selected_vers="${latest_vers_bl_edge}"
 
-        ( cd $source_dir && bash ./install --return-check )
+        dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${proj_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
+
+        ( cd "${source_dir}" && git checkout - && bash ./install --return-check )
+
+    elif [ "${custom_project_version-null}" = "l" ]
+    then
+
+        selected_vers="${latest_vers_tagged}"
+
+        dna-echo -m "${o-}Installing | ${n-}latest-tagged version${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p b${o-} |."
+
+        ( cd "${source_dir}" && git checkout "tags/${latest_vers_tagged}" && bash ./install --return-check )
 
     else
 
-        dna-echo -m "Installing ${proj_name} ${latest_vers}"
+        selected_vers="${latest_vers_final}"
 
-        ( cd $source_dir && git checkout tags/$latest_vers && bash ./install --return-check )
+        dna-echo -m "Installing ${proj_name} ${latest_vers_final}"
+
+        ( cd "${source_dir}" && git checkout "tags/${latest_vers_final}" && bash ./install --return-check )
 
     fi
 

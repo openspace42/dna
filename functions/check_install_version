@@ -84,13 +84,7 @@ dna-check_install_version() {
 
     ### Log current version being initiated to version_initiated
 
-    if [ "${custom_project_version-null}" = "b" ]
-    then
-        latest_commit="$(cd ${source_dir} && git log -n 1 --pretty=format:"%H"  | cut -c1-7)"
-        echo "bleeding-edge-${latest_commit}" > "${conf_dir}/version/version_initiated"
-    else
-        echo "${latest_vers}" > "${conf_dir}/version/version_initiated"
-    fi
+    echo "${selected_vers}" > "${conf_dir}/version/version_initiated"
 
     ### If a previous installation was at the very least initiated...
 
@@ -116,18 +110,16 @@ dna-check_install_version() {
                 if [ ! "${custom_project_version-null}" = "b" ]
                 then
 
-                    if grep -q "bleeding-edge" "${conf_dir}/version/version_installed"
+                    if grep -q "+" "${conf_dir}/version/version_installed"
                     then
-                        dna-echo -m "You're now installing stable version | ${c-}$latest_vers${x-}${b-} | over a previously | ${r-}bleeding-edge${x-}${b-} | version of $proj_name."
+                        dna-echo -m "You're now installing stable version | ${c-}${selected_vers}${n-} | over a previously | ${r-}bleeding-edge${n-} | version of ${proj_name}."
                         dna-echo -m "This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
                         dna-press_to_continue
                     else
-
-                        ### if (( $(echo "$latest_vers < $prev_version_installed" | tr -d "." | bc -l) ))
                         if testvercomp "${latest_vers//v}" "${prev_version_installed//v}" '<'
                         then
-                            dna-echo -e "You have previously installed a newer version of $proj_name."
-                            dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, edit the installer to bypass this check."
+                            dna-echo -e "You have previously installed a newer version of ${proj_name}."
+                            dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, and you're sure you want to do so, then edit the installer to bypass this check."
                             dna-exit
                         fi
                     fi
