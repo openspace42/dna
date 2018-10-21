@@ -651,7 +651,7 @@ dna-run_install() {
     if [ "${custom_project_version-null}" = "b" ]
     then
 
-        selected_vers="${latest_vers_bl_edge}"
+        export selected_vers="${latest_vers_bl_edge}"
 
         dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${proj_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
 
@@ -660,7 +660,7 @@ dna-run_install() {
     elif [ "${custom_project_version-null}" = "l" ]
     then
 
-        selected_vers="${latest_vers_tagged}"
+        export selected_vers="${latest_vers_tagged}"
 
         dna-echo -m "${o-}Installing | ${n-}latest-tagged version${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p b${o-} |."
 
@@ -668,7 +668,7 @@ dna-run_install() {
 
     else
 
-        selected_vers="${latest_vers_final}"
+        export selected_vers="${latest_vers_final}"
 
         dna-echo -m "Installing ${proj_name} ${latest_vers_final}"
 
