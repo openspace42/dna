@@ -51,7 +51,7 @@ dna-run_install() {
 
         dna-echo -m "${o-}Installing | ${n-}latest-tagged version${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p t${o-} |."
 
-        ( cd "${source_dir}" && git checkout "tags/${latest_vers_tagged}" && bash ./install --return-check )
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_tagged}" && bash ./install --return-check )
 
     else
 
@@ -59,7 +59,7 @@ dna-run_install() {
 
         dna-echo -m "Installing ${proj_name} ${latest_vers_final}"
 
-        ( cd "${source_dir}" && git checkout "tags/${latest_vers_final}" && bash ./install --return-check )
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_final}" && bash ./install --return-check )
 
     fi
 
