@@ -10,9 +10,11 @@ dna-generate_ssh_keypair() {
         dna-exit
     fi
 
-    while getopts ":n:" arguments; do
+    while getopts ":n:h:" arguments; do
         case $arguments in
             n)	name="${OPTARG}"
+                ;;
+            h)	hostname="${OPTARG}"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -33,9 +35,17 @@ dna-generate_ssh_keypair() {
 
     dna-echo_operation -h
 
-    ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}"
+    if [ -n "${hostname-}" ]
+    then
+        ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name} -C ${hostname}"
+    else
+        ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}"
+    fi
+
     echo
+
     chmod 600 "/root/.ssh/${name}"
+
     ssh_keypair_privkey_path="/root/.ssh/${name}"
     ssh_keypair_pubkey_path="/root/.ssh/${name}.pub"
 
