@@ -648,7 +648,16 @@ dna-run_install() {
 
     ### Launch the installer
 
-    if [ "${custom_project_version-null}" = "b" ]
+    if [ "${custom_project_version-null}" = "l" ]
+    then
+
+        export selected_vers="v0.0.1-custom-local"
+
+        dna-echo -e "Installing | ${n-}local version${r-} | of | ${n-}${proj_name}${r-} | respecting any local alteration performed as per | ${n-}-p l${r-} |."
+
+        ( cd "${source_dir}" && bash ./install --return-check )
+
+    elif [ "${custom_project_version-null}" = "b" ]
     then
 
         export selected_vers="${latest_vers_bl_edge}"
@@ -657,12 +666,12 @@ dna-run_install() {
 
         ( cd "${source_dir}" && git checkout - && bash ./install --return-check )
 
-    elif [ "${custom_project_version-null}" = "l" ]
+    elif [ "${custom_project_version-null}" = "t" ]
     then
 
         export selected_vers="${latest_vers_tagged}"
 
-        dna-echo -m "${o-}Installing | ${n-}latest-tagged version${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p b${o-} |."
+        dna-echo -m "${o-}Installing | ${n-}latest-tagged version${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p t${o-} |."
 
         ( cd "${source_dir}" && git checkout "tags/${latest_vers_tagged}" && bash ./install --return-check )
 
