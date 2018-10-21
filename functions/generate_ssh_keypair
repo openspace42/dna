@@ -37,7 +37,7 @@ dna-generate_ssh_keypair() {
 
     if [ -n "${hostname-}" ]
     then
-        ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name} -C ${hostname}"
+        ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}" -C "${hostname}"
     else
         ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}"
     fi
