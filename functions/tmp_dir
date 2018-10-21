@@ -2,11 +2,6 @@
 
 dna-touch_tmp_project_dir() {
 
-	if [ -d "${tmp_project_dir}" ]
-	then
-		rm -r "${tmp_project_dir}"
-	fi
-
 	mkdir -p "${tmp_project_dir}"
 
 }
