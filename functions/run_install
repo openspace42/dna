@@ -639,7 +639,6 @@ dna-run_install() {
 
     ### Define latest version
 
-    #export latest_vers="$(git --git-dir=${source_dir}/.git/ describe --tags | cut -f1 -d"-")"
     export latest_vers_final="$(cd ${source_dir} && semtag getfinal)"
     export latest_vers_tagged="$(cd ${source_dir} && semtag getlast)"
     export latest_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
