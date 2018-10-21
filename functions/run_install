@@ -42,7 +42,7 @@ dna-run_install() {
 
         dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${proj_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
 
-        ( cd "${source_dir}" && git reset --hard origin/master && bash ./install --return-check )
+        ( cd "${source_dir}" && git fetch && git reset --hard origin/master && echo && bash ./install --return-check )
 
     elif [[ "${custom_project_version-null}" == *"v"* ]]
     then
