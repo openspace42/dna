@@ -12,7 +12,18 @@ dna-install_mail_notifications() {
 
         debconf-set-selections <<< "postfix postfix/mailname string $hostname"
         debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-        dna-install_dependencies -p "mailutils"
+
+        if [ "${distro_name}" = "Ubuntu" ]
+    	then
+
+            dna-install_dependencies -p "mailutils"
+
+        elif [ "${distro_name}" = "Debian" ]
+        then
+
+            dna-install_dependencies -p "mailutils postfix"
+
+        fi
 
         ### Reload postfix
 
@@ -21,46 +32,31 @@ dna-install_mail_notifications() {
 
     }
 
-    if [ "${distro_name}" = "Ubuntu" ]
-	then
+    dna-ask_for_boolean -d "y" -q "[Purge and re-]install the local mailserver for task notifications?"
 
-        dna-echo -s "Detected Ubuntu distro. Proceeding with full install..."
+    if [ "${boolean_output}" = "y" ]
+    then
 
-        dna-ask_for_boolean -d "y" -q "[Purge and re-]install the local mailserver for task notifications?"
+        dna-echo -m "Ok, proceeding..."
 
-		if [ "${boolean_output}" = "y" ]
-		then
+        operation_message="[purging and re-]installing the local mailserver"
 
-            dna-echo -m "Ok, proceeding..."
+        dna-echo_operation -h
 
-            operation_message="[purging and re-]installing the local mailserver"
+        ### Purge any existing local server installation
 
-            dna-echo_operation -h
-
-            ### Purge any existing local server installation
-
-			apt-get -y purge mailutils postfix || true
-
-            install_mailutils
-
-            dna-echo_operation -t
-
-        else
-
-            dna-echo -m "Ok, skipping."
-
-		fi
-
-        unset boolean_output
-
-    else
-
-        dna-echo -m "Detected NON-Ubuntu distro [mail notifications might not work]. Proceeding..."
+        apt-get -y purge mailutils postfix || true
 
         install_mailutils
 
-    fi
+        dna-echo_operation -t
 
-    unset install_mailutils
+    else
+
+        dna-echo -m "Ok, skipping."
+
+	fi
+
+    unset boolean_output install_mailutils
 
 }
