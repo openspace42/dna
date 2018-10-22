@@ -4,6 +4,8 @@ dna-set_hostname() {
 
     dna-set_option -o "hostname" -p "/etc" -d "y" -v "n"
 
+    hostname -F "/etc/hostname"
+
 }
 
 dna-set_locale() {
