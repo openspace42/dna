@@ -14,3 +14,10 @@ dna-remove_tmp_project_dir() {
 	fi
 
 }
+
+dna-refresh_tmp_project_dir() {
+
+	dna-remove_tmp_project_dir
+	dna-touch_tmp_project_dir
+
+}
