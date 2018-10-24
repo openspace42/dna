@@ -48,15 +48,6 @@ dna-check_install_version() {
 
             prev_version_installed="$(cat ${conf_dir}/version/version_installed)"
 
-            ### Alert in case of an imminent downgrade
-
-            if semverLT "${selected_vers}" "${prev_version_installed}"
-            then
-                dna-echo -e "You have previously installed a newer version of ${proj_name}."
-                dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, and you're sure you want to do so, then edit the installer to bypass this check."
-                dna-exit
-            fi
-
             if [ "${prev_version_installed}" = "${prev_version_initiated}" ]
             then
 
@@ -69,9 +60,22 @@ dna-check_install_version() {
 
                     if grep -q "+" "${conf_dir}/version/version_installed"
                     then
+
                         dna-echo -m "You're now installing stable version | ${c-}${selected_vers}${n-} | over a previously | ${r-}bleeding-edge${n-} | version of ${proj_name}."
-                        dna-echo -m "This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
+                        dna-echo -m "This is normal if you're intentionally intentionally installing a stable release, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
                         dna-press_to_continue
+
+                    else
+
+                        ### Alert in case of an imminent downgrade
+
+                        if semverLT "${selected_vers}" "${prev_version_installed}"
+                        then
+                            dna-echo -e "You have previously installed a newer version of ${proj_name}."
+                            dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, and you're sure you want to do so, then edit the installer to bypass this check."
+                            dna-exit
+                        fi
+
                     fi
 
                     ### In any event, alert about the re-install
