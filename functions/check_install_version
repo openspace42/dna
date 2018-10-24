@@ -2,7 +2,7 @@
 
 dna-check_install_version() {
 
-    ### Check if a previous installation was at the very least initiated
+    ### Check if a previous installation was at the very least initiated.
 
     if [ -f "${conf_dir}/version/version_initiated" ]
     then
@@ -12,6 +12,7 @@ dna-check_install_version() {
 
         dna-echo -s "Found a previous install of ${proj_name}."
         dna-ask_for_boolean -d "y" -q "Skip the introduction on how it works?"
+
         if [ "${boolean_output}" = "y" ]
         then
             skip_intro="y"
@@ -29,7 +30,7 @@ dna-check_install_version() {
 
     fi
 
-    ### Log current version being initiated to version_initiated
+    ### Log current version being initiated to version_initiated.
 
     echo "${selected_vers}" > "${conf_dir}/version/version_initiated"
 
@@ -43,15 +44,24 @@ dna-check_install_version() {
         if [ -f "${conf_dir}/version/version_installed" ]
         then
 
-            ### Check that version_initiated and version_installed match
+            ### Check that prev_version_initiated and prev_version_installed match.
 
             prev_version_installed="$(cat ${conf_dir}/version/version_installed)"
+
+            ### Alert in case of an imminent downgrade
+
+            if semverLT "${selected_vers}" "${prev_version_installed}"
+            then
+                dna-echo -e "You have previously installed a newer version of ${proj_name}."
+                dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, and you're sure you want to do so, then edit the installer to bypass this check."
+                dna-exit
+            fi
 
             if [ "${prev_version_installed}" = "${prev_version_initiated}" ]
             then
 
-                ### Versions match, therefore previous install was completed successfully
-                ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed
+                ### Versions match, therefore the latest previous install was completed successfully.
+                ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed.
                 ### If instead we're installing a bleeding-edge version, skip any checks as we're certainly intalling a newer version.
 
                 if [ ! "${custom_project_version-null}" = "b" ]
@@ -62,13 +72,6 @@ dna-check_install_version() {
                         dna-echo -m "You're now installing stable version | ${c-}${selected_vers}${n-} | over a previously | ${r-}bleeding-edge${n-} | version of ${proj_name}."
                         dna-echo -m "This is normal if you've opted out of bleeding-edge versions since the last install, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
                         dna-press_to_continue
-                    else
-                        if testvercomp "${selected_vers//v}" "${prev_version_installed//v}" '<'
-                        then
-                            dna-echo -e "You have previously installed a newer version of ${proj_name}."
-                            dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, and you're sure you want to do so, then edit the installer to bypass this check."
-                            dna-exit
-                        fi
                     fi
 
                     ### In any event, alert about the re-install
