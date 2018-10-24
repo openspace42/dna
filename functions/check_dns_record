@@ -276,6 +276,8 @@ dna-check_dns_record() {
 	    done
 	    OPTIND=1
 
+        unset valid
+
 		until [ "${valid-null}" = "y" ]
 		do
 
@@ -624,7 +626,7 @@ dna-check_dns_record() {
 
 	rm -rf "${dns_checks_dir}"
 
-	unset name type version reference
+	unset name type version reference valid
 
 	if [ ! "${dns_checks_outcome-null}" = "exit" ]
 	then
