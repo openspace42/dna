@@ -18,7 +18,7 @@ dna-get_public_ipv4() {
 
     ############################################################################
 
-    this_ipv4="$(dig +short myip.opendns.com @resolver1.opendns.com)"
+    this_ipv4="$(curl -s http://whatismyip.akamai.com/)"
 
     dna-echo -m "Your IPv4 public address appears to be: | ${y-}${this_ipv4}${n-} |."
 
