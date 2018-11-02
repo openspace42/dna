@@ -367,7 +367,7 @@ dna-secure_root_pw() {
 
 dna-install_basic_packages() {
 
-    dna-install_dependencies -p "sudo software-properties-common curl ntp dnsutils haveged cronic fail2ban git glances htop pwgen pv bc rsync"
+    dna-install_dependencies -p "sudo software-properties-common curl ntp dnsutils haveged cronic fail2ban git glances htop pwgen pv bc rsync screen"
 
     dna-install_mail_notifications
 
