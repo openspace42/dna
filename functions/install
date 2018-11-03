@@ -5,3 +5,167 @@ dna-install_build_tools() {
     dna-install_dependencies -p "build-essential libpcre3-dev"
 
 }
+
+dna-install_sslh() {
+
+	operation_message="installing SSLH"
+    dna-echo_operation -h
+
+    dna-read_conf_settings
+
+    dna-get_public_ipv4 -s
+    dna-check_ipv6_connectivity -s
+
+    ############################################################################
+
+	dna-install_build_tools
+    dna-install_dependencies -e -p "libwrap0-dev libconfig-dev"
+
+    if systemctl is-active --quiet sslh
+    then
+    	/usr/sbin/service sslh stop
+    fi
+
+    ############################################################################
+
+    if [ -d "${tmp_project_dir}/sslh" ]
+    then
+        rm -r "${tmp_project_dir}/sslh"
+    fi
+
+	git clone https://github.com/yrutschle/sslh "${tmp_project_dir}/sslh"
+
+    ############################################################################
+
+	( cd "${tmp_project_dir}/sslh" && make install && make && cp sslh-select /usr/local/sbin/sslh )
+
+    ############################################################################
+
+    cat <<EOF >/etc/sslh.cfg
+verbose: false;
+foreground: false;
+inetd: false;
+numeric: false;
+transparent: false;
+timeout: 2;
+user: "nobody";
+pidfile: "/var/run/sslh/sslh.pid";
+
+# syslog_facility: "auth";
+
+listen:
+(
+    { host: "this_ipv4-var";       port: "443"; }#ipv6_comma
+#ipv6_line    { host: "this_ipv6-var";       port: "443"; }
+);
+
+protocols:
+(
+    { name: "ssh"; service: "ssh"; host: "localhost"; port: "ssh_port-var"; keepalive: true; },
+    { name: "tls"; host: "localhost"; port: "443"; },
+    { name: "timeout"; host: "localhost"; port: "443"; }
+);
+
+on-timeout: "timeout";
+EOF
+
+	cat <<EOF >/etc/init.d/sslh
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:		sslh
+# Required-Start:    \$remote_fs \$syslog
+# Required-Stop:     \$remote_fs \$syslog
+# Default-Start:	2 3 4 5
+# Default-Stop:		1
+# Short-Description:	sslh proxy ssl & ssh connections
+### END INIT INFO
+
+set -e
+tag=sslh
+facility=user.info
+
+# /etc/init.d/sslh: start and stop the sslh proxy daemon
+
+if test -f /etc/default/sslh; then
+    . /etc/default/sslh
+fi
+
+# The prefix is normally filled by make install. If
+# installing by hand, fill it in yourself!
+PREFIX=/usr/local
+DAEMON=\$PREFIX/sbin/sslh
+
+start()
+{
+        echo "Start services: sslh"
+        mkdir -p /var/run/sslh/
+        touch /var/run/sslh/sslh.pid
+        \$DAEMON -F/etc/sslh.cfg
+        logger -t \${tag} -p \${facility} -i 'Started sslh'
+}
+
+stop()
+{
+        echo "Stop services: sslh"
+	killall \$DAEMON
+      	logger -t \${tag} -p \${facility} -i 'Stopped sslh'
+}
+
+
+case "\$1" in
+	  start)
+		    start
+		    ;;
+	  stop)
+		    stop
+		    ;;
+    restart)
+		    stop
+		    sleep 5
+		    start
+		    ;;
+	  *)
+		    echo "Usage: /etc/init.d/sslh {start|stop|restart}" >&2
+		    ;;
+esac
+
+exit 0
+EOF
+
+    ############################################################################
+
+    sed -i "s|ssh_port-var|${ssh_port}|g" "/etc/sslh.cfg"
+
+	sed -i "s|this_ipv4-var|${this_ipv4}|g" "/etc/sslh.cfg"
+
+    if [ "${ipv6_available}" = "y" ]
+	then
+		sed -i "s|#ipv6_comma|,|g" "/etc/sslh.cfg"
+		sed -i "s|#ipv6_line||g" "/etc/sslh.cfg"
+		sed -i "s|this_ipv6-var|${this_ipv6}|g" "/etc/sslh.cfg"
+	else
+		sed -i "s|#ipv6_comma||g" "/etc/sslh.cfg"
+		sed -i "s|#ipv6_line|#|g" "/etc/sslh.cfg"
+	fi
+
+    ############################################################################
+
+	chmod +x "/etc/init.d/sslh"
+
+	update-rc.d sslh defaults
+
+	systemctl daemon-reload
+
+	rm -r "${tmp_project_dir}/sslh"
+
+	mkdir -p /var/run/sslh
+	touch /var/run/sslh/sslh.pid
+
+	/usr/sbin/service sslh restart || true
+
+	echo
+
+	dna-echo_operation -t
+
+}
