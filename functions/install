@@ -6,6 +6,229 @@ dna-install_build_tools() {
 
 }
 
+dna-install_certbot() {
+
+	operation_message="installing certbot/letsencrypt"
+	dna-echo_operation -h
+
+	dna-get_distro_name
+
+	if [ "${distro_name}" = "Ubuntu" ]
+	then
+
+		dna-install_dependencies -p "software-properties-common"
+		apt-add-repository -yu ppa:certbot/certbot
+		echo
+		dna-install_dependencies -p "certbot"
+
+	elif [ "${distro_name}" = "Debian" ]
+	then
+
+        dna-enable_debian_backports_repo
+        apt-get update
+		apt-get install certbot -t stretch-backports
+		echo
+
+	fi
+
+	certbot &> /dev/null || true
+
+	dna-echo_operation -t
+
+}
+
+dna-install_dependencies() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${r-}${FUNCNAME[0]}${n-} |."
+        dna-exit
+    fi
+
+    while getopts ":ep:" arguments
+    do
+        case "${arguments}" in
+            e)	allow_errors="y"
+                ;;
+            p)	packages="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${packages-}" ]
+    then
+        dna-echo -e "Argument | ${n-}packages [-p]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    operation_message="installing dependencies"
+
+    dna-echo_operation -h
+
+    dna-check_dpkg_availability
+
+    dna-apt_update
+
+    if ! apt-get -y install $packages                                           ### Do NOT escape this variable
+    then
+
+        echo
+
+        if [ "${allow_errors-null}" = "y" ]
+        then
+
+            dna-echo -e "An error occured performing APT operations."
+            dna-echo -m "If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be naturally resolved."
+
+            dna-ask_for_boolean -d "n" -q "Would you like to continue the installation anyway?"
+
+            if [ "${boolean_output}" = "y" ]
+            then
+                dna-echo -m "Ok, continuing installation anyway..."
+            else
+                dna-echo -m "Ok, aborting..."
+                dna-exit
+            fi
+
+        else
+
+            dna-echo -e "An error occured performing APT operations."
+            dna-exit
+
+        fi
+
+    fi
+
+    echo
+
+    set -e
+
+    dna-echo_operation -t
+
+    unset allow_errors
+    unset packages
+
+}
+
+dna-install_duplicity() {
+
+	operation_message="installing the duplicity backup utility"
+
+	dna-echo_operation -h
+
+	dna-get_distro_name
+
+	if [ "${distro_name}" = "Ubuntu" ]
+	then
+		dna-install_dependencies -p "software-properties-common"
+		apt-add-repository ppa:duplicity-team/ppa -y
+		echo
+	fi
+
+	dna-install_dependencies -p "libpcre3-dev duplicity python-pip s3cmd pwgen curl pv"
+	pip install --upgrade pip
+	/usr/local/bin/pip install boto
+	/usr/local/bin/pip install --upgrade boto
+	echo
+
+	dna-echo_operation -t
+
+}
+
+dna-install_easyengine() {
+
+	operation_message="[re-]installing and updating EasyEngine..."
+
+	dna-echo_operation -h
+
+	wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
+	bash ee || true
+	rm ee
+	source /etc/bash_completion.d/ee_auto.rc
+	echo
+	ee update || true
+	echo
+	rm /tmp/eeupdate* &> /dev/null || true
+	mkdir -p /var/www/
+	chown -R www-data:www-data /var/www/
+	echo
+	ufw allow 80 || true
+	ufw allow 443 || true
+	echo
+
+	dna-echo_operation -t
+
+}
+
+dna-install_mail_notifications() {
+
+    hostname="$(cat /etc/hostname)"
+
+    dna-get_distro_name
+
+    install_mailutils() {
+
+        ### [re-]Install mailutils
+
+        debconf-set-selections <<< "postfix postfix/mailname string $hostname"
+        debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+
+        if [ "${distro_name}" = "Ubuntu" ]
+    	then
+
+            dna-install_dependencies -p "mailutils"
+
+        elif [ "${distro_name}" = "Debian" ]
+        then
+
+            dna-install_dependencies -p "mailutils postfix"
+
+        fi
+
+        ### Reload postfix
+
+        /etc/init.d/postfix reload
+        echo
+
+    }
+
+    dna-ask_for_boolean -d "y" -q "[Purge and re-]install the local mailserver for task notifications?"
+
+    if [ "${boolean_output}" = "y" ]
+    then
+
+        dna-echo -m "Ok, proceeding..."
+
+        operation_message="[purging and re-]installing the local mailserver"
+
+        dna-echo_operation -h
+
+        ### Purge any existing local server installation
+
+        apt-get -y purge mailutils postfix || true
+
+        install_mailutils
+
+        dna-echo_operation -t
+
+    else
+
+        dna-echo -m "Ok, skipping."
+
+	fi
+
+    unset boolean_output install_mailutils
+
+}
+
 dna-install_sslh() {
 
 	operation_message="installing SSLH"
