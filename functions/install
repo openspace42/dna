@@ -273,7 +273,6 @@ transparent: false;
 timeout: 2;
 user: "nobody";
 pidfile: "/var/run/sslh.pid";
-chroot: "/var/empty";
 
 syslog_facility: "auth";
 
