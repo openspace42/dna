@@ -265,16 +265,17 @@ dna-install_sslh() {
     ############################################################################
 
     cat <<EOF >/etc/sslh.cfg
-verbose: false;
-foreground: false;
+verbose: true;
+foreground: true;
 inetd: false;
 numeric: false;
 transparent: false;
 timeout: 2;
 user: "nobody";
-pidfile: "/var/run/sslh/sslh.pid";
+pidfile: "/var/run/sslh.pid";
+chroot: "/var/empty";
 
-# syslog_facility: "auth";
+syslog_facility: "auth";
 
 listen:
 (
@@ -284,9 +285,8 @@ listen:
 
 protocols:
 (
-    { name: "ssh"; service: "ssh"; host: "localhost"; port: "ssh_port-var"; keepalive: true; },
-    { name: "tls"; host: "localhost"; port: "443"; },
-    { name: "timeout"; host: "localhost"; port: "443"; }
+    { name: "ssh";      host: "localhost";          port: "ssh_port-var";     keepalive: true; fork: true;                                },
+    { name: "tls";      host: "localhost";          port: "443";    log_level: 0;                                               }
 );
 
 on-timeout: "timeout";
