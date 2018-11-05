@@ -2,7 +2,7 @@
 
 dna-get_distro_name() {
 
-    distro_name="$(lsb_release --id | cut -f2)"
+    distro_name="$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]')"
 
 }
 

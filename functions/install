@@ -13,7 +13,7 @@ dna-install_certbot() {
 
 	dna-get_distro_name
 
-	if [ "${distro_name}" = "Ubuntu" ]
+	if [ "${distro_name}" = "ubuntu" ]
 	then
 
 		dna-install_dependencies -p "software-properties-common"
@@ -21,7 +21,7 @@ dna-install_certbot() {
 		echo
 		dna-install_dependencies -p "certbot"
 
-	elif [ "${distro_name}" = "Debian" ]
+	elif [ "${distro_name}" = "debian" ]
 	then
 
         dna-enable_debian_backports_repo
@@ -126,7 +126,7 @@ dna-install_duplicity() {
 
 	dna-get_distro_name
 
-	if [ "${distro_name}" = "Ubuntu" ]
+	if [ "${distro_name}" = "ubuntu" ]
 	then
 		dna-install_dependencies -p "software-properties-common"
 		apt-add-repository ppa:duplicity-team/ppa -y
@@ -181,12 +181,12 @@ dna-install_mail_notifications() {
         debconf-set-selections <<< "postfix postfix/mailname string $hostname"
         debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
 
-        if [ "${distro_name}" = "Ubuntu" ]
+        if [ "${distro_name}" = "ubuntu" ]
     	then
 
             dna-install_dependencies -p "mailutils"
 
-        elif [ "${distro_name}" = "Debian" ]
+        elif [ "${distro_name}" = "debian" ]
         then
 
             dna-install_dependencies -p "mailutils postfix"
@@ -237,17 +237,12 @@ dna-install_nginx() {
     dna-get_distro_name
     dna-get_distro_codename
 
-    if [ "${distro_name}" = "Debian" ]
-    then
-
-        curl -O https://nginx.org/keys/nginx_signing.key && apt-key add ./nginx_signing.key
-        rm ./nginx_signing.key
-        echo "deb http://nginx.org/packages/debian/ ${distro_codename} nginx" > "/etc/apt/sources.list.d/nginx.list"
-        echo "deb-src http://nginx.org/packages/debian/ ${distro_codename} nginx" >> "/etc/apt/sources.list.d/nginx.list"
-        apt-get update
-        echo
-
-    fi
+    curl -O https://nginx.org/keys/nginx_signing.key && apt-key add ./nginx_signing.key
+    rm ./nginx_signing.key
+    echo "deb http://nginx.org/packages/${distro_name}/ ${distro_codename} nginx" > "/etc/apt/sources.list.d/nginx.list"
+    echo "deb-src http://nginx.org/packages/${distro_name}/ ${distro_codename} nginx" >> "/etc/apt/sources.list.d/nginx.list"
+    apt-get update
+    echo
 
     dna-install_dependencies -p "nginx"
 
