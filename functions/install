@@ -246,6 +246,8 @@ dna-install_nginx() {
 
     dna-install_dependencies -p "nginx"
 
+    dna-echo_operation -t
+
 }
 
 dna-install_sslh() {
