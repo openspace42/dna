@@ -229,6 +229,29 @@ dna-install_mail_notifications() {
 
 }
 
+dna-install_nginx() {
+
+    operation_message="installing NGINX"
+    dna-echo_operation -h
+
+    dna-get_distro_name
+    dna-get_distro_codename
+
+    if [ "${distro_name}" = "Debian" ]
+    then
+
+        curl -O https://nginx.org/keys/nginx_signing.key && apt-key add ./nginx_signing.key
+        rm ./nginx_signing.key
+        echo "deb http://nginx.org/packages/debian/ ${distro_codename} nginx" > "/etc/apt/sources.list.d/nginx.list"
+        echo "deb-src http://nginx.org/packages/debian/ ${distro_codename} nginx" >> "/etc/apt/sources.list.d/nginx.list"
+        apt-get update
+
+    fi
+
+    dna-install_dependencies -p "nginx"
+
+}
+
 dna-install_sslh() {
 
 	operation_message="installing SSLH"

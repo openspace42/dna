@@ -2,9 +2,13 @@
 
 dna-get_distro_name() {
 
-    ### Get name of distro
-
     distro_name="$(lsb_release --id | cut -f2)"
+
+}
+
+dna-get_distro_codename() {
+
+    distro_codename="$(lsb_release --codename | cut -f2)"
 
 }
 
