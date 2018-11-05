@@ -245,6 +245,7 @@ dna-install_nginx() {
         echo "deb http://nginx.org/packages/debian/ ${distro_codename} nginx" > "/etc/apt/sources.list.d/nginx.list"
         echo "deb-src http://nginx.org/packages/debian/ ${distro_codename} nginx" >> "/etc/apt/sources.list.d/nginx.list"
         apt-get update
+        echo
 
     fi
 
