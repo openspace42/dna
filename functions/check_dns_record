@@ -225,15 +225,28 @@ dna-check_dns_record() {
 
 	lookup_name(){
 
+        ### Determine authoritative nameserver for this domain
+
+        top_level_domain="$(echo ${name} | grep -o '[^.]*\.[^.]*$')"
+
+        authoritative_ns_for_domain="$(host -t soa "${top_level_domain}" | sed -n -e 's/^.*has SOA record //p' | sed 's~. .*~~')"
+
+        if [ -z "${authoritative_ns_for_domain}" ]
+        then
+            dna-echo -e "There appears to be no authoritative DNS nameserver for: | ${n-}${name}${r-} |."
+            dna-echo -m "Double-check this hostname and try again."
+            return 1
+        fi
+
 		if [ ! -z "${version-}" ]
 		then
 
-			host -t "${type}" "${name}" | sed -n -e 's/^.*address //p' > "${name_file_path}"
+			host -t "${type}" "${name}" "${authoritative_ns_for_domain}" | sed -n -e 's/^.*address //p' > "${name_file_path}"
 
 		elif [ "${type}" = "srv" ]
 		then
 
-			host -t srv "${name}" | sed -n -e 's/^.*has SRV record //p' > "${name_file_path}"
+			host -t srv "${name}" "${authoritative_ns_for_domain}" | sed -n -e 's/^.*has SRV record //p' > "${name_file_path}"
 
 		fi
 
