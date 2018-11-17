@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+dna-link_tools() {
+
+chmod +x "${tools_dir}"/*
+
+    (
+            cd "${tools_dir}"
+
+            for tool_script in "${proj_name}"-*
+            do
+                    if [ ! -f "/usr/local/bin/${tool_script}" ]
+                    then
+                            ln -s "${tools_dir}/${tool_script}" /usr/local/bin/
+                    fi
+            done
+    )
+
+}
