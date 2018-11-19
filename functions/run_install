@@ -29,6 +29,17 @@ dna-run_install() {
     if [ "${custom_project_version-null}" = "l" ]
     then
 
+        if [[ "${BASH_SOURCE}" == *upgrade* ]]                                  ### Do NOT escape the string comparison
+        then
+
+            dna-echo -e "You're running the installation via the upgrade script."
+            dna-echo -m "Therefore the | ${r-}local${n-} | version of the ${proj_name} directory doesn't exist, as it's cloned automatically by the upgrade script itself."
+            dna-echo -m "If you want to make customizations to the project before installing it, clone it yourself while in the root directory of the root user and then run:"
+            dna-echo -m " | ${c-}bash ${proj_name}/setup -pl | "
+            dna-exit
+
+        fi
+
         export selected_vers="v0.0.1-custom-local"
 
         dna-echo -e "Installing | ${n-}local version${r-} | of | ${n-}${proj_name}${r-} | respecting any local alteration performed as per | ${n-}-p l${r-} |."
