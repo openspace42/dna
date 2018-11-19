@@ -255,6 +255,16 @@ dna-install_sslh() {
 	operation_message="installing SSLH"
     dna-echo_operation -h
 
+    ############################################################################
+
+    ### Abort installation if current SSH session is being carried out over SSLH itself
+
+    dna-abort_on_sslh_session
+
+    ############################################################################
+
+    ### Prepare the installation environment by reading the current system SSH port and fetching IP connectivity information
+
     dna-read_conf_settings
 
     dna-get_public_ipv4 -s
@@ -262,15 +272,25 @@ dna-install_sslh() {
 
     ############################################################################
 
+    ### Install dependencies
+
 	dna-install_build_tools
     dna-install_dependencies -e -p "libwrap0-dev libconfig-dev"
+
+    ############################################################################
+
+    ### Stop / kill if it's already installed and currently running
 
     if systemctl is-active --quiet sslh
     then
     	/usr/sbin/service sslh stop
     fi
 
+    if pgrep sslh &> /dev/null ; then sudo killall sslh ; fi
+
     ############################################################################
+
+    ### Clone
 
     if [ -d "${tmp_project_dir}/sslh" ]
     then
@@ -281,9 +301,13 @@ dna-install_sslh() {
 
     ############################################################################
 
+    ### Install
+
 	( cd "${tmp_project_dir}/sslh" && make install && make && cp sslh-select /usr/local/sbin/sslh )
 
     ############################################################################
+
+    ### Install default config files
 
     cat <<EOF >/etc/sslh.cfg
 verbose: false;
@@ -378,6 +402,8 @@ EOF
 
     ############################################################################
 
+    ### Localize install with this machine's info
+
     sed -i "s|ssh_port-var|${ssh_port}|g" "/etc/sslh.cfg"
 
 	sed -i "s|this_ipv4-var|${this_ipv4}|g" "/etc/sslh.cfg"
@@ -394,6 +420,8 @@ EOF
 
     ############################################################################
 
+    ### Finish
+
 	chmod +x "/etc/init.d/sslh"
 
 	update-rc.d sslh defaults
@@ -404,6 +432,10 @@ EOF
 
 	mkdir -p /var/run/sslh
 	touch /var/run/sslh/sslh.pid
+
+    ############################################################################
+
+    ### Activate
 
 	/usr/sbin/service sslh restart || true
 
