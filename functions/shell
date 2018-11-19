@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+: '
+
+    for get a current positon of cursor you nieed :
+    
+    dna-shell_cursor_position 
+    dna-echo -n -m  "$dna_shell_position_x"   // x position at the time dna-shell_cursor_position was executed
+    dna-echo -n -m  "$dna_shell_position_y"   // y position at the time dna-shell_cursor_position was executed
+
+'
+#⠀⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿
+#⡀⡁⡂⡃⡄⡅⡆⡇⡈⡉⡊⡋⡌⡍⡎⡏⡐⡑⡒⡓⡔⡕⡖⡗⡘⡙⡚⡛⡜⡝⡞⡟⡠⡡⡢⡣⡤⡥⡦⡧⡨⡩⡪⡫⡬⡭⡮⡯⡰⡱⡲⡳⡴⡵⡶⡷⡸⡹⡺⡻⡼⡽⡾⡿
+#⢀⢁⢂⢃⢄⢅⢆⢇⢈⢉⢊⢋⢌⢍⢎⢏⢐⢑⢒⢓⢔⢕⢖⢗⢘⢙⢚⢛⢜⢝⢞⢟⢠⢡⢢⢣⢤⢥⢦⢧⢨⢩⢪⢫⢬⢭⢮⢯⢰⢱⢲⢳⢴⢵⢶⢷⢸⢹⢺⢻⢼⢽⢾⢿
+#⣀⣁⣂⣃⣄⣅⣆⣇⣈⣉⣊⣋⣌⣍⣎⣏⣐⣑⣒⣓⣔⣕⣖⣗⣘⣙⣚⣛⣜⣝⣞⣟⣠⣡⣢⣣⣤⣥⣦⣧⣨⣩⣪⣫⣬⣭⣮⣯⣰⣱⣲⣳⣴⣵⣶⣷⣸⣹⣺⣻⣼⣽⣾⣿
+
+## position of cusor
+dna-shell_cursor_position() {
+    local pos
+    IFS='[;' read -p $'\e[6n' -d R -a pos -rs || echo "failed with error: $? ; ${pos[*]}"
+    dna_shell_position_y="${pos[1]}";
+    dna_shell_position_x="${pos[2]}";
+}
+dna-shell_cursor_position_x() {
+    local pos
+    IFS='[;' read -p $'\e[6n' -d R -a pos -rs || echo "failed with error: $? ; ${pos[*]}"
+    dna-echo "${pos[2]}";
+}
+dna-shell_cursor_position_y() {
+    local pos
+    IFS='[;' read -p $'\e[6n' -d R -a pos -rs || echo "failed with error: $? ; ${pos[*]}"
+    dna-echo "${pos[1]}";
+}
+dna_shell_position_x=1
+dna_shell_position_y=1
+
+dna-shell_cursor_save_position(){
+    dna-echo -n $dna_shell_cursor_save_position_default
+}
+
+dna-shell_cursor_restore_position(){
+    dna-echo -n $dna_shell_cursor_restore_position_default
+}
+
+dna_shell_cursor_save_position_default="\033[s"
+dna_shell_cursor_restore_position_default="\033[u"
+dna_shell_cursor_go_to_endline="\033[K"
+dna_shell_cursor_clear_endline="\033[K"
+dna_shell_cursor_clear_resotre="\033[2J"
+
+dna-shell_cursor_forward_columns(){
+    dna-echo -n "\033[$1C"
+}
+dna-shell_cursor_backward_columns(){
+    dna-echo -n "\033[$1D"
+}
+
+dna-shell_cursor_forward_lines(){
+    dna-echo -n "\033[$1B"
+}
+dna-shell_cursor_backward_lines(){
+    dna-echo -n "\033[$1A"
+}
+
+dna-shell_cursor_locate(){
+    dna-echo -n "\033[$2;$1H"
+}
+dna-shell_cursor_locate2(){
+    dna-echo -n "\033[$1;$2f"
+}
+dna-shell_lines(){
+    read ShellLINES ShellCOLUMNS < <(stty size) 
+    dna-echo -n $ShellLINES
+    unset ShellLINES ShellCOLUMNS
+}
+dna-shell_columns(){
+    read ShellLINES ShellCOLUMNS < <(stty size) 
+    dna-echo -n $ShellCOLUMNS
+    unset ShellLINES ShellCOLUMNS
+}
+
+## all SGR (Select Graphic Rendition) 
+dna_shell_SGR_cls="\033c"
+dna_shell_SGR_clear="\033c"
+dna_shell_SGR_icls="\033c"
+dna_shell_SGR_esc() {
+    dna-echo "\012"
+}
+dna_shell_SGR_reset="\033[0m"
+dna_shell_SGR_normal="\033[0m"
+
+dna_shell_SGR_bold="\033[1m"
+dna_shell_SGR_faint="\033[2m"
+dna_shell_SGR_italic="\033[3m"
+dna_shell_SGR_underline="\033[4m"
+dna_shell_SGR_blink="\033[5m"
+dna_shell_SGR_blink_fast="\033[6m"
+dna_shell_SGR_inverse="\033[7m"
+dna_shell_SGR_hidden="\033[8m"
+dna_shell_SGR_crossed="\033[9m"
+
+dna_shell_SGR_font_0="\033[10m"
+dna_shell_SGR_font_1="\033[11m"
+dna_shell_SGR_font_2="\033[12m"
+dna_shell_SGR_font_3="\033[13m"
+dna_shell_SGR_font_4="\033[14m"
+dna_shell_SGR_font_5="\033[15m"
+dna_shell_SGR_font_6="\033[16m"
+dna_shell_SGR_font_7="\033[17m"
+dna_shell_SGR_font_8="\033[18m"
+dna_shell_SGR_font_9="\033[19m"
+
+dna_shell_SGR_fraktur="\033[20m"
+dna_shell_SGR_underline_duble="\033[21m"
+dna_shell_SGR_bold_off="\033[21m"
+dna_shell_SGR_normal_color="\033[22m"
+dna_shell_SGR_normal_intensity="\033[22m"
+
+dna_shell_SGR_italic_off="\033[23m"
+dna_shell_SGR_fraktur_off="\033[23m"
+dna_shell_SGR_underline_off="\033[24m"
+dna_shell_SGR_blink_off="\033[25m"
+dna_shell_SGR_inverse_off="\033[27m"
+dna_shell_SGR_hidden_off="\033[28m"
+dna_shell_SGR_crossed_off="\033[29m"
+
+# foreground 3 bit color
+for i in {30..37}; do    eval "dna_shell_SGR_foreground_3bit_c$(($i-29))=\"\033[${i}m\""; done
+
+# foreground 8 bit color
+for i in {1..256}; do    eval "dna_shell_SGR_foreground_8bit_c${i}=\"\033[38;5;${i}m\""; done
+
+# foreground rgb color
+
+dna_shell_SGR_foreground_24bit() {
+    while [[ $# -gt 0 ]]
+    do
+        key="$1"
+        case $key in
+            -r|--red)
+            red="$2"
+            shift; shift; ;;
+            -b|--blue)
+            blue="$2"
+            shift; shift; ;;
+            -g|--green)
+            green="$2"
+            shift; shift; ;;
+            *)    
+            shift 
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+    echo "\033[38;2;${red};${green};${blue}m"
+}
+
+
+: '
+for ii in {0..255..5};do
+    for i in {0..255..5};do 
+        echo -en "$(dna_shell_SGR_foreground_24bit -r $ii -g $i -b $ii)█\033[0m" 
+    done
+    echo 
+done'
+
+dna_shell_SGR_foreground_default="\033[39m"
+
+# background 3 bit color
+for i in {40..47}; do    eval "dna_shell_SGR_background_3bit_c$(($i-39))=\"\033[${i}m\""; done
+
+# background 8 bit color
+for i in {1..256}; do    eval "dna_shell_SGR_background_8bit_c${i}=\"\033[48;5;${i}m\""; done
+
+# background rgb color
+dna_shell_SGR_background_24bit() {
+    while [[ $# -gt 0 ]]
+    do
+        key="$1"
+        case $key in
+            -r|--red)
+            red="$2"
+            shift; shift; ;;
+            -b|--blue)
+            blue="$2"
+            shift; shift; ;;
+            -g|--green)
+            green="$2"
+            shift; shift; ;;
+            *)    
+            shift 
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+    echo "\033[48;2;${red};${green};${blue}m"
+}
+
+dna_shell_SGR_background_default="\033[49m"
+
+dna_shell_SGR_framed="\033[51m"
+dna_shell_SGR_encircled="\033[52m"
+dna_shell_SGR_overlined="\033[53m"
+dna_shell_SGR_framed_off="\033[54m"
+dna_shell_SGR_encircled_off="\033[54m"
+dna_shell_SGR_overlined_off="\033[55m"
+
+
+## ideogram section
+
+dna_shell_SGR_ideogram_underline="\033[60m"
+dna_shell_SGR_ideogram_right_side="\033[60m"
+dna_shell_SGR_ideogram_underline_double="\033[61m"
+dna_shell_SGR_ideogram_right_side_double="\033[61m"
+
+dna_shell_SGR_ideogram_overline="\033[62m"
+dna_shell_SGR_ideogram_left_side="\033[62m"
+dna_shell_SGR_ideogram_overline_double="\033[63m"
+dna_shell_SGR_ideogram_left_side_double="\033[63m"
+
+dna_shell_SGR_ideogram_stress_marking="\033[64m"
+
+dna_shell_SGR_ideogram_underline_off=_off"\033[65m"
+dna_shell_SGR_ideogram_right_side_off="\033[65m"
+dna_shell_SGR_ideogram_underline_double_off="\033[65m"
+dna_shell_SGR_ideogram_right_side_double_off="\033[65m"
+
+dna_shell_SGR_ideogram_overline_off="\033[65m"
+dna_shell_SGR_ideogram_left_side_off="\033[65m"
+dna_shell_SGR_ideogram_overline_double_off="\033[65m"
+dna_shell_SGR_ideogram_left_side_double_off="\033[65m"
+
+dna_shell_SGR_ideogram_stress_marking_off="\033[65m"
+
+
+#aixterm section
+
+for i in {90..97}; do    eval "dna_shell_SGR_aixterm_bright_foreground_3bit_c$(($i-89))=\"\033[${i}m\""; done
+for i in {100..107}; do    eval "dna_shell_SGR_aixterm_bright_background_3bit_c$(($i-99))=\"\033[${i}m\""; done
