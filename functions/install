@@ -311,7 +311,7 @@ dna-install_sslh() {
 
     cat <<EOF >/etc/sslh.cfg
 verbose: false;
-foreground: true;
+foreground: false;
 inetd: false;
 numeric: false;
 transparent: false;
