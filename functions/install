@@ -250,6 +250,33 @@ dna-install_nginx() {
 
 }
 
+dna-localize_sslh_install() {
+
+    ### Prepare the installation environment by reading the current system SSH port and fetching IP connectivity information
+
+    dna-read_conf_settings
+
+    dna-get_public_ipv4 -s
+    dna-check_ipv6_connectivity -s
+
+    ### Localize install with this machine's info
+
+    sed -i "s|ssh_port-var|${ssh_port}|g" "/etc/sslh.cfg"
+
+	sed -i "s|this_ipv4-var|${this_ipv4}|g" "/etc/sslh.cfg"
+
+    if [ "${ipv6_available}" = "y" ]
+	then
+		sed -i "s|#ipv6_comma|,|g" "/etc/sslh.cfg"
+		sed -i "s|#ipv6_line||g" "/etc/sslh.cfg"
+		sed -i "s|this_ipv6-var|${this_ipv6}|g" "/etc/sslh.cfg"
+	else
+		sed -i "s|#ipv6_comma||g" "/etc/sslh.cfg"
+		sed -i "s|#ipv6_line|#|g" "/etc/sslh.cfg"
+	fi
+
+}
+
 dna-install_sslh() {
 
 	operation_message="installing SSLH"
@@ -260,15 +287,6 @@ dna-install_sslh() {
     ### Abort installation if current SSH session is being carried out over SSLH itself
 
     dna-abort_on_sslh_session
-
-    ############################################################################
-
-    ### Prepare the installation environment by reading the current system SSH port and fetching IP connectivity information
-
-    dna-read_conf_settings
-
-    dna-get_public_ipv4 -s
-    dna-check_ipv6_connectivity -s
 
     ############################################################################
 
@@ -402,21 +420,7 @@ EOF
 
     ############################################################################
 
-    ### Localize install with this machine's info
-
-    sed -i "s|ssh_port-var|${ssh_port}|g" "/etc/sslh.cfg"
-
-	sed -i "s|this_ipv4-var|${this_ipv4}|g" "/etc/sslh.cfg"
-
-    if [ "${ipv6_available}" = "y" ]
-	then
-		sed -i "s|#ipv6_comma|,|g" "/etc/sslh.cfg"
-		sed -i "s|#ipv6_line||g" "/etc/sslh.cfg"
-		sed -i "s|this_ipv6-var|${this_ipv6}|g" "/etc/sslh.cfg"
-	else
-		sed -i "s|#ipv6_comma||g" "/etc/sslh.cfg"
-		sed -i "s|#ipv6_line|#|g" "/etc/sslh.cfg"
-	fi
+    dna-localize_sslh_install
 
     ############################################################################
 
