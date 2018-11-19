@@ -3,19 +3,19 @@
 dna-link_tools() {
 
     (
-            cd "${tools_dir}"
+        cd "${tools_dir}"
 
-            for tool_script in "${proj_name}"-*
-            do
+        for tool_script in "${proj_name}"-*
+        do
 
-                chmod +x "${tool_script}"
+            chmod +x "${tool_script}"
 
-                    if [ ! -f "/usr/local/bin/${tool_script}" ]
-                    then
-                            ln -s "${tools_dir}/${tool_script}" "/usr/local/bin/"
-                    fi
+            if [ ! -f "/usr/local/bin/${tool_script}" ]
+            then
+                ln -s "${tools_dir}/${tool_script}" "/usr/local/bin/"
+            fi
 
-            done
+        done
     )
 
 }
