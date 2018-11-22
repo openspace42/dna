@@ -42,8 +42,9 @@ dna-echo() {
     dna_echo_warning_style_default_3bit="${dna_shell_SGR_foreground_3bit_c4}%message%${dna_shell_SGR_foreground_default}"
     dna_echo_info_style_default_3bit="${dna_shell_SGR_foreground_3bit_c7}%message%${dna_shell_SGR_foreground_default}"
 
-
-
+    dna_new_line_append="f"
+    dna_force_bold="f"
+    
     # #ffb3ba	(255,179,186)
     dna_echo_error_style_default="$(dna_shell_SGR_foreground_24bit -r 255 -g 179 -b 186)%message%${dna_shell_SGR_foreground_default}"
     # #baffc9	(186,255,201)
@@ -62,6 +63,8 @@ dna-echo() {
                 else 
                     message_buffer="$message_buffer $2"
                 fi
+                dna_new_line_append="t"
+                dna_force_bold="t"
                 shift; shift; ;;
             -s|--success)
                 use_success_style="t"
@@ -240,6 +243,9 @@ fi
 
 
    # message_buffer=${message_buffer//"%%__endline__%%"/'\n'}
+    if [ "$dna_force_bold" == "t" ]; then
+        message_buffer="${dna_shell_SGR_bold}${message_buffer}{dna_shell_SGR_bold_off}"
+    fi
 
 
     if [ "$DEBUG" == "t" ]; then 
@@ -255,7 +261,10 @@ fi
             echo -e "$message_buffer"
         fi
     fi
-
+    if [ "$dna_new_line_append" == "t" ]; then
+        echo ""      
+    fi
+    
     unset dna_echo_style_passed
 }
 
