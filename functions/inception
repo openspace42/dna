@@ -79,6 +79,18 @@ dna-set_ssh_pubkey() {
 
 dna-harden_ssh() {
 
+    while getopts ":f" arguments
+    do
+        case "${arguments}" in
+            f)	force_alt_port="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
     dna-echo -m "Now setting SSH hardened values..."
 
     sed -i "s/^PermitRootLogin yes$/PermitRootLogin without-password/" "${ssh_config_file}"
@@ -113,12 +125,34 @@ dna-harden_ssh() {
 
     			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
 
-                dna-ask_for_boolean -d "y" -q "Change it to 42022?"
-
-                if [ "${boolean_output}" = "y" ]
+                if [ "${force_alt_port}" = "y" ]
                 then
 
-    				dna-echo -m "Ok, changing SSH Port to 42022"
+                    set_alt_port="y"
+
+                else
+
+                    dna-ask_for_boolean -d "y" -q "Change it to 42022?"
+
+                    if [ "${boolean_output}" = "y" ]
+                    then
+
+        				dna-echo -m "Ok, changing SSH Port to 42022"
+
+                        set_alt_port="y"
+
+                    else
+
+        				dna-echo -m "Leaving SSH port set to: | ${y-}${curr_ssh_port}${x-} |."
+
+                        set_alt_port="n"
+
+                    fi
+
+                fi
+
+                if [ "${set_alt_port}" = "y" ]
+                then
 
     				sed -i "/Port /c\Port 42022" "${ssh_config_file}"
 
@@ -128,11 +162,9 @@ dna-harden_ssh() {
 
     			else
 
-    				dna-echo -m "Leaving SSH port set to: | ${y-}${curr_ssh_port}${x-} |."
-
     				ssh_port="${curr_ssh_port}"
 
-    			fi
+                fi
 
     		fi
 
@@ -140,30 +172,50 @@ dna-harden_ssh() {
 
             dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]. Fixing it now."
 
-            dna-ask_for_boolean -d "y" -q "Also set it to 42022?"
-
-            if [ "${boolean_output}" = "y" ]
+            if [ "${force_alt_port}" = "y" ]
             then
 
-                dna-echo -m "Ok, fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
+                set_alt_port="y"
+
+            else
+
+                dna-ask_for_boolean -d "y" -q "Also set it to 42022?"
+
+                if [ "${boolean_output}" = "y" ]
+                then
+
+                    dna-echo -m "Ok, fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
+
+                    set_alt_port="y"
+
+        		else
+
+        			dna-echo -m "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+
+                    set_alt_port="n"
+
+    	        fi
+
+            fi
+
+            if [ "${set_alt_port}" = "y" ]
+            then
 
                 sed -i "/Port /c\Port 42022" "${ssh_config_file}"
 
-    			dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}42022${n-} |."
+                dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}42022${n-} |."
 
-    			ssh_port="42022"
+                ssh_port="42022"
 
-    		else
-
-    			dna-echo -m "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+            else
 
                 sed -i "/Port /c\Port 22" "${ssh_config_file}"
 
-    			dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+                dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
-    			ssh_port="22"
+                ssh_port="22"
 
-	        fi
+            fi
 
     	fi
 
@@ -171,30 +223,48 @@ dna-harden_ssh() {
 
         dna-echo -e " | ${n-}Port${r-} | line not found. Adding it now."
 
-        dna-ask_for_boolean -d "y" -q "Also set it to 42022?"
-
-        if [ "${boolean_output}" = "y" ]
+        if [ "${force_alt_port}" = "y" ]
         then
 
-            dna-echo -m "Ok, adding | ${o-}Port${n-} | line and setting it to | ${y-}42022${n-} |."
-
-    		sed -i '1iPort 42022' "${ssh_config_file}"
-
-            dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
-
-    		ssh_port="42022"
+            set_alt_port="y"
 
         else
 
-    		echo
+            dna-ask_for_boolean -d "y" -q "Also set it to 42022?"
 
-            dna-echo -m "Ok, adding | ${o-}Port${n-} | line but leaving it set to | ${y-}22${n-} [standard] |."
+            if [ "${boolean_output}" = "y" ]
+            then
 
-    		sed -i '1iPort 22' "${ssh_config_file}"
+                dna-echo -m "Ok, adding | ${o-}Port${n-} | line and setting it to | ${y-}42022${n-} |."
+
+        		set_alt_port="y"
+
+            else
+
+                dna-echo -m "Ok, adding | ${o-}Port${n-} | line but leaving it set to | ${y-}22${n-} [standard] |."
+
+        		set_alt_port="n"
+
+            fi
+
+        fi
+
+        if [ "${set_alt_port}" = "y" ]
+        then
+
+            sed -i '1iPort 42022' "${ssh_config_file}"
 
             dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
-    		ssh_port="22"
+            ssh_port="42022"
+
+        else
+
+            sed -i '1iPort 22' "${ssh_config_file}"
+
+            dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
+
+            ssh_port="22"
 
         fi
 
