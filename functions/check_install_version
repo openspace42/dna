@@ -62,7 +62,7 @@ dna-check_install_version() {
                     then
 
                         dna-echo -m "You're now installing stable version | ${c-}${selected_vers}${n-} | over a previously | ${r-}bleeding-edge${n-} | version of ${proj_name}."
-                        dna-echo -m "This is normal if you're intentionally intentionally installing a stable release, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
+                        dna-echo -m "This is normal if you're intentionally installing a stable release, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
                         dna-press_to_continue
 
                     else

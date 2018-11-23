@@ -457,8 +457,6 @@ dna-install_basic_packages() {
 
     dna-install_dependencies -p "sudo software-properties-common apt-transport-https curl ntp dnsutils haveged cronic fail2ban git glances htop pwgen pv bc rsync screen psmisc"
 
-    dna-install_mail_notifications
-
 }
 
 dna-inception() {
@@ -470,10 +468,12 @@ dna-inception() {
 
     ############################################################################
 
-    while getopts ":hp" arguments
+    while getopts ":hmp" arguments
     do
         case "${arguments}" in
             h)	skip_hostname="y"
+                ;;
+            m)	skip_mail_notifications="y"
                 ;;
             p)	force_alt_ssh_port="y"
                 ;;
@@ -491,7 +491,7 @@ dna-inception() {
 
         ########################################################################
 
-        if [ ! "${skip_hostname-}" = "y" ]
+        if [ ! "${skip_hostname-null}" = "y" ]
         then
 
             dna-set_hostname
@@ -504,7 +504,7 @@ dna-inception() {
 
         dna-set_ssh_pubkey
 
-        if [ "${force_alt_ssh_port}" = "y" ]
+        if [ "${force_alt_ssh_port-null}" = "y" ]
         then
 
             dna-harden_ssh -p
@@ -524,6 +524,13 @@ dna-inception() {
         dna-create_non_root_user
 
         dna-secure_root_pw
+
+        if [ ! "${skip_mail_notifications-null}" = "y" ]
+        then
+
+            dna-install_mail_notifications
+
+        fi
 
         dna-install_basic_packages
 
