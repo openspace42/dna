@@ -82,7 +82,7 @@ dna-harden_ssh() {
     while getopts ":f" arguments
     do
         case "${arguments}" in
-            f)	force_alt_port="y"
+            f)	local force_alt_port="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -125,10 +125,10 @@ dna-harden_ssh() {
 
     			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
 
-                if [ "${force_alt_port}" = "y" ]
+                if [ "${force_alt_port-null}" = "y" ]
                 then
 
-                    set_alt_port="y"
+                    local set_alt_port="y"
 
                 else
 
@@ -139,13 +139,13 @@ dna-harden_ssh() {
 
         				dna-echo -m "Ok, changing SSH Port to 42022"
 
-                        set_alt_port="y"
+                        local set_alt_port="y"
 
                     else
 
         				dna-echo -m "Leaving SSH port set to: | ${y-}${curr_ssh_port}${x-} |."
 
-                        set_alt_port="n"
+                        local set_alt_port="n"
 
                     fi
 
@@ -172,10 +172,10 @@ dna-harden_ssh() {
 
             dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]. Fixing it now."
 
-            if [ "${force_alt_port}" = "y" ]
+            if [ "${force_alt_port-null}" = "y" ]
             then
 
-                set_alt_port="y"
+                local set_alt_port="y"
 
             else
 
@@ -186,13 +186,13 @@ dna-harden_ssh() {
 
                     dna-echo -m "Ok, fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
 
-                    set_alt_port="y"
+                    local set_alt_port="y"
 
         		else
 
         			dna-echo -m "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
-                    set_alt_port="n"
+                    local set_alt_port="n"
 
     	        fi
 
@@ -226,7 +226,7 @@ dna-harden_ssh() {
         if [ "${force_alt_port}" = "y" ]
         then
 
-            set_alt_port="y"
+            local set_alt_port="y"
 
         else
 
@@ -237,13 +237,13 @@ dna-harden_ssh() {
 
                 dna-echo -m "Ok, adding | ${o-}Port${n-} | line and setting it to | ${y-}42022${n-} |."
 
-        		set_alt_port="y"
+        		local set_alt_port="y"
 
             else
 
                 dna-echo -m "Ok, adding | ${o-}Port${n-} | line but leaving it set to | ${y-}22${n-} [standard] |."
 
-        		set_alt_port="n"
+        		local set_alt_port="n"
 
             fi
 
