@@ -63,8 +63,6 @@ dna-echo() {
                 else 
                     message_buffer="$message_buffer $2"
                 fi
-                dna_new_line_append="t"
-                dna_force_bold="t"
                 shift; shift; ;;
             -s|--success)
                 use_success_style="t"
@@ -241,6 +239,27 @@ else
     message_buffer=${dna_echo_style_passed/"%message%"/$message_buffer} 
 fi
 
+    if [ -z "${dna_echo_warning_style+set}" ]; then
+        a=a;
+    else
+        if [ -z "${dna_echo_success_style+set}" ]; then
+            a=a;
+        else
+            if [ -z "${dna_echo_info_style+set}" ]; then
+                a=a;
+            else
+                if [ -z "${dna_echo_error_style+set}" ]; then
+                    a=a;
+                else
+                    if [ -z "${dna_echo_normal_style+set}" ]; then
+                    a=a;
+                        else
+                        message_buffer=${dna_echo_normal_style/"%message%"/$message_buffer} 
+                    fi
+                fi
+            fi
+        fi
+    fi
 
    # message_buffer=${message_buffer//"%%__endline__%%"/'\n'}
     if [ "$dna_force_bold" == "t" ]; then
@@ -260,9 +279,6 @@ fi
         else
             echo -e "$message_buffer"
         fi
-    fi
-    if [ "$dna_new_line_append" == "t" ]; then
-        echo ""      
     fi
     
     unset dna_echo_style_passed
