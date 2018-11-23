@@ -79,6 +79,16 @@ dna-set_ssh_pubkey() {
 
 dna-harden_ssh() {
 
+    alert_force_alt_port() {
+
+        dna-echo -e "${proj_name} requires your SSH port to be changed to: | ${n-}42022${r-} |."
+        dna-echo -m "This will happen automatically if you choose to continue the installation."
+        dna-echo -m "To connect once again to this machine in the future simply use the:"
+        dna-echo -m " | ssh ${c-}-p 42022${n-} [...] | "
+        dna-press_to_continue
+
+    }
+
     while getopts ":f" arguments
     do
         case "${arguments}" in
@@ -128,6 +138,8 @@ dna-harden_ssh() {
                 if [ "${force_alt_port-null}" = "y" ]
                 then
 
+                    alert_force_alt_port
+
                     local set_alt_port="y"
 
                 else
@@ -174,6 +186,8 @@ dna-harden_ssh() {
 
             if [ "${force_alt_port-null}" = "y" ]
             then
+
+                alert_force_alt_port
 
                 local set_alt_port="y"
 
@@ -225,6 +239,8 @@ dna-harden_ssh() {
 
         if [ "${force_alt_port}" = "y" ]
         then
+
+            alert_force_alt_port
 
             local set_alt_port="y"
 
