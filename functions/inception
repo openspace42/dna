@@ -79,20 +79,20 @@ dna-set_ssh_pubkey() {
 
 dna-harden_ssh() {
 
-    alert_force_alt_port() {
+    alert_force_alt_ssh_port() {
 
         dna-echo -e "${proj_name} requires your SSH port to be changed to: | ${n-}42022${r-} |."
         dna-echo -m "This will happen automatically if you choose to continue the installation."
-        dna-echo -m "To connect once again to this machine in the future simply use the:"
+        dna-echo -m "To connect once again to this machine in the future simply use:"
         dna-echo -m " | ssh ${c-}-p 42022${n-} [...] | "
         dna-press_to_continue
 
     }
 
-    while getopts ":f" arguments
+    while getopts ":p" arguments
     do
         case "${arguments}" in
-            f)	local force_alt_port="y"
+            p)	local force_alt_ssh_port="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -135,12 +135,12 @@ dna-harden_ssh() {
 
     			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
 
-                if [ "${force_alt_port-null}" = "y" ]
+                if [ "${force_alt_ssh_port-null}" = "y" ]
                 then
 
-                    alert_force_alt_port
+                    alert_force_alt_ssh_port
 
-                    local set_alt_port="y"
+                    local set_alt_ssh_port="y"
 
                 else
 
@@ -151,19 +151,19 @@ dna-harden_ssh() {
 
         				dna-echo -m "Ok, changing SSH Port to 42022"
 
-                        local set_alt_port="y"
+                        local set_alt_ssh_port="y"
 
                     else
 
         				dna-echo -m "Leaving SSH port set to: | ${y-}${curr_ssh_port}${x-} |."
 
-                        local set_alt_port="n"
+                        local set_alt_ssh_port="n"
 
                     fi
 
                 fi
 
-                if [ "${set_alt_port}" = "y" ]
+                if [ "${set_alt_ssh_port}" = "y" ]
                 then
 
     				sed -i "/Port /c\Port 42022" "${ssh_config_file}"
@@ -184,12 +184,12 @@ dna-harden_ssh() {
 
             dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]. Fixing it now."
 
-            if [ "${force_alt_port-null}" = "y" ]
+            if [ "${force_alt_ssh_port-null}" = "y" ]
             then
 
-                alert_force_alt_port
+                alert_force_alt_ssh_port
 
-                local set_alt_port="y"
+                local set_alt_ssh_port="y"
 
             else
 
@@ -200,19 +200,19 @@ dna-harden_ssh() {
 
                     dna-echo -m "Ok, fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
 
-                    local set_alt_port="y"
+                    local set_alt_ssh_port="y"
 
         		else
 
         			dna-echo -m "Ok, fixing syntax but leaving | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
-                    local set_alt_port="n"
+                    local set_alt_ssh_port="n"
 
     	        fi
 
             fi
 
-            if [ "${set_alt_port}" = "y" ]
+            if [ "${set_alt_ssh_port}" = "y" ]
             then
 
                 sed -i "/Port /c\Port 42022" "${ssh_config_file}"
@@ -237,12 +237,12 @@ dna-harden_ssh() {
 
         dna-echo -e " | ${n-}Port${r-} | line not found. Adding it now."
 
-        if [ "${force_alt_port}" = "y" ]
+        if [ "${force_alt_ssh_port}" = "y" ]
         then
 
-            alert_force_alt_port
+            alert_force_alt_ssh_port
 
-            local set_alt_port="y"
+            local set_alt_ssh_port="y"
 
         else
 
@@ -253,19 +253,19 @@ dna-harden_ssh() {
 
                 dna-echo -m "Ok, adding | ${o-}Port${n-} | line and setting it to | ${y-}42022${n-} |."
 
-        		local set_alt_port="y"
+        		local set_alt_ssh_port="y"
 
             else
 
                 dna-echo -m "Ok, adding | ${o-}Port${n-} | line but leaving it set to | ${y-}22${n-} [standard] |."
 
-        		local set_alt_port="n"
+        		local set_alt_ssh_port="n"
 
             fi
 
         fi
 
-        if [ "${set_alt_port}" = "y" ]
+        if [ "${set_alt_ssh_port}" = "y" ]
         then
 
             sed -i '1iPort 42022' "${ssh_config_file}"
@@ -468,10 +468,12 @@ dna-inception() {
 
     ############################################################################
 
-    while getopts ":h" arguments
+    while getopts ":hp" arguments
     do
-        case $arguments in
+        case "${arguments}" in
             h)	skip_hostname="y"
+                ;;
+            p)	force_alt_ssh_port="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -500,7 +502,16 @@ dna-inception() {
 
         dna-set_ssh_pubkey
 
-        dna-harden_ssh
+        if [ "${force_alt_ssh_port}" = "y" ]
+        then
+
+            dna-harden_ssh -p
+
+        else
+
+            dna-harden_ssh
+
+        fi
 
         dna-initialize_ufw
 
