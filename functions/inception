@@ -468,9 +468,11 @@ dna-inception() {
 
     ############################################################################
 
-    while getopts ":hmp" arguments
+    while getopts ":fhmp" arguments
     do
         case "${arguments}" in
+            f)	force_rerun="y"
+                ;;
             h)	skip_hostname="y"
                 ;;
             m)	skip_mail_notifications="y"
@@ -486,7 +488,7 @@ dna-inception() {
 
     ############################################################################
 
-    if [ ! -f "${os_conf_dir}/inception_run_status" ]
+    if [ ! -f "${os_conf_dir}/inception_run_status" ] || [ "${force_rerun-null}" = "y" ]
     then
 
         ########################################################################
