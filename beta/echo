@@ -1,0 +1,490 @@
+#!/usr/bin/env bash
+
+dna-echo() {
+
+    ############################################################################
+
+    ### Do NOT use dna-exit as it depends on this.
+
+    dna-echo_usage(){
+        echo '
+
+        '
+    }
+
+
+    dna-echo_ex1(){
+        dna-echo --error "you can use only one style in a message"
+    }
+
+
+
+    local DEBUG="f"
+
+    local force_message="f"
+    local message_buffer=""
+    local use_error_style="f"
+    local use_success_style="f"
+    local use_warning_style="f"
+    local use_info_style="f"
+    local no_newline="f"
+    local restore_position="f"
+
+    dna_echo_force_8bit_colors="f"
+    dna_echo_error_style_default_8bit="${dna_shell_SGR_foreground_8bit_c160}%message%${dna_shell_SGR_foreground_default}"
+    dna_echo_success_style_default_8bit="${dna_shell_SGR_foreground_8bit_c40}%message%${dna_shell_SGR_foreground_default}"
+    dna_echo_warning_style_default_8bit="${dna_shell_SGR_foreground_8bit_c226}%message%${dna_shell_SGR_foreground_default}"
+    dna_echo_info_style_default_8bit="${dna_shell_SGR_foreground_8bit_c45}%message%${dna_shell_SGR_foreground_default}"
+
+    dna_echo_force_3bit_colors="f"
+    dna_echo_error_style_default_3bit="${dna_shell_SGR_foreground_3bit_c2}%message%${dna_shell_SGR_foreground_default}"
+    dna_echo_success_style_default_3bit="${dna_shell_SGR_foreground_3bit_c3}%message%${dna_shell_SGR_foreground_default}"
+    dna_echo_warning_style_default_3bit="${dna_shell_SGR_foreground_3bit_c4}%message%${dna_shell_SGR_foreground_default}"
+    dna_echo_info_style_default_3bit="${dna_shell_SGR_foreground_3bit_c7}%message%${dna_shell_SGR_foreground_default}"
+
+    dna_new_line_append="f"
+    dna_force_bold="f"
+
+    # #ffb3ba	(255,179,186)
+    dna_echo_error_style_default="$(dna_shell_SGR_foreground_24bit -r 255 -g 179 -b 186)%message%${dna_shell_SGR_foreground_default}"
+    # #baffc9	(186,255,201)
+    dna_echo_success_style_default="$(dna_shell_SGR_foreground_24bit -r 186 -g 255 -b 201)%message%${dna_shell_SGR_foreground_default}"
+    #ffffba	(255,255,186)
+    dna_echo_warning_style_default="$(dna_shell_SGR_foreground_24bit -r 255 -g 255 -b 186)%message%${dna_shell_SGR_foreground_default}"
+    # #bae1ff	(186,225,255)
+    dna_echo_info_style_default="$(dna_shell_SGR_foreground_24bit -r 186 -g 225 -b 255)%message%${dna_shell_SGR_foreground_default}"
+
+    while [[ $# -gt 0 ]]
+    do
+        case $1 in
+            -m|--message)
+                if [ "$message_buffer" == "" ]; then
+                    message_buffer="$2"
+                else
+                    message_buffer="$message_buffer $2"
+                fi
+                shift; shift; ;;
+            -s|--success)
+                use_success_style="t"
+                shift; ;;
+            --style)
+                dna_echo_style_passed="$2"
+                shift; shift; ;;
+            -e|--error)
+                use_error_style="t"
+                shift; ;;
+            -w|--warning)
+                use_warning_style="t"
+                shift; ;;
+            -i|--info)
+                use_info_style="t"
+                shift; ;;
+            -n|--no_newline)
+                no_newline="t"
+                shift; ;;
+            -r|--restore_position)
+                restore_position="t"
+                shift; ;;
+            --force_8bit_colors)
+                dna_echo_force_8bit_colors="t"
+                shift; ;;
+            --force_3bit_colors)
+                dna_echo_force_3bit_colors="t"
+                shift; ;;
+            -v|-d|--verbouse)
+                DEBUG="t"
+                shift; ;;
+            *|\?)
+                if [ "$message_buffer" == "" ]; then
+                    message_buffer="$1"
+                else
+                    message_buffer="$message_buffer $1"
+                fi
+                shift; ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+
+    if [ "$use_error_style" == "t" ]; then
+        if [ "$use_success_style" != "f" ]  || [ "$use_warning_style" != "f" ]  || [ "$use_info_style" != "f" ]; then
+            echo $(dna-echo_ex1)
+            return
+        fi
+    fi
+    if [ "$use_success_style" == "t" ]; then
+        if [ "$use_error_style" != "f" ]  || [ "$use_warning_style" != "f" ]  || [ "$use_info_style" != "f" ]; then
+            echo $(dna-echo_ex1)
+            return
+        fi
+    fi
+    if [ "$use_warning_style" == "t" ]; then
+        if [ "$use_success_style" != "f" ]  || [ "$use_error_style" != "f" ]  || [ "$use_info_style" != "f" ]; then
+            echo $(dna-echo_ex1)
+            return
+        fi
+    fi
+    if [ "$use_info_style" == "t" ]; then
+        if [ "$use_success_style" != "f" ]  || [ "$use_warning_style" != "f" ]  || [ "$use_error_style" != "f" ]; then
+            echo $(dna-echo_ex1)
+            return
+        fi
+    fi
+: '
+    #xxx template
+    if [ "$use_xxx_style" == "t" ]; then
+        if [ -z "${dna_echo_xxx_style+set}" ]; then
+            if [ "$dna_echo_force_3bit_colors" == "t" ]; then
+                # 3bit style
+            else
+                if [ "$dna_echo_force_8bit_colors" == "t" ]; then
+                    # 8bit style
+                else
+                    # 24bit style
+                fi
+            fi
+        else
+            # global style
+        fi
+    fi
+'
+
+    #error template
+    if [ "$use_error_style" == "t" ]; then
+        if [ -z "${dna_echo_error_style+set}" ]; then
+            if [ "$dna_echo_force_3bit_colors" == "t" ]; then
+                # 3bit style
+                message_buffer=${dna_echo_error_style_default_3bit/"%message%"/$message_buffer}
+            else
+                if [ "$dna_echo_force_8bit_colors" == "t" ]; then
+                    # 8bit style
+                    message_buffer=${dna_echo_error_style_default_8bit/"%message%"/$message_buffer}
+                else
+                    # 24bit style
+                    message_buffer=${dna_echo_error_style_default/"%message%"/$message_buffer}
+                fi
+            fi
+        else
+            # global style
+            message_buffer=${dna_echo_error_style/"%message%"/$message_buffer}
+        fi
+    fi
+
+    #info template
+    if [ "$use_info_style" == "t" ]; then
+        if [ -z "${dna_echo_info_style+set}" ]; then
+            if [ "$dna_echo_force_3bit_colors" == "t" ]; then
+                # 3bit style
+                message_buffer=${dna_echo_info_style_default_3bit/"%message%"/$message_buffer}
+            else
+                if [ "$dna_echo_force_8bit_colors" == "t" ]; then
+                    # 8bit style
+                    message_buffer=${dna_echo_info_style_default_8bit/"%message%"/$message_buffer}
+                else
+                    # 24bit style
+                    message_buffer=${dna_echo_info_style_default/"%message%"/$message_buffer}
+                fi
+            fi
+        else
+            # global style
+            message_buffer=${dna_echo_info_style/"%message%"/$message_buffer}
+        fi
+    fi
+
+    #success template
+    if [ "$use_success_style" == "t" ]; then
+        if [ -z "${dna_echo_success_style+set}" ]; then
+            if [ "$dna_echo_force_3bit_colors" == "t" ]; then
+                # 3bit style
+                message_buffer=${dna_echo_success_style_default_3bit/"%message%"/$message_buffer}
+            else
+                if [ "$dna_echo_force_8bit_colors" == "t" ]; then
+                    # 8bit style
+                    message_buffer=${dna_echo_success_style_default_8bit/"%message%"/$message_buffer}
+                else
+                    # 24bit style
+                    message_buffer=${dna_echo_success_style_default/"%message%"/$message_buffer}
+                fi
+            fi
+        else
+            # global style
+            message_buffer=${dna_echo_success_style/"%message%"/$message_buffer}
+        fi
+    fi
+
+    #warning template
+    if [ "$use_warning_style" == "t" ]; then
+        if [ -z "${dna_echo_warning_style+set}" ]; then
+            if [ "$dna_echo_force_3bit_colors" == "t" ]; then
+                # 3bit style
+                message_buffer=${dna_echo_warning_style_default_3bit/"%message%"/$message_buffer}
+            else
+                if [ "$dna_echo_force_8bit_colors" == "t" ]; then
+                    # 8bit style
+                    message_buffer=${dna_echo_warning_style_default_8bit/"%message%"/$message_buffer}
+                else
+                    # 24bit style
+                    message_buffer=${dna_echo_warning_style_default/"%message%"/$message_buffer}
+                fi
+            fi
+        else
+            # global style
+            message_buffer=${dna_echo_warning_style/"%message%"/$message_buffer}
+        fi
+    fi
+
+if [ -z "${dna_echo_style_passed+set}" ]; then
+null=null
+else
+    message_buffer=${dna_echo_style_passed/"%message%"/$message_buffer}
+fi
+
+    if [ -z "${dna_echo_warning_style+set}" ]; then
+        a=a;
+    else
+        if [ -z "${dna_echo_success_style+set}" ]; then
+            a=a;
+        else
+            if [ -z "${dna_echo_info_style+set}" ]; then
+                a=a;
+            else
+                if [ -z "${dna_echo_error_style+set}" ]; then
+                    a=a;
+                else
+                    if [ -z "${dna_echo_normal_style+set}" ]; then
+                    a=a;
+                        else
+                        message_buffer=${dna_echo_normal_style/"%message%"/$message_buffer}
+                    fi
+                fi
+            fi
+        fi
+    fi
+
+   # message_buffer=${message_buffer//"%%__endline__%%"/'\n'}
+    if [ "$dna_force_bold" == "t" ]; then
+        message_buffer="${dna_shell_SGR_bold}${message_buffer}{dna_shell_SGR_bold_off}"
+    fi
+
+
+    if [ "$DEBUG" == "t" ]; then
+        if [ "$no_newline" == "t" ]; then
+            echo -n "$message_buffer"
+        else
+            echo "$message_buffer"
+        fi
+    else
+        if [ "$no_newline" == "t" ]; then
+            echo -en "$message_buffer"
+        else
+            echo -e "$message_buffer"
+        fi
+    fi
+
+    unset dna_echo_style_passed
+}
+
+dna-echo_block() {
+    dna_echo_block_temp=""
+    i="0"
+    while [ $i -lt $1 ]; do
+        ii="0"
+        while [ $ii -lt $2 ]; do
+            dna_echo_block_temp="$dna_echo_block_temp$3"
+            ii=$[$ii+1]
+        done
+        i=$[$i+1]
+        if [ $i -lt $1 ]; then
+            dna_echo_block_temp=$dna_echo_block_temp'\n'
+        fi
+    done
+    dna-echo -v $dna_echo_block_temp
+    unset dna_echo_block_temp
+}
+
+
+dna-echo_right_jast() {
+
+    message_buffer=""
+    dna_echo_right_jast_width="0"
+
+    ## all paramiter as input
+    while [[ $# -gt 0 ]]; do
+        if [ "$message_buffer" == "" ]; then
+            message_buffer="$1"
+        else
+            message_buffer="$message_buffer\n$1"
+        fi
+        shift;
+    done
+    shift $((OPTIND-1))
+
+    array=()
+
+    length="${#message_buffer}";
+    array[0]=""
+    cont="0"
+    cont2="0"
+
+    ## \n splitter
+    while [[ $cont -lt $length ]]; do
+        if [ "${message_buffer:$cont:1}" == $'\n' ]; then
+            cont2=$(($cont2 + 1))
+            array[${cont2}]=""
+            #accapo
+        else
+            if [ "${message_buffer:$cont:2}" == "\n" ]; then
+                cont2=$(($cont2 + 1))
+                array[${cont2}]=""
+                cont=$(($cont + 1))
+            else
+                t="${array[$cont2]}${message_buffer:$cont:1}"
+                array[$cont2]="$t"
+            fi
+        fi
+        cont=$(($cont + 1))
+    done
+
+    cont="0"
+    dna_echo_right_jast_width=0
+    while [ $cont -le $cont2 ]; do
+        dna_echo_right_jast_t=${array[cont]}
+        if [ "${#dna_echo_right_jast_t}" -gt "$dna_echo_right_jast_width" ]; then
+            #echo "${#dna_echo_right_jast_t}- $dna_echo_right_jast_t"
+            dna_echo_right_jast_width="${#dna_echo_right_jast_t}"
+        fi
+        #echo "${#dna_echo_right_jast_t}- $dna_echo_right_jast_t"
+        cont=$[$cont+1]
+    done
+    dna_echo_right_jast_height=$cont2
+
+    cont="0"
+    dna_echo_right_jast_temp=""
+    while [ $cont -le $cont2 ]; do
+        dna-shell_cursor_position
+        dna_echo_right_jast_temp=$dna_echo_right_jast_temp"$(dna-shell_cursor_locate $[$(dna-shell_columns)-$dna_echo_right_jast_width] $[$dna_shell_position_y+$cont])${array[cont]}"
+        cont=$[$cont+1]
+    done
+    dna-echo -v  "$dna_echo_right_jast_temp"
+}
+
+dna-echo_right() {
+
+    message_buffer=""
+    dna_echo_right_jast_width="0"
+
+    ## all paramiter as input
+    while [[ $# -gt 0 ]]; do
+        if [ "$message_buffer" == "" ]; then
+            message_buffer="$1"
+        else
+            message_buffer="$message_buffer\n$1"
+        fi
+        shift;
+    done
+    shift $((OPTIND-1))
+
+    array=()
+
+    length="${#message_buffer}";
+    array[0]=""
+    cont="0"
+    cont2="0"
+
+    ## \n splitter
+    while [[ $cont -lt $length ]]; do
+        if [ "${message_buffer:$cont:1}" == $'\n' ]; then
+            cont2=$(($cont2 + 1))
+            array[${cont2}]=""
+            #accapo
+        else
+            if [ "${message_buffer:$cont:2}" == "\n" ]; then
+                cont2=$(($cont2 + 1))
+                array[${cont2}]=""
+                cont=$(($cont + 1))
+            else
+                t="${array[$cont2]}${message_buffer:$cont:1}"
+                array[$cont2]="$t"
+            fi
+        fi
+        cont=$(($cont + 1))
+    done
+
+    cont="0"
+    dna_echo_right_jast_width=0
+    while [ $cont -le $cont2 ]; do
+        dna_echo_right_jast_t=${array[cont]}
+        if [ "${#dna_echo_right_jast_t}" -gt "$dna_echo_right_jast_width" ]; then
+            #echo "${#dna_echo_right_jast_t}- $dna_echo_right_jast_t"
+            dna_echo_right_jast_width="${#dna_echo_right_jast_t}"
+        fi
+        #echo "${#dna_echo_right_jast_t}- $dna_echo_right_jast_t"
+        cont=$[$cont+1]
+    done
+    dna_echo_right_jast_height=$cont2
+
+    cont="0"
+    dna_echo_right_jast_temp=""
+    while [ $cont -le $cont2 ]; do
+        dna-shell_cursor_position
+         dna_echo_right_jast_t=${array[cont]}
+        dna_echo_right_jast_temp=$dna_echo_right_jast_temp"$(dna-shell_cursor_locate $[$(dna-shell_columns)-${#dna_echo_right_jast_t}] $[$dna_shell_position_y+$cont])${array[cont]}"
+        cont=$[$cont+1]
+    done
+    dna-echo -v  "$dna_echo_right_jast_temp"
+}
+
+dna-echo_operation() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":ht" arguments; do
+        case $arguments in
+            h)	status="head"
+                ;;
+            t)	status="tail"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${status-}" ]
+    then
+        dna-echo -e "Status flag | ${n-}head [-h] || tail [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ -z "${operation_message-}" ]
+    then
+        dna-echo -e "The variable | ${n-}operation_message${r-} | must be exported before calling the function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    if [ "${status}" = "head" ]
+    then
+
+        dna-echo -m "Now ${operation_message}..."
+
+    elif [ "${status}" = "tail" ]
+    then
+
+        dna-echo -s "Finished ${operation_message}."
+
+    fi
+
+    ############################################################################
+
+}
+
+dna-print
