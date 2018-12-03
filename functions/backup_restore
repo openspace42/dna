@@ -550,6 +550,11 @@ dna-br_restore_from_standalone() {
 
 dna-br_duplicity_loop() {
 
+	### Raise ulimit for open files
+
+	standard_ulimit_n="$(ulimit -n)"
+	ulimit -Sn "16384"
+
 	# Export some ENV variables so you don't have to type anything
 	export AWS_ACCESS_KEY_ID=$s3_access_key_id
 	export AWS_SECRET_ACCESS_KEY=$s3_secret_access_key
@@ -572,7 +577,6 @@ dna-br_duplicity_loop() {
 	else
 		duplicity_type="restore"
 	fi
-
 
 	duplicity_base_dir=/root/logs/$proj_name-duplicity
 	duplicity_log_dir=$duplicity_base_dir/$duplicity_type
@@ -696,6 +700,10 @@ dna-br_duplicity_loop() {
 		dna-exit
 
 	fi
+
+	### Reset ulimit for open files
+
+	ulimit -Sn "${standard_ulimit_n}"
 
 }
 
