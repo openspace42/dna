@@ -139,6 +139,8 @@ dna-install_duplicity() {
 	/usr/local/bin/pip install --upgrade boto
 	echo
 
+    ulimit -Sn 10000
+
 	dna-echo_operation -t
 
 }
