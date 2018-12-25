@@ -328,7 +328,6 @@ dna-install_sslh() {
     ### Install default config files
 
     cat <<EOF >/etc/sslh.cfg
-verbose: false;
 foreground: false;
 inetd: false;
 numeric: false;
