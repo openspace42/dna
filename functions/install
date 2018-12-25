@@ -321,7 +321,7 @@ dna-install_sslh() {
 
     ### Install
 
-	( cd "${tmp_project_dir}/sslh" && make install && make && cp sslh-select /usr/local/sbin/sslh )
+	( cd "${tmp_project_dir}/sslh" && git checkout v1.20 && make install && make && cp sslh-select /usr/local/sbin/sslh )
 
     ############################################################################
 

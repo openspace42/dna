@@ -479,7 +479,7 @@ dna-inception() {
                 ;;
             p)	force_alt_ssh_port="y"
                 ;;
-            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
                 ;;
         esac
