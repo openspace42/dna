@@ -82,7 +82,7 @@ dna-install_dependencies() {
 
         echo
 
-        if [ "${allow_errors-null}" = "y" ]
+        if [ "${allow_errors-null}" = "y" ] || [ "${dna_global_allow_apt_errors-}" = "y" ]
         then
 
             dna-echo -e "An error occured performing APT operations."
