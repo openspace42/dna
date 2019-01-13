@@ -92,7 +92,7 @@ dna-install_dependencies() {
 
             if [ "${boolean_output}" = "y" ]
             then
-                dna-echo -m "Ok, continuing installation anyway..."
+                dna-echo -n -m "Ok, continuing installation anyway..."
             else
                 dna-echo -m "Ok, aborting..."
                 dna-exit
