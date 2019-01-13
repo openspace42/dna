@@ -215,6 +215,8 @@ dna-install_mail_notifications() {
 
         apt-get -y purge mailutils postfix || true
 
+        echo
+
         install_mailutils
 
         dna-echo_operation -t

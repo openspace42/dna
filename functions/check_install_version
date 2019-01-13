@@ -124,27 +124,43 @@ dna-check_install_version() {
             if [ "${boolean_output}" = "y" ]
             then
 
-                dna-echo -m "Ok, proceeding with backup..."
+                dna-echo -n -m "Ok, proceeding with backup..."
+
                 if bash "${source_dir}/tools/${proj_name}-backup" -s
                 then
+
                     backup_output="ok"
+
                 else
+
                     backup_output="failed"
+
                 fi
+
                 sleep 1
+
                 if [ "${backup_output}" = "ok" ]
                 then
+
                     dna-echo -s "Backup complete. Continuing installation..."
+
                 else
+
                     dna-echo -e "Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk."
                     dna-ask_for_boolean -d "y" -q "Continue anyway even without a backup?"
+
                     if [ "${boolean_output}" = "y" ]
                     then
+
                         dna-echo -m "Ok, continuing..."
+
                     else
+
                         dna-echo -m "Ok, aborting..."
                         dna-exit
+
                     fi
+
                 fi
 
             else
