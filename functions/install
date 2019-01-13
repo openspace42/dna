@@ -88,7 +88,7 @@ dna-install_dependencies() {
             dna-echo -e "An error occured performing APT operations."
             dna-echo -m "It is likely that by continuing the installation this and any other errors collected along the way will be naturally resolved."
 
-            dna-ask_for_boolean -d "n" -q "Would you like to continue the installation anyway?"
+            dna-ask_for_boolean -d "y" -q "Would you like to continue the installation anyway?"
 
             if [ "${boolean_output}" = "y" ]
             then
