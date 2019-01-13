@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-dna-generate_project_specific_dhparam() {
+dna-generate_dhparam() {
 
-    if [ -f "${ssl_project_dir}/dh.pem" ]
+    if [ -f "${ssl_dir}/dhparam.pem" ]
     then
 
         dna-echo -s "DHparam file found. Skipping generation."
@@ -13,7 +13,7 @@ dna-generate_project_specific_dhparam() {
 
         dna-echo -m "To make your TLS connections even more secure, it is necessary to generate a DH parameters file."
         dna-echo -m "To do so, simply answer yes, but be aware that this is a very time consuming cryptographic operation, although it must only be performed once."
-        dna-ask_for_boolean -d "y" -q "Generate openssl DHparams file?"
+        dna-ask_for_boolean -d "y" -q "Generate openssl DHparam file now?"
 
         if [ "${boolean_output}" = "y" ]
         then
@@ -25,22 +25,22 @@ dna-generate_project_specific_dhparam() {
             export dh_param_outcome="generating"
             export dh_param_status="no"
 
-            openssl dhparam -out "${ssl_project_dir}/dh.pem.incomplete" "4096"
+            openssl dhparam -out "${ssl_dir}/dhparam.pem.incomplete" "4096"
             echo
 
             export dh_param_outcome="generated"
             export dh_param_status="ok"
 
-            mv "${ssl_project_dir}/dh.pem.incomplete" "${ssl_project_dir}/dh.pem"
+            mv "${ssl_dir}/dhparam.pem.incomplete" "${ssl_dir}/dhparam.pem"
 
         else
 
             dna-echo -m "Skipping DHparams generation."
             dna-echo -m "You can always generate them at a later time by executing:"
-            dna-echo -m " | ${o-}openssl dhparam -out ${ssl_project_dir}/dh.pem.incomplete 4096${n-} |. "
+            dna-echo -m " | ${o-}openssl dhparam -out ${ssl_dir}/dhparam.pem.incomplete 4096${n-} |. "
             dna-echo -m "[and making sure you let the command run until it exits]."
             dna-echo -m "Once it's done, execute:"
-            dna-echo -m " | ${o-}mv ${ssl_project_dir}/dh.pem.incomplete ${ssl_project_dir}/dh.pem${n-} |. "
+            dna-echo -m " | ${o-}mv ${ssl_dir}/dhparam.pem.incomplete ${ssl_dir}/dhparam.pem${n-} |. "
 
             export dh_param_outcome="generation_skipped"
             export dh_param_status="no"
