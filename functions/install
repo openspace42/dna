@@ -86,7 +86,7 @@ dna-install_dependencies() {
         then
 
             dna-echo -e "An error occured performing APT operations."
-            dna-echo -m "If this is an upgrade [rather than a first install] it is possible that by continuing the installation this and any other errors collected along the way will be naturally resolved."
+            dna-echo -m "It is likely that by continuing the installation this and any other errors collected along the way will be naturally resolved."
 
             dna-ask_for_boolean -d "n" -q "Would you like to continue the installation anyway?"
 
