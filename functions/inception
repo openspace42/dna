@@ -11,7 +11,29 @@ dna-set_hostname() {
 dna-set_locale() {
 
     dna-echo -m "Now setting locale to | ${y-}en_US.UTF-8${n-} |...${x-}"
-    export LC_ALL="en_US.UTF-8"
+
+    dna-get_distro_name
+
+    if [ "${distro_name}" = "ubuntu" ]
+    then
+
+        export LC_ALL="en_US.UTF-8"
+
+    elif [ "${distro_name}" = "debian" ]
+    then
+
+        echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+        echo "LANG=en_US.UTF-8" > /etc/locale.conf
+        locale-gen en_US.UTF-8
+
+    else
+
+        ### just guessing for now
+        export LC_ALL="en_US.UTF-8"
+
+    fi
+
     echo "LC_ALL=en_US.UTF-8" > "/etc/default/locale"
     dna-echo -s "Locale set."
 
