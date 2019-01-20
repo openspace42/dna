@@ -49,7 +49,7 @@ dna-generate_ssh_keypair() {
     ssh_keypair_privkey_path="/root/.ssh/${name}"
     ssh_keypair_pubkey_path="/root/.ssh/${name}.pub"
 
-    dna-echo -m "Stored DHparam file in: | ${y-}/root/.ssh/${name}[.pub]${n-} |."
+    dna-echo -m "Stored SSH keypair files in: | ${y-}/root/.ssh/${name}[.pub]${n-} |."
 
     dna-echo_operation -t
 
