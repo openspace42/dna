@@ -256,7 +256,7 @@ dna-install_mail_notifications() {
 
     fi
 
-    unset install_mailutils
+    unset install_mailutils force
 
 }
 
