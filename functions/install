@@ -170,6 +170,18 @@ dna-install_easyengine() {
 
 dna-install_mail_notifications() {
 
+    while getopts ":f:" arguments
+    do
+        case "${arguments}" in
+            f)	force="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
     hostname="$(cat /etc/hostname)"
 
     dna-get_distro_name
@@ -200,12 +212,7 @@ dna-install_mail_notifications() {
 
     }
 
-    dna-ask_for_boolean -d "y" -q "[Purge and re-]install the local mailserver for task notifications?"
-
-    if [ "${boolean_output}" = "y" ]
-    then
-
-        dna-echo -m "Ok, proceeding..."
+    install_mail_notifications_proceed() {
 
         operation_message="[purging and re-]installing the local mailserver"
 
@@ -221,13 +228,35 @@ dna-install_mail_notifications() {
 
         dna-echo_operation -t
 
+    }
+
+    if [ "${force-}" = "y" ]
+    then
+
+        install_mail_notifications_proceed
+
     else
 
-        dna-echo -m "Ok, skipping."
+        dna-ask_for_boolean -d "y" -q "[Purge and re-]install the local mailserver for task notifications?"
 
-	fi
+        if [ "${boolean_output}" = "y" ]
+        then
 
-    unset boolean_output install_mailutils
+            dna-echo -m "Ok, proceeding..."
+
+            install_mail_notifications_proceed
+
+        else
+
+            dna-echo -m "Ok, skipping."
+
+    	fi
+
+        unset boolean_output
+
+    fi
+
+    unset install_mailutils
 
 }
 
