@@ -170,7 +170,7 @@ dna-install_easyengine() {
 
 dna-install_mail_notifications() {
 
-    while getopts ":f:" arguments
+    while getopts ":f" arguments
     do
         case "${arguments}" in
             f)	force="y"
