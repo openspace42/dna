@@ -272,8 +272,8 @@ dna-install_mosh() {
     if [ "${distro_name}" = "ubuntu" ]
     then
         dna-install_dependencies -p "software-properties-common"
-        sudo add-apt-repository ppa:keithw/mosh
-        sudo apt-get update
+        add-apt-repository -y ppa:keithw/mosh
+        apt-get update
     fi
 
     ############################################################################
