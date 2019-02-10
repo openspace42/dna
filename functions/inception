@@ -480,6 +480,8 @@ dna-install_basic_packages() {
 
     dna-install_dependencies -p "sudo software-properties-common apt-transport-https curl ntp dnsutils haveged cronic fail2ban git glances htop pwgen pv bc rsync screen psmisc"
 
+    dna-install_mosh
+
 }
 
 dna-inception() {
