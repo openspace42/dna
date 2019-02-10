@@ -260,6 +260,41 @@ dna-install_mail_notifications() {
 
 }
 
+dna-install_mosh() {
+
+    operation_message="installing Mosh"
+    dna-echo_operation -h
+
+    ############################################################################
+
+    dna-get_distro_name
+
+    if [ "${distro_name}" = "ubuntu" ]
+    then
+        dna-install_dependencies -p "software-properties-common"
+        sudo add-apt-repository ppa:keithw/mosh
+        sudo apt-get update
+    fi
+
+    ############################################################################
+
+    dna-install_dependencies -p "mosh"
+
+    ############################################################################
+
+    if dpkg -s ufw &> /dev/null
+    then
+        ufw allow 60000:61000/udp
+    else
+        iptables -I INPUT 1 -p udp --dport 60000:61000 -j ACCEPT
+    fi
+
+    ############################################################################
+
+    dna-echo_operation -t
+
+}
+
 dna-install_nginx() {
 
     operation_message="installing NGINX"
