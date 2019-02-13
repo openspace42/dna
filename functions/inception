@@ -126,11 +126,11 @@ dna-harden_ssh() {
 
     dna-echo -m "Now setting SSH hardened values..."
 
-    sed -i "s/^PermitRootLogin yes$/PermitRootLogin without-password/" "${ssh_config_file}"
+    sed -i "s/^PermitRootLogin yes/PermitRootLogin without-password/" "${ssh_config_file}"
 
     dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to | ${y-}without-password${n-} |."
 
-    sed -i "0, /sftp_access/ s/^PasswordAuthentication yes$/PasswordAuthentication no/" "${ssh_config_file}"
+    sed -i "0, /sftp_access/ s/^PasswordAuthentication yes/PasswordAuthentication no/" "${ssh_config_file}"
 
     dna-echo -m "Set | ${o-}PasswordAuthentication${n-} | to | ${y-}no${n-} |."
 
