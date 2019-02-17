@@ -38,10 +38,12 @@ dna-provision_le_wildcard_cert() {
 
     if [ ! -z "${admin_mail-}" ]
     then
-        certbot certonly --manual -d "$domain, *.$domain" -m "${admin_mail}" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
+        certbot certonly --manual -d "$domain, *.$domain" -m "${admin_mail}" --agree-tos --keep-until-expiring --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
     else
-        certbot certonly --manual -d "$domain, *.$domain" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
+        certbot certonly --manual -d "$domain, *.$domain" --agree-tos --keep-until-expiring --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
     fi
+
+    echo
 
     dna-echo_operation -t
 
