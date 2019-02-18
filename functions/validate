@@ -1,5 +1,51 @@
 #!/usr/bin/env bash
 
+dna-validate_domain() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":d:s" arguments
+    do
+        case "${arguments}" in
+            d)  domain="${OPTARG}"
+                ;;
+            s)	export silent="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${domain-}" ]
+    then
+        dna-echo -e "Argument | ${n-}domain [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    if echo "${domain}" | grep -qP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$)'
+
+    then
+        dna-echo -s "The domain | ${n-}${domain}${g-} | is valid."
+        export domain_is_valid="y"
+    else
+        dna-echo -e "The domain | ${n-}${domain}${r-} | is NOT valid."
+        export domain_is_valid="n"
+    fi
+
+    unset silent
+
+}
+
 dna-validate_ipv4() {
 
     ############################################################################
