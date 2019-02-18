@@ -10,7 +10,7 @@ dna-validate_domain() {
         dna-exit
     fi
 
-    while getopts ":d:st:" arguments
+    while getopts ":d:st" arguments
     do
         case "${arguments}" in
             d)  domain_to_validate="${OPTARG}"
