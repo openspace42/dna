@@ -37,7 +37,7 @@ dna-validate_domain() {
     if [ "${top_level_only-}" = "y" ]
     then
 
-        if echo "${domain_to_validate}" | grep -qp '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)[a-zA-Z]{2,}$)'
+        if echo "${domain_to_validate}" | grep -qP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)[a-zA-Z]{2,}$)'
         then
             dna-echo -s "The domain | ${n-}${domain_to_validate}${g-} | is valid."
             export domain_is_valid="y"
