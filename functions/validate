@@ -10,12 +10,14 @@ dna-validate_domain() {
         dna-exit
     fi
 
-    while getopts ":d:s" arguments
+    while getopts ":d:st:" arguments
     do
         case "${arguments}" in
             d)  domain_to_validate="${OPTARG}"
                 ;;
             s)	export silent="y"
+                ;;
+            t)	export top_level_only="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -32,14 +34,29 @@ dna-validate_domain() {
 
     ############################################################################
 
-    if echo "${domain_to_validate}" | grep -qP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$)'
-
+    if [ "${top_level_only-}" = "y" ]
     then
-        dna-echo -s "The domain | ${n-}${domain_to_validate}${g-} | is valid."
-        export domain_is_valid="y"
+
+        if echo "${domain_to_validate}" | grep -qp '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)[a-zA-Z]{2,}$)'
+        then
+            dna-echo -s "The domain | ${n-}${domain_to_validate}${g-} | is valid."
+            export domain_is_valid="y"
+        else
+            dna-echo -e "The domain | ${n-}${domain_to_validate}${r-} | is NOT valid."
+            export domain_is_valid="n"
+        fi
+
     else
-        dna-echo -e "The domain | ${n-}${domain_to_validate}${r-} | is NOT valid."
-        export domain_is_valid="n"
+
+        if echo "${domain_to_validate}" | grep -qP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$)'
+        then
+            dna-echo -s "The domain | ${n-}${domain_to_validate}${g-} | is valid."
+            export domain_is_valid="y"
+        else
+            dna-echo -e "The domain | ${n-}${domain_to_validate}${r-} | is NOT valid."
+            export domain_is_valid="n"
+        fi
+
     fi
 
 }
