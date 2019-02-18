@@ -42,8 +42,6 @@ dna-validate_domain() {
         export domain_is_valid="n"
     fi
 
-    unset silent
-
 }
 
 dna-validate_ipv4() {
@@ -105,8 +103,6 @@ dna-validate_ipv4() {
         dna-echo -e "The IPv4 address | ${n-}${ip}${r-} | is NOT valid."
         export ip_is_valid="n"
     fi
-
-    unset silent
 
 }
 
@@ -227,8 +223,6 @@ dna-validate_ipv6() {
         export ip_is_valid="n"
     fi
 
-    unset silent
-
 }
 
 dna-validate_ssh_pubkey() {
@@ -277,7 +271,5 @@ dna-validate_ssh_pubkey() {
     fi
 
     rm "${tmp_project_dir}/validate_ssh_pubkey"
-
-    unset silent
 
 }
