@@ -211,6 +211,7 @@ dna-check_dns_record() {
 				dna-echo -e "The reference value | ${n-}${reference_item}${r-} | is not a valid | ${n-}IPv${version-}${r-} | address."
 				dna-exit
 			fi
+            unset silent
 		done
 		unset reference_item
 	fi
