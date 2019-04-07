@@ -126,15 +126,27 @@ dna-harden_ssh() {
     done
     OPTIND=1
 
-    dna-echo -m "Now setting SSH hardened values..."
+    dna-echo -m "It is highly recommended to only allow SSH connections via keypair and disable password-based authentication."
+    dna-echo -m "Only answer yes to this question if you've previously entered your SSH public key when prompted."
 
-    sed -i "s/^PermitRootLogin yes/PermitRootLogin without-password/" "${ssh_config_file}"
+    dna-ask_for_boolean -d "y" -q "Also set setting SSH hardened values now?"
 
-    dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to | ${y-}without-password${n-} |."
+    if [ "${boolean_output}" = "y" ]
+    then
 
-    sed -i "0, /sftp_access/ s/^PasswordAuthentication yes/PasswordAuthentication no/" "${ssh_config_file}"
+        sed -i "s/^PermitRootLogin yes/PermitRootLogin without-password/" "${ssh_config_file}"
 
-    dna-echo -m "Set | ${o-}PasswordAuthentication${n-} | to | ${y-}no${n-} |."
+        dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to | ${y-}without-password${n-} |."
+
+        sed -i "0, /sftp_access/ s/^PasswordAuthentication yes/PasswordAuthentication no/" "${ssh_config_file}"
+
+        dna-echo -m "Set | ${o-}PasswordAuthentication${n-} | to | ${y-}no${n-} |."
+
+    else
+
+        dna-echo -m "Ok, skipping hardening SSH values."
+
+    fi
 
     dna-echo -m "Now checking current SSH port setting..."
 
@@ -360,6 +372,7 @@ dna-prompt_ssh_connection_test() {
 
     dna-echo -m "It's now time to ensure that your SSH configuration on this machine is correct."
     dna-echo -m "Now open a new SSH session to this machine from your workstation with the SSH keypair and SSH port you previously entered and chose."
+    dna-echo -e "Make absolutely sure you perform this test before answering the following question or you will be locked out of your machine!"
 
     dna-ask_for_boolean -d "n" -q "Has the new SSH session worked?"
 
