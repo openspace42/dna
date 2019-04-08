@@ -558,7 +558,7 @@ dna-br_duplicity_loop() {
 	fi
 
 	standard_ulimit_n="$(ulimit -n)"
-	ulimit -Sn "16384"
+	ulimit -n "524288"
 
 	# Export some ENV variables so you don't have to type anything
 	export AWS_ACCESS_KEY_ID=$s3_access_key_id
