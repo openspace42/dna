@@ -552,6 +552,11 @@ dna-br_duplicity_loop() {
 
 	### Raise ulimit for open files
 
+	if ! grep -q "fs.file-max = 2097152" "/etc/sysctl.conf"
+	then
+		echo "fs.file-max = 2097152" >> "/etc/sysctl.conf"
+	fi
+
 	standard_ulimit_n="$(ulimit -n)"
 	ulimit -Sn "16384"
 
