@@ -6,14 +6,16 @@ dna-get_public_ipv4() {
 
     while getopts ":ps" arguments
     do
-        case $arguments in
+        case $arguments
+        in
             p)  export prompt_for_override="y"
+                ;;
             s)	export silent="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
                 ;;
-            esac
+        esac
     done
     OPTIND=1
 
