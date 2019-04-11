@@ -19,7 +19,7 @@ dna-get_public_ipv4() {
     done
     OPTIND=1
 
-    if [ "${prompt_for_override-}" = "y" ] && [ "${prompt_for_override-}" = "y" ]
+    if [ "${prompt_for_override-}" = "y" ] && [ "${silent-}" = "y" ]
     then
         dna-echo -e "Argument | ${n-}silent [-s]${r-} | is incompatible with | ${n-}prompt_for_override [-o]${r-} |."
         dna-exit
