@@ -69,4 +69,6 @@ dna-get_public_ipv4() {
 
     fi
 
+    unset silent prompt_for_override
+
 }
