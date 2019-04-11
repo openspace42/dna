@@ -19,6 +19,12 @@ dna-get_public_ipv4() {
     done
     OPTIND=1
 
+    if [ "${prompt_for_override-}" = "y" ]
+    then
+        dna-echo -e "Argument | ${n-}silent [-s]${r-} | is incompatible with | ${n-}prompt_for_override [-o]${r-} |."
+        dna-exit
+    fi
+
     ############################################################################
 
     this_ipv4="$(curl -s http://whatismyip.akamai.com/)"
