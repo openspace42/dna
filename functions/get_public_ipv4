@@ -4,11 +4,11 @@ dna-get_public_ipv4() {
 
     ############################################################################
 
-    while getopts ":ps" arguments
+    while getopts ":os" arguments
     do
         case $arguments
         in
-            p)  export prompt_for_override="y"
+            o)  export prompt_for_override="y"
                 ;;
             s)	export silent="y"
                 ;;
