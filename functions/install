@@ -329,7 +329,7 @@ dna-localize_sslh_install() {
 
     sed -i "s|ssh_port-var|${ssh_port}|g" "/etc/sslh.cfg"
 
-	sed -i "s|this_ipv4-var|${this_ipv4}|g" "/etc/sslh.cfg"
+	sed -i "s|public_ipv4-var|${public_ipv4}|g" "/etc/sslh.cfg"
 
     if [ "${ipv6_available}" = "y" ]
 	then
@@ -406,7 +406,7 @@ syslog_facility: "auth";
 
 listen:
 (
-    { host: "this_ipv4-var";       port: "443"; }#ipv6_comma
+    { host: "public_ipv4-var";       port: "443"; }#ipv6_comma
 #ipv6_line    { host: "this_ipv6-var";       port: "443"; }
 );
 

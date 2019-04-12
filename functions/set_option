@@ -197,7 +197,7 @@ dna-set_option() {
 
 						ask_for_value() {
 
-							if [ "${hint_value}" = "y" ]
+							if [ "${hint_value-}" = "y" ]
 							then
 
 								### If | -h y | then | hint_value | must be defined immediately prior to calling this function.

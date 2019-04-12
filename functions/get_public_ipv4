@@ -19,7 +19,7 @@ dna-get_public_ipv4() {
 
     ############################################################################
 
-    if [ ! -f "${temp_project_dir}/public_ipv4_setup" ]
+    if [ ! -f "${tmp_project_dir}/public_ipv4_setup" ]
     then
 
         describe_setting() {
@@ -67,7 +67,7 @@ dna-get_public_ipv4() {
 
         }
 
-        dna-set_option -o "public_ipv4" -p "network" -d "y" -v "y"
+        dna-set_option -o "public_ipv4" -p "network" -d "y" -h "y" -v "y"
 
         touch "${tmp_project_dir}/public_ipv4_setup"
 
