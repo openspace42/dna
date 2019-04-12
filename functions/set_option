@@ -10,7 +10,7 @@ dna-set_option() {
         dna-exit
     fi
 
-	while getopts ":o:p:d:c:v:s:" arguments
+	while getopts ":o:p:d:c:h:v:s:" arguments
 	do
 		case "${arguments}" in
 			o)	option="${OPTARG}"
@@ -20,6 +20,8 @@ dna-set_option() {
 			d)	describe="${OPTARG}"
 				;;
 			c)	choices="${OPTARG}"
+				;;
+			h)	hint="${OPTARG}"
 				;;
 			v)	validate="${OPTARG}"
 				;;
@@ -44,6 +46,19 @@ dna-set_option() {
 			y)	describe_setting=y
 				;;
 			n)	describe_setting=n
+				;;
+			*)	dna-echo -e "Invalid content for describe argument in function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	fi
+
+	if [ ! -z "${hint-}" ]
+	then
+		case "${hint}" in
+			y)	hint_value=y
+				;;
+			n)	hint_value=n
 				;;
 			*)	dna-echo -e "Invalid content for describe argument in function | ${n-}${FUNCNAME[0]}${r-} |."
 				dna-exit
@@ -180,11 +195,28 @@ dna-set_option() {
 					until [ ! -z "${new_val-}" ]
 					do
 
+						ask_for_value() {
+
+							if [ "${hint_value}" = "y" ]
+							then
+
+								### If | -h y | then | hint_value | must be defined immediately prior to calling this function.
+
+								hint_value
+
+							else
+
+								read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
+								echo
+
+							fi
+
+						}
+
 						if [ "${skip_descr-null}" = "y" ]
 						then
 
-							read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
-							echo
+							ask_for_value
 
 						else
 
@@ -197,8 +229,7 @@ dna-set_option() {
 
 							fi
 
-							read -rp "${b-}Now specify your value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
-							echo
+							ask_for_value
 
 						fi
 
