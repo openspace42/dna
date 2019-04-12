@@ -73,7 +73,7 @@ dna-get_public_ipv4() {
 
     else
 
-        dna-echo -m "Public IPv4 for this machine previously set during this installation to: | ${y-}${apparent_public_ipv4}${n-} |."
+        dna-echo -m "Public IPv4 for this machine previously set during this installation to: | ${y-}${public_ipv4}${n-} |."
 
     fi
 
