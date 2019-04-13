@@ -114,23 +114,32 @@ dna-set_option() {
 	if [ -z "${setting-}" ]
 	then
 
-		if [ -f "$opt_path" ]
+		if [ -f "${opt_path}" ]
 		then
 
 			previous_value="$(cat ${opt_path})"
 
-			if [ "${validate_input-null}" = "y" ]
+			if [ -n "${previous_value}" ]
 			then
 
-				input="${previous_value}"
+				if [ "${validate_input-null}" = "y" ]
+				then
 
-				### If | -v y | then | validate_input | must be defined immediately prior to calling this function.
+					input="${previous_value}"
 
-				validate_input
+					### If | -v y | then | validate_input | must be defined immediately prior to calling this function.
+
+					validate_input
+
+				else
+
+					valid="y"
+
+				fi
 
 			else
 
-				valid="y"
+				valid="n"
 
 			fi
 

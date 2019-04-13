@@ -322,7 +322,7 @@ dna-localize_sslh_install() {
 
     dna-read_conf_settings
 
-    dna-get_public_ipv4 -s
+    dna-get_public_ipv4
     dna-check_ipv6_connectivity -s
 
     ### Localize install with this machine's info
