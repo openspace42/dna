@@ -4,6 +4,21 @@ dna-get_public_ipv4() {
 
     ############################################################################
 
+    while getopts ":s" arguments
+    do
+        case $arguments
+        in
+            s)	export silent="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    ############################################################################
+
     if [ ! -f "${tmp_project_dir}/public_ipv4_setup" ]
     then
 
@@ -58,7 +73,12 @@ dna-get_public_ipv4() {
 
     else
 
-        dna-echo -m "Public IPv4 for this machine previously set during this installation to: | ${y-}${public_ipv4}${n-} |."
+        if [ ! "${silent-}" = "y" ]
+        then
+
+            dna-echo -m "Public IPv4 for this machine previously set during this installation to: | ${y-}${public_ipv4}${n-} |."
+
+        fi
 
     fi
 
