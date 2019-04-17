@@ -31,7 +31,7 @@ dna-install_certbot() {
 
 	fi
 
-	certbot &> /dev/null || true
+	certbot -n &> /dev/null || true
 
 	dna-echo_operation -t
 
