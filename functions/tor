@@ -47,11 +47,20 @@ dna-tor_enable_hidden_service() {
 
         dna-echo -m "Tor hidden service directive not present. Creating and enabling it now..."
 
-        sed -i "/############### This section is just for location-hidden services ###/a HiddenServiceDir /var/lib/tor/hidden_service/" "/etc/tor/torrc"
-
-        /usr/sbin/service tor restart
+        sed -i "|############### This section is just for location-hidden services ###|a HiddenServiceDir /var/lib/tor/hidden_service/" "/etc/tor/torrc"
 
     fi
+
+    ### Add one listener to make the hidden service actually start
+
+    if ! grep -q "^HiddenServicePort" "/etc/tor/torrc"
+    then
+
+        sed -i "|HiddenServiceDir /var/lib/tor/hidden_service/|a HiddenServicePort 80 127.0.0.1:80" "/etc/tor/torrc"
+
+    fi
+
+    /usr/sbin/service tor restart
 
     dna-wait -s "4" -d "Now allowing tor to start up correctly..."
 
