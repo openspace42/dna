@@ -535,6 +535,10 @@ dna-install_tor() {
     echo "deb https://deb.torproject.org/torproject.org ${distro_codename} main" > "/etc/apt/sources.list.d/tor.list"
     echo "deb-src https://deb.torproject.org/torproject.org ${distro_codename} main" >> "/etc/apt/sources.list.d/tor.list"
 
+    apt-get update
+
+    ### Install
+
     dna-install_dependencies -p "tor deb.torproject.org-keyring"
 
     dna-echo_operation -t
