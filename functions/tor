@@ -47,7 +47,7 @@ dna-tor_enable_hidden_service() {
 
         dna-echo -m "Tor hidden service directive not present. Creating and enabling it now..."
 
-        sed -i "|############### This section is just for location-hidden services ###|a HiddenServiceDir /var/lib/tor/hidden_service/" "/etc/tor/torrc"
+        sed -i "/############### This section is just for location-hidden services ###/a HiddenServiceDir /var/lib/tor/hidden_service/" "/etc/tor/torrc"
 
     fi
 
@@ -56,7 +56,7 @@ dna-tor_enable_hidden_service() {
     if ! grep -q "^HiddenServicePort" "/etc/tor/torrc"
     then
 
-        sed -i "|HiddenServiceDir /var/lib/tor/hidden_service/|a HiddenServicePort 80 127.0.0.1:80" "/etc/tor/torrc"
+        sed -i "/HiddenServiceDir \/var\/lib\/tor\/hidden_service\//a HiddenServicePort 80 127.0.0.1:80" "/etc/tor/torrc"
 
     fi
 
