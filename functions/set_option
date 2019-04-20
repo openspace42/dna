@@ -10,10 +10,12 @@ dna-set_option() {
         dna-exit
     fi
 
-	while getopts ":o:p:d:c:h:v:s:" arguments
+	while getopts ":o:t:p:d:c:h:v:s:" arguments
 	do
 		case "${arguments}" in
 			o)	option="${OPTARG}"
+				;;
+			t)	type="${OPTARG}"
 				;;
 			p)	path="${OPTARG}"
 				;;
@@ -38,6 +40,19 @@ dna-set_option() {
 	then
 		dna-echo -e "Argument | ${n-}option [-o]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
 		dna-exit
+	fi
+
+	if [ ! -z "${type-}" ]
+	then
+		case "${type}" in
+			g)	setting_type="global"
+				;;
+			p)	setting_type="project_specific"
+				;;
+			*)	dna-echo -e "Invalid content for describe argument in function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
 	fi
 
 	if [ ! -z "${describe-}" ]
@@ -83,6 +98,18 @@ dna-set_option() {
 
 	mkdir -p "${conf_dir}"
 
+	if [ ! -z "${setting_type-}" ]
+	then
+		if [ "${setting_type}" = "global" ]
+		then
+			setting_conf_dir="${os_conf_dir}"
+		elif [ "${setting_type}" = "project_specific" ]
+			setting_conf_dir="${conf_dir}"
+		fi
+	else
+		setting_conf_dir="${conf_dir}"
+	fi
+
 	if [ ! -z "${path-}" ]
 	then
 
@@ -99,7 +126,7 @@ dna-set_option() {
 		then
 			opt_base_path="${path}"
 		else
-			opt_base_path="${conf_dir}/${path}"
+			opt_base_path="${setting_conf_dir}/${path}"
 			mkdir -p "${opt_base_path}"
 		fi
 
@@ -107,7 +134,7 @@ dna-set_option() {
 
 	else
 
-		opt_path="${conf_dir}/${option}"
+		opt_path="${setting_conf_dir}/${option}"
 
 	fi
 

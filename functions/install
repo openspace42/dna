@@ -513,3 +513,26 @@ EOF
 	dna-echo_operation -t
 
 }
+
+dna-install_tor() {
+
+    ### https://2019.www.torproject.org/docs/debian.html.en
+
+    operation_message="installing Tor"
+    dna-echo_operation -h
+
+    ### Import key
+
+    curl https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc | gpg --import
+    gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
+
+    ### Add repo
+
+    dna-get_distro_codename
+
+    echo "deb https://deb.torproject.org/torproject.org ${distro_codename} main" > "/etc/apt/sources.list.d/tor.list"
+    echo "deb-src https://deb.torproject.org/torproject.org ${distro_codename} main" >> "/etc/apt/sources.list.d/tor.list"
+
+    dna-echo_operation -t
+
+}
