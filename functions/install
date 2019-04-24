@@ -316,6 +316,15 @@ dna-install_nginx() {
 
 }
 
+dna-install_nodejs() {
+
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+
+    dna-install_dependencies -p "nodejs"
+
+
+}
+
 dna-localize_sslh_install() {
 
     ### Prepare the installation environment by reading the current system SSH port and fetching IP connectivity information
