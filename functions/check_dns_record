@@ -272,7 +272,6 @@ dna-check_dns_record() {
 
 	read_choice() {
 
-
 		if [ $# -eq 0 ]
 	    then
 	        dna-echo -m "${r-}No argument supplied for function | ${FUNCNAME[0]} |."
@@ -281,7 +280,7 @@ dna-check_dns_record() {
 
 		while getopts ":m:" arguments; do
 	        case $arguments in
-	            m)	message="$OPTARG"
+	            m)	choice_message="$OPTARG"
 		            ;;
 	            \?)	dna-echo -m "${r-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |."
 		            dna-exit
@@ -295,7 +294,7 @@ dna-check_dns_record() {
 		until [ "${valid-null}" = "y" ]
 		do
 
-			read -n 1 -rp "${b-}${message}${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip this check]/${b-}e${x-}[xit all checks]) " answer;
+			read -n 1 -rp "${b-}${choice_message}${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip this check]/${b-}e${x-}[xit all checks]) " answer;
 			case $answer in
 				"")	echo
 					valid=y
