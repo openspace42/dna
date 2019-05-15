@@ -168,6 +168,21 @@ dna-install_easyengine() {
 
 }
 
+dna-install_etcd () {
+
+    dna-get_distro_name
+
+    if [ "${distro_name}" = "debian" ]
+    then
+
+        dna-enable_debian_testing_repo
+
+    fi
+
+    dna-install_dependencies -p "etcd"
+
+}
+
 dna-install_mail_notifications() {
 
     while getopts ":f" arguments

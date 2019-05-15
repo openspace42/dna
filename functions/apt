@@ -95,6 +95,7 @@ deb     http://security.debian.org/         testing/updates  main contrib non-fr
 EOF
 
     apt-get update
+    echo
 
 }
 
