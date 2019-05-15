@@ -1,0 +1,25 @@
+aenigma-install_postgresql() {
+
+	### https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04
+
+	############################################################################
+
+	### Install dependencies required for postgresql cluster
+
+	aenigma-install_postgresql_dependencies
+
+	############################################################################
+
+	### Locate pg_hba file
+
+	#pg_hba_file_path="$(find /etc/postgresql/ -name pg_hba.conf)"
+
+	### Allow direct psql user login
+
+	#dna-echo -m "Allowing direct PSQL login"
+
+	#sed -i "s|local   all             all                                     peer|local   all             all                                     md5|g" "${pg_hba_file_path}"
+
+	#service postgresql restart
+
+}
