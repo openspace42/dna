@@ -361,7 +361,7 @@ dna-install_postgresql() {
 		touch "/etc/apt/preferences"
 		if ! grep -q "apt.postgresql.org" "/etc/apt/preferences"
 		then
-			cat <<EOF > "/etc/apt/preferences"
+			cat <<EOF >> "/etc/apt/preferences"
 Package: *
 Pin: origin "apt.postgresql.org"
 Pin-Priority: 1000
