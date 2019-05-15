@@ -346,6 +346,35 @@ dna-install_nodejs() {
 
 }
 
+dna-install_postgresql() {
+
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+    dna-get_distro_codename
+
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ ${distro_codename}"-pgdg main > "/etc/apt/sources.list.d/pgdg.list"
+
+    dna-get_distro_name
+
+    if [ "${distro_name}" = "debian" ]
+	then
+		touch "/etc/apt/preferences"
+		if ! grep -q "apt.postgresql.org" "/etc/apt/preferences"
+		then
+			cat <<EOF > "/etc/apt/preferences"
+Package: *
+Pin: origin "apt.postgresql.org"
+Pin-Priority: 1000
+EOF
+		fi
+	fi
+
+    apt-get update
+
+    dna-install_dependencies -p "postgresql-11"
+
+}
+
 dna-localize_sslh_install() {
 
     ### Prepare the installation environment by reading the current system SSH port and fetching IP connectivity information
