@@ -358,6 +358,7 @@ dna-install_postgresql() {
 
     if [ "${distro_name}" = "debian" ]
 	then
+
 		touch "/etc/apt/preferences"
 		if ! grep -q "apt.postgresql.org" "/etc/apt/preferences"
 		then
@@ -368,6 +369,10 @@ Pin: origin "apt.postgresql.org"
 Pin-Priority: 1000
 EOF
 		fi
+
+        apt-get -y install "postgresql-client-common"
+        apt-get -y install "postgresql-client-11"
+
 	fi
 
     apt-get update
