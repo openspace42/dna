@@ -493,9 +493,19 @@ dna-secure_root_pw() {
 
 dna-install_basic_packages() {
 
+    ### Install basic packages
+
     dna-install_dependencies -p "sudo software-properties-common apt-transport-https curl ntp dnsutils haveged cronic fail2ban git glances htop pwgen pv bc rsync screen psmisc"
 
+    ### Enable bash completion for screen
+
+    echo "defshell -bash" > ~/.screenrc
+
+    ### Start ntp in case it doesn't on its own
+
     service ntp start
+
+    ### Install mosh
 
     dna-install_mosh
 
