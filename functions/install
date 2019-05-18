@@ -309,6 +309,7 @@ dna-install_mosh() {
     else
         iptables -I INPUT 1 -p udp --dport 60000:61000 -j ACCEPT
     fi
+    echo
 
     ############################################################################
 
