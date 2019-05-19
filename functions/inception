@@ -104,6 +104,10 @@ dna-set_ssh_pubkey() {
 
 dna-harden_ssh() {
 
+    ### Install sshd
+
+    dna-install_dependencies -p "openssh-server"
+
     alert_force_alt_ssh_port() {
 
         dna-echo -e "${proj_name} requires your SSH port to be changed to: | ${n-}42022${r-} |."
@@ -481,7 +485,7 @@ dna-secure_root_pw() {
         then
 
     		dna-echo -m "Ok, unsetting | ${o-}root${n-} | password."
-    		sudo passwd -dl root
+    		passwd -dl root
     		echo
     	else
     		dna-echo -m "Ok, not taking any action on | ${o-}root${n-} | password."

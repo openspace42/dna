@@ -145,6 +145,14 @@ dna-install_duplicity() {
 
 dna-install_easyengine() {
 
+    ############################################################################
+
+    ### Install dependencies
+
+    dna-install_wget
+
+    ############################################################################
+
 	operation_message="[re-]installing and updating EasyEngine..."
 
 	dna-echo_operation -h
@@ -165,6 +173,8 @@ dna-install_easyengine() {
 	echo
 
 	dna-echo_operation -t
+
+    ############################################################################
 
 }
 
@@ -340,16 +350,33 @@ dna-install_nginx() {
 
 dna-install_nodejs() {
 
-    curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+    curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
     dna-install_dependencies -p "nodejs"
 
 
 }
 
+dna-install_ping() {
+
+    dna-install_dependencies -p "iputils-ping"
+
+}
+
 dna-install_postgresql() {
 
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    ############################################################################
+
+    ### Install dependencies
+
+    dna-install_wget
+
+    ############################################################################
+
+    operation_message="installing PostgreSQL"
+    dna-echo_operation -h
+
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
     dna-get_distro_codename
 
@@ -379,6 +406,10 @@ EOF
     apt-get update
 
     dna-install_dependencies -p "postgresql-11"
+
+    dna-echo_operation -t
+
+    ############################################################################
 
 }
 
@@ -436,7 +467,7 @@ dna-install_sslh() {
     	/usr/sbin/service sslh stop
     fi
 
-    if pgrep sslh &> /dev/null ; then sudo killall sslh ; fi
+    if pgrep sslh &> /dev/null ; then killall sslh ; fi
 
     ############################################################################
 
@@ -608,5 +639,11 @@ dna-install_tor() {
     dna-install_dependencies -p "tor deb.torproject.org-keyring"
 
     dna-echo_operation -t
+
+}
+
+dna-install_wget() {
+
+    dna-install_dependencies -p "wget"
 
 }

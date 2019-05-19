@@ -4,6 +4,14 @@ dna-check_ipv6_connectivity() {
 
     ############################################################################
 
+    ### Install dependencies
+
+    dna-install_ping
+
+    ############################################################################
+
+    ### Get arguments
+
     while getopts ":s" arguments; do
         case $arguments in
             s)	export silent="y"
@@ -16,6 +24,8 @@ dna-check_ipv6_connectivity() {
     OPTIND=1
 
     ############################################################################
+
+    ### Check to see if IPv6 connectivity is available
 
     dna-echo -m "Now testing IPv6 connectivity..."
 
@@ -50,6 +60,9 @@ dna-check_ipv6_connectivity() {
             this_ipv6="null"
         fi
     fi
+
+    ### Fetch current IPv6 global address if it's available
+
     if [ "${ipv6_available}" = "y" ]
     then
         this_ipv6="$(dig +short -6 myip.opendns.com aaaa @resolver1.ipv6-sandbox.opendns.com)"

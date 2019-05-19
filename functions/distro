@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
+dna-distro_install_dependencies() {
+
+    dna-install_dependencies -p "lsb-release"
+
+}
+
 dna-get_distro_name() {
+
+    dna-distro_install_dependencies
 
     distro_name="$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]')"
 
@@ -8,11 +16,17 @@ dna-get_distro_name() {
 
 dna-get_distro_codename() {
 
+    dna-distro_install_dependencies
+
     distro_codename="$(lsb_release --codename | cut -f2)"
 
 }
 
 dna-check_distro_ubuntu() {
+
+    ### Install dependencies
+
+    dna-distro_install_dependencies
 
     ### Check that the running distro is Ubuntu
 
@@ -24,6 +38,10 @@ dna-check_distro_ubuntu() {
 }
 
 dna-check_distro_ubuntu_lts() {
+
+    ### Install dependencies
+
+    dna-distro_install_dependencies
 
     ### Check that the running distro is Ubuntu on an LTS version
 
@@ -38,6 +56,10 @@ dna-check_distro_ubuntu_lts() {
 
 dna-check_distro_ubuntu_18() {
 
+    ### Install dependencies
+
+    dna-distro_install_dependencies
+
     ### Check that the running distro is Ubuntu
 
     if ! lsb_release -d | cut -f2 | grep "Ubuntu 18.04" > /dev/null
@@ -49,6 +71,8 @@ dna-check_distro_ubuntu_18() {
 
 dna-check_distro_debian() {
 
+    dna-distro_install_dependencies
+
     if ! lsb_release -d | cut -f2 | grep "Debian" > /dev/null
     then
         false
@@ -57,6 +81,8 @@ dna-check_distro_debian() {
 }
 
 dna-check_distro_debian_9() {
+
+    dna-distro_install_dependencies
 
     if ! lsb_release -d | cut -f2 | grep "Debian GNU/Linux 9" > /dev/null
     then
