@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+set -eu
+
+dna-provision_le_wildcard_cert() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":d:" arguments
+    do
+        case "${arguments}" in
+            d)	cert_domain="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${cert_domain-}" ]
+    then
+        dna-echo -e "Argument | ${n-}cert_domain [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    dna-install_certbot
+
+    operation_message="provisioning a wildcard LetsEncrypt TLS [SSL] certificate for: | ${c-}${cert_domain}${n-} |."
+
+    dna-echo_operation -h
+
+    if [ ! -z "${admin_mail-}" ]
+    then
+        certbot certonly --manual -d "$cert_domain, *.$cert_domain" -m "${admin_mail}" --agree-tos --keep-until-expiring --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
+    else
+        certbot certonly --manual -d "$cert_domain, *.$cert_domain" --agree-tos --keep-until-expiring --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
+    fi
+
+    echo
+
+    dna-echo_operation -t
+
+    unset cert_domain
+
+}
+
+dna-provision_self_signed_wildcard_cert() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":d:" arguments
+    do
+        case "${arguments}" in
+            d)	cert_domain="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${cert_domain-}" ]
+    then
+        dna-echo -e "Argument | ${n-}cert_domain [-d]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    local_openssl_config="
+    [ req ]
+    prompt = no
+    distinguished_name = req_distinguished_name
+    x509_extensions = san_self_signed
+    [ req_distinguished_name ]
+    CN=${cert_domain}
+    [ san_self_signed ]
+    subjectAltName = DNS:${cert_domain}, DNS:*.${cert_domain}
+    subjectKeyIdentifier = hash
+    authorityKeyIdentifier = keyid:always,issuer
+    basicConstraints = CA:true
+    keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment, keyCertSign, cRLSign
+    extendedKeyUsage = serverAuth, clientAuth, timeStamping
+    "
+
+    openssl req \
+      -newkey rsa:8192 -nodes \
+      -keyout "${ssl_project_dir}/${cert_domain}.key" \
+      -x509 -sha256 -days 3650 \
+      -config <(echo "$local_openssl_config") \
+      -subj "/C=IS/ST=Island/L=Reykjavik/O=aenigma/CN=${cert_domain}" \
+      -out "${ssl_project_dir}/${cert_domain}.pem"
+    openssl x509 -noout -text -in "${ssl_project_dir}/${cert_domain}.pem"
+
+    unset cert_domain
+
+}
