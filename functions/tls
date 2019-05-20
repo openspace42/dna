@@ -101,12 +101,12 @@ dna-provision_self_signed_wildcard_cert() {
 
     openssl req \
       -newkey rsa:8192 -nodes \
-      -keyout "${ssl_project_dir}/${cert_domain}.key" \
+      -keyout "${tls_project_dir}/${cert_domain}.key" \
       -x509 -sha256 -days 3650 \
       -config <(echo "$local_openssl_config") \
       -subj "/C=IS/ST=Island/L=Reykjavik/O=aenigma/CN=${cert_domain}" \
-      -out "${ssl_project_dir}/${cert_domain}.pem"
-    openssl x509 -noout -text -in "${ssl_project_dir}/${cert_domain}.pem"
+      -out "${tls_project_dir}/${cert_domain}.pem"
+    openssl x509 -noout -text -in "${tls_project_dir}/${cert_domain}.pem"
 
     unset cert_domain
 
