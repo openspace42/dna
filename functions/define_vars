@@ -12,7 +12,7 @@ dna-define_vars() {
 
 	### system
 
-	export ssl_dir="/etc/ssl"
+	export tls_dir="/etc/ssl"
 	export www_dir="/var/www"
 	export tmp_dir="/tmp"
 	export le_live_dir="/etc/letsencrypt/live"
@@ -54,7 +54,7 @@ dna-define_vars() {
 
 	### system project-specific
 
-	export ssl_project_dir="${ssl_dir}/${proj_name}"
+	export tls_project_dir="${tls_dir}/${proj_name}"
 	export tmp_project_dir="${tmp_dir}/${proj_name}"
 
 	############################################################################
