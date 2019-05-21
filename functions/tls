@@ -117,7 +117,7 @@ dna-provision_self_signed_wildcard_cert() {
       -config <(echo "$local_openssl_config") \
       -subj "/C=IS/ST=Island/L=Reykjavik/O=aenigma/CN=${cert_domain}" \
       -out "${tls_project_dir}/${cert_domain}.cert.pem"
-    openssl x509 -noout -text -in "${tls_project_dir}/${cert_domain}.pem"
+    openssl x509 -noout -text -in "${tls_project_dir}/${cert_domain}.cert.pem"
 
     unset cert_domain
 
