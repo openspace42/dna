@@ -53,6 +53,17 @@ dna-provision_le_wildcard_cert() {
 
 }
 
+dna-provision_self_signed_cert() {
+
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+    -keyout "${ssl_project_dir}/onion.key" \
+    -out "${ssl_project_dir}/onion.crt" \
+    -subj "/C=IS/ST=Island/L=Reykjavik/O=aenigma/CN=${tor_hidden_service_hostname}" \
+    -reqexts SAN -extensions SAN -config <(cat "/System/Library/OpenSSL/openssl.cnf" \
+    <(printf '[SAN]\nsubjectAltName=DNS:*.${tor_hidden_service_hostname}'))
+
+}
+
 dna-provision_self_signed_wildcard_cert() {
 
     ############################################################################

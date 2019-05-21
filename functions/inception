@@ -23,9 +23,7 @@ dna-set_locale() {
     then
 
         echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
         echo "LANG=en_US.UTF-8" > /etc/locale.conf
-        locale-gen en_US.UTF-8
         echo
 
     else
@@ -36,6 +34,10 @@ dna-set_locale() {
     fi
 
     echo "LC_ALL=en_US.UTF-8" > "/etc/default/locale"
+
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+    locale-gen en_US.UTF-8
+
     dna-echo -s "Locale set."
 
 }
