@@ -363,7 +363,7 @@ dna-install_nodejs() {
     if [ "${distro_name}" = "debian" ]
 	then
 		touch "/etc/apt/preferences"
-		if ! grep -q "apt.jabber.at" "/etc/apt/preferences"
+		if ! grep -q "apt.nodesource.at" "/etc/apt/preferences"
 		then
 			cat <<EOF >> "/etc/apt/preferences"
 
