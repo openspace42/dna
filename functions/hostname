@@ -4,6 +4,6 @@ set -eu
 
 dna-get_hostname() {
 
-    hostname="${HOSTNAME}"
+    hostname="$(cat /etc/hostname)"
 
 }
