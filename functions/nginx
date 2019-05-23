@@ -1,0 +1,14 @@
+#/usr/bin/env bash
+
+set -eu
+
+dna-nginx_increase_names_hash_bucket_size_128() {
+
+    if ! grep -q "server_names_hash_bucket_size 128;" "/etc/nginx/nginx.conf"
+    then
+
+        sed -i "/^http {$/a\ \n    server_names_hash_bucket_size 128;\n" "/etc/nginx/nginx.conf"
+
+    fi
+
+}
