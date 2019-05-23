@@ -62,7 +62,7 @@ dna-tor_enable_hidden_service() {
 
     /usr/sbin/service tor restart
 
-    dna-wait -s "4" -d "Now allowing tor to start up correctly..."
+    dna-wait -s "8" -d "Now allowing tor to start up correctly..."
 
     ############################################################################
 
@@ -78,6 +78,7 @@ dna-tor_enable_hidden_service() {
     else
 
         dna-echo -e "Tor hidden service was NOT enabled successfully."
+        dna-exit
 
     fi
 
