@@ -398,12 +398,16 @@ Pin-Priority: 1000
 EOF
 		fi
 
+        apt-get update
+
         apt-get -y install "postgresql-client-common"
         apt-get -y install "postgresql-client-11"
 
-	fi
+    else
 
-    apt-get update
+        apt-get update
+
+	fi
 
     dna-install_dependencies -p "postgresql-11"
 
