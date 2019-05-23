@@ -61,14 +61,14 @@ dna-check_dns_record() {
 
 	### Check if the user has previously selected to skip all DNS checks
 
-	if [ "${dns_checks_outcome-null}" = "exit" ]
+	if [ "${dns_checks_outcome-}" = "exit" ]
 	then
 		return 0
 	fi
 
 	### Unset any previously set "skip" choice
 
-	if [ "${dns_checks_outcome-null}" = "skip" ]
+	if [ "${dns_checks_outcome-}" = "skip" ]
 	then
 		unset dns_checks_outcome
 	fi
@@ -259,7 +259,7 @@ dna-check_dns_record() {
 	    local array="$1[@]"
 	    local seeking="$2"
 	    local in=1
-	    for element in "${!array-null}"
+	    for element in "${!array-}"
 		do
 	        if [[ "$element" == "$seeking" ]]
 			then
@@ -291,7 +291,7 @@ dna-check_dns_record() {
 
         unset valid
 
-		until [ "${valid-null}" = "y" ]
+		until [ "${valid-}" = "y" ]
 		do
 
 			read -n 1 -rp "${b-}${choice_message}${x-} (${b-}Y${x-}[es]/${b-}s${x-}[kip this check]/${b-}e${x-}[xit all checks]) " answer;
@@ -334,13 +334,13 @@ dna-check_dns_record() {
 
 	### Check that every item in reference_array is contained in name_array
 
-	if [ ! "${delete_record-null}" = "y" ]
+	if [ ! "${delete_record-}" = "y" ]
 	then
 
 		for reference_item in "${reference_array[@]}"
 		do
 
-			until [ "${accept-null}" = "y" ]
+			until [ "${accept-}" = "y" ]
 			do
 
 				reference_item_name="$(echo ${reference_item} | xargs)"
@@ -366,7 +366,7 @@ dna-check_dns_record() {
 
 						dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is NOT registered."
 
-						if [ "${autoset_dns-null}" = "y" ]
+						if [ "${autoset_dns-}" = "y" ]
 						then
 
 							dna-echo -m "Automatically setting this record on your DNS provider."
@@ -377,7 +377,7 @@ dna-check_dns_record() {
 
 							dna-echo -m "You must now set this record on the authoritative DNS provider for this zone."
 
-							if [ "${dns_provider_setup-null}" = "y" ]
+							if [ "${dns_provider_setup-}" = "y" ]
 							then
 					            dna-ask_for_boolean -d "y" -q "Would you like to automatically set this record on [one of] your previously specified DNS provider[s]?"
 					            if [ "${boolean_output}" = "y" ]
@@ -489,7 +489,7 @@ dna-check_dns_record() {
 
 	}
 
-	if [ ! "${dns_checks_outcome-null}" = "skip" ] && [ ! "${dns_checks_outcome-null}" = "exit" ]
+	if [ ! "${dns_checks_outcome-}" = "skip" ] && [ ! "${dns_checks_outcome-}" = "exit" ]
 	then
 
 		lookup_name
@@ -504,7 +504,7 @@ dna-check_dns_record() {
 
 				diff_item_name="$(echo ${diff_item} | xargs)"
 
-				until [ "${accept-null}" = "y" ]
+				until [ "${accept-}" = "y" ]
 				do
 
 					### Check to see if this extra item is still actually erroneously registered on DNS
@@ -532,7 +532,7 @@ dna-check_dns_record() {
 
 							dna-echo -m "${r-}The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | is registered but should NOT be."
 
-							if [ "${autoset_dns-null}" = "y" ]
+							if [ "${autoset_dns-}" = "y" ]
 							then
 
 								dna-echo -m "Automatically removing this record on your DNS provider."
@@ -543,7 +543,7 @@ dna-check_dns_record() {
 
 								dna-echo -m "You must now remove this record on the authoritative DNS provider for this zone."
 
-								if [ "${dns_provider_setup-null}" = "y" ]
+								if [ "${dns_provider_setup-}" = "y" ]
 								then
 						            dna-ask_for_boolean -d "y" -q "Would you like to automatically remove this record on [one of] your previously specified DNS provider[s]?"
 						            if [ "${boolean_output}" = "y" ]
@@ -630,7 +630,7 @@ dna-check_dns_record() {
 
 	############################################################################
 
-	if [ ! "${dns_checks_outcome-null}" = "skip" ] && [ ! "${dns_checks_outcome-null}" = "exit" ]
+	if [ ! "${dns_checks_outcome-}" = "skip" ] && [ ! "${dns_checks_outcome-}" = "exit" ]
 	then
 
 		dna-echo -s "All | ${n-}${type_name}${g-} | DNS checks for name | ${n-}${name}${g-} | completed successfully."
@@ -641,7 +641,7 @@ dna-check_dns_record() {
 
 	unset name type version reference valid
 
-	if [ ! "${dns_checks_outcome-null}" = "exit" ]
+	if [ ! "${dns_checks_outcome-}" = "exit" ]
 	then
 		unset dns_checks_outcome
 	fi

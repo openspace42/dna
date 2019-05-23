@@ -50,12 +50,12 @@ dna-set_value() {
 
 		unset defined
 
-		until [ "${defined-null}" = "y" ]
+		until [ "${defined-}" = "y" ]
 		do
 
 			unset valid
 
-			until [ "${valid-null}" = "y" ]
+			until [ "${valid-}" = "y" ]
 			do
 
 				unset new_val
@@ -68,7 +68,7 @@ dna-set_value() {
 
 				done
 
-				if [ "${validate_input-null}" = "y" ]
+				if [ "${validate_input-}" = "y" ]
 				then
 
 					input="$new_val"
@@ -87,7 +87,7 @@ dna-set_value() {
 
 			unset acceptable
 
-			until [ "${acceptable-null}" = "y" ]
+			until [ "${acceptable-}" = "y" ]
 			do
 
 				read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;

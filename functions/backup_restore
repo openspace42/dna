@@ -164,7 +164,7 @@ dna-br_purge_dirs() {
 
 dna-br_create_dirs() {
 
-	if [ "${1:-null}" = "backup" ]
+	if [ "${1:-}" = "backup" ]
 	then
 
 		mkdir -p "$backup_local_storage_path/archive"
@@ -209,7 +209,7 @@ dna-br_backup_locally() {
     echo "${b-}Now backing up locally...${x-}"
 	echo
 
-	if [ ! ${skip_install_complete_check-null} = "y" ]
+	if [ ! ${skip_install_complete_check-} = "y" ]
 	then
 
 		### Abort if the current installation was never completed
@@ -236,7 +236,7 @@ dna-br_backup_locally() {
 
 	cd "$backup_local_storage_path/temp"
 
-    if [ ! ${last-null} = "y" ]
+    if [ ! ${last-} = "y" ]
 	then
 
     	### Tar [and - if chosen - bzip2] this backup archive.
@@ -573,10 +573,10 @@ dna-br_duplicity_loop() {
 
 	HOST=$(hostname)
 	DATE=$(date +%Y-%m-%d)
-	MAILADDR="${admin_mail-null}"
+	MAILADDR="${admin_mail-}"
 	TODAY=$(date +%d%m%Y)
 
-	if [ "${1:-null}" = "backup" ]
+	if [ "${1:-}" = "backup" ]
 	then
 		duplicity_type="backup"
 	else
@@ -614,7 +614,7 @@ dna-br_duplicity_loop() {
 			echo "$stamp: $*" >> ${DAILYLOGFILE}
 		}
 
-		if [ "${1:-null}" = "backup" ]
+		if [ "${1:-}" = "backup" ]
 		then
 
 			# The source of your backup
@@ -633,7 +633,7 @@ dna-br_duplicity_loop() {
 
 		set +e
 
-		if [ "${1:-null}" = "backup" ]
+		if [ "${1:-}" = "backup" ]
 		then
 
 			# How long to keep backups for
@@ -657,7 +657,7 @@ dna-br_duplicity_loop() {
 		#        --exclude=/** \
 		#        ${SOURCE} ${DEST} >> ${DAILYLOGFILE} 2>&1
 
-		if [ "${1:-null}" = "backup" ]
+		if [ "${1:-}" = "backup" ]
 		then
 			duplicity --progress --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
 		else
@@ -669,7 +669,7 @@ dna-br_duplicity_loop() {
 		trace "Backup for local filesystem complete"
 		trace "------------------------------------"
 
-		if [ "${1:-null}" = "backup" ]
+		if [ "${1:-}" = "backup" ]
 		then
 
 			# Send the daily log file by email
@@ -781,7 +781,7 @@ dna-br_backup_to_S3() {
 
 dna-br_restore_from_S3() {
 
-	if [ "${1:-null}" = "test" ]
+	if [ "${1:-}" = "test" ]
 	then
 		echo "${b-}Now testing restore from S3 to $backup_local_storage_path/restores/s3/ to ensure existing backups integrity and passphrase match...${x-}"
 		echo
@@ -798,7 +798,7 @@ dna-br_restore_from_S3() {
 	if grep -q "No backup chains found" "$backup_local_storage_path/temp/duplicity-log"
 	then
 
-		if [ "${1:-null}" = "test" ]
+		if [ "${1:-}" = "test" ]
 		then
 			# This is the first backup, all is good.
 			echo "${g-}${b-}First S3 backup detected. Skipping restore test...${x-}"
@@ -819,7 +819,7 @@ dna-br_restore_from_S3() {
 		if grep -q "gpg: decryption failed: bad key" "$backup_local_storage_path/temp/duplicity-log" || [ ! -d "$backup_local_storage_path/restores/s3/" ]
 		then
 
-			if [ "${1:-null}" = "test" ]
+			if [ "${1:-}" = "test" ]
 			then
 				echo "${r-}${b-}Testing restore from S3 failed.${x-}"
 				echo
@@ -872,7 +872,7 @@ dna-br_restore_from_S3() {
 		else
 
 			echo
-			if [ "${1:-null}" = "test" ]
+			if [ "${1:-}" = "test" ]
 			then
 				echo "${g-}${b-}S3 Restore test succeded. Proceeding with S3 backup...${x-}"
 				echo
@@ -903,7 +903,7 @@ dna-br_launch_restore() {
 	done
     OPTIND=1
 
-	if [ ! ${skip_questions-null} = "y" ]
+	if [ ! ${skip_questions-} = "y" ]
 	then
 
 	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $proj_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
@@ -941,7 +941,7 @@ dna-br_launch_restore() {
 
 	    else
 
-	    	if [ "${backup_archival_location-null}" = "s3" ]
+	    	if [ "${backup_archival_location-}" = "s3" ]
 	    	then
 	    		echo "${b-}You've previously set up an S3 file storage server connection on this machine.${x-}"
 	    		echo
