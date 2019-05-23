@@ -26,7 +26,7 @@ dna-install_certbot() {
 
         dna-enable_debian_backports_repo
         apt-get update
-		apt-get install certbot -t stretch-backports
+		apt-get -y install certbot -t stretch-backports
 		echo
 
 	fi
