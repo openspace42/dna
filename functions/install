@@ -350,7 +350,34 @@ dna-install_nginx() {
 
 dna-install_nodejs() {
 
+    ### Run nodesource setup script
+
     curl -sL https://deb.nodesource.com/setup_10.x | bash -
+
+    ### Get hostname
+
+    dna-get_hostname
+
+    ### If this is debian install pin the nodesource repo to top priority
+
+    if [ "${distro_name}" = "debian" ]
+	then
+		touch "/etc/apt/preferences"
+		if ! grep -q "apt.jabber.at" "/etc/apt/preferences"
+		then
+			cat <<EOF >> "/etc/apt/preferences"
+
+Package: *
+Pin: origin "deb.nodesource.com"
+Pin-Priority: 1000
+
+EOF
+		fi
+	fi
+
+    ### Install
+
+    apt-get update
 
     dna-install_dependencies -p "nodejs"
 
