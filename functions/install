@@ -354,9 +354,9 @@ dna-install_nodejs() {
 
     curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
-    ### Get hostname
+    ### Get distro_name
 
-    dna-get_hostname
+    dna-get_distro_name
 
     ### If this is debian install pin the nodesource repo to top priority
 
