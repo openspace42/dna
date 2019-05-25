@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -eu
+
+dna-check_s3_connection() {
+
+    ############################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":i:s:e:b:q:" arguments
+    do
+        case $arguments in
+            i)	s3_access_key_id="${OPTARG}"
+                ;;
+            s)	s3_secret_access_key="${OPTARG}"
+                ;;
+            e)	s3_endpoint="${OPTARG}"
+                ;;
+            b)	s3_bucket_name="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${s3_access_key_id-}" ]
+    then
+        dna-echo -e "Argument | ${n-}s3_access_key_id [-i]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ -z "${s3_secret_access_key-}" ]
+    then
+        dna-echo -e "Argument | ${n-}s3_secret_access_key [-s]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ -z "${s3_endpoint-}" ]
+    then
+        dna-echo -e "Argument | ${n-}s3_endpoint [-b]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ -z "${s3_bucket_name-}" ]
+    then
+        dna-echo -e "Argument | ${n-}s3_bucket_name [-b]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ############################################################################
+
+    s3cmd --configure --access_key="${s3_access_key_id}" --secret_key="${s3_secret_access_key}" --host="${s3_endpoint}" --host-bucket="%(bucket).${s3_endpoint}" -s --no-encrypt --dump-config 2>&1 | tee "/tmp/.s3cfg" &> /dev/null
+    set +e
+    s3cmd info s3://"${s3_bucket_name}" &>/dev/null
+
+    if [[ $? -eq 0 ]]
+    then
+        dna-echo -s "S3 connection details appear to be valid."
+    else
+        dna-echo -e "S3 connection details do NOT appear to be valid."
+    fi
+
+    rm "/tmp/.s3cfg"
+
+    ############################################################################
+
+}
