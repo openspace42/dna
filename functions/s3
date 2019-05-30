@@ -6,6 +6,12 @@ dna-check_s3_connection() {
 
     ############################################################################
 
+    ### Install dependencies
+
+    dna-install_dependencies -p "s3cmd"
+
+    ############################################################################
+
     if [ $# -eq 0 ]
     then
         dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
@@ -58,7 +64,7 @@ dna-check_s3_connection() {
 
     s3cmd --configure --access_key="${s3_access_key_id}" --secret_key="${s3_secret_access_key}" --host="${s3_endpoint}" --host-bucket="%(bucket).${s3_endpoint}" -s --no-encrypt --dump-config 2>&1 | tee "/tmp/.s3cfg" &> /dev/null
     set +e
-    s3cmd info s3://"${s3_bucket_name}" &>/dev/null
+    s3cmd -c "/tmp/.s3cfg" info s3://"${s3_bucket_name}" &>/dev/null
 
     if [[ $? -eq 0 ]]
     then

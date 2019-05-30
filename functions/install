@@ -429,6 +429,7 @@ EOF
 
         apt-get -y install "postgresql-client-common"
         apt-get -y install "postgresql-client-11"
+        echo
 
     else
 
@@ -516,6 +517,7 @@ dna-install_sslh() {
     ### Install
 
 	( cd "${tmp_project_dir}/sslh" && git checkout v1.20 && make install && make && cp sslh-select /usr/local/sbin/sslh )
+    echo
 
     ############################################################################
 

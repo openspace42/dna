@@ -12,31 +12,37 @@ dna-set_locale() {
 
     dna-echo -m "Now setting locale to | ${y-}en_US.UTF-8${n-} |...${x-}"
 
-    dna-get_distro_name
+    ### Set "/etc/default/locale" values
 
-    if [ "${distro_name}" = "ubuntu" ]
-    then
+    export LC_ALL="en_US.UTF-8"
+    echo -e '"LC_ALL=en_US.UTF-8"' > "/etc/default/locale"
 
-        export LC_ALL="en_US.UTF-8"
+    export LANG="en_US.UTF-8"
+    echo -e 'LANG="en_US.UTF-8"' >> "/etc/default/locale"
 
-    elif [ "${distro_name}" = "debian" ]
-    then
+    export LANGUAGE="en_US:en"
+    echo -e 'LANGUAGE="en_US:en"' >> "/etc/default/locale"
 
-        echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-        echo "LANG=en_US.UTF-8" > /etc/locale.conf
-        echo
+    ### Set "/etc/locale.conf" value
 
-    else
+    echo "LANG=en_US.UTF-8" > "/etc/locale.conf"
 
-        ### just guessing for now
-        export LC_ALL="en_US.UTF-8"
+    ### Set "/etc/locale.gen" value
 
-    fi
+    echo "en_US.UTF-8 UTF-8" > "/etc/locale.gen"
 
-    echo "LC_ALL=en_US.UTF-8" > "/etc/default/locale"
+    ### Forcefully regenerate locales
 
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-    locale-gen en_US.UTF-8
+    locale-gen --purge en_US.UTF-8
+    echo
+
+    ### Reconfigure locales
+
+    dpkg-reconfigure --frontend=noninteractive locales
+
+    ### Update locale
+
+    update-locale LANG=en_US.UTF-8
 
     dna-echo -s "Locale set."
 

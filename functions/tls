@@ -119,6 +119,8 @@ dna-provision_self_signed_wildcard_cert() {
       -out "${tls_project_dir}/${cert_domain}.cert.pem"
     openssl x509 -noout -text -in "${tls_project_dir}/${cert_domain}.cert.pem"
 
+    echo
+
     unset cert_domain
 
 }
