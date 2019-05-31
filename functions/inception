@@ -15,7 +15,7 @@ dna-set_locale() {
     ### Set "/etc/default/locale" values
 
     export LC_ALL="en_US.UTF-8"
-    echo -e '"LC_ALL=en_US.UTF-8"' > "/etc/default/locale"
+    echo -e 'LC_ALL="en_US.UTF-8"' > "/etc/default/locale"
 
     export LANG="en_US.UTF-8"
     echo -e 'LANG="en_US.UTF-8"' >> "/etc/default/locale"
