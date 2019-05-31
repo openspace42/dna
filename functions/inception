@@ -44,6 +44,10 @@ dna-set_locale() {
 
     update-locale LANG=en_US.UTF-8
 
+    ### Source locale
+
+    . "/etc/default/locale"
+
     dna-echo -s "Locale set."
 
 }
