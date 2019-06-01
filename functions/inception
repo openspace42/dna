@@ -12,28 +12,27 @@ dna-set_locale() {
 
     dna-echo -m "Now setting locale to | ${y-}en_US.UTF-8${n-} |...${x-}"
 
-    ### Set "/etc/default/locale" values
+    ### /etc/environment
 
-    export LC_ALL="en_US.UTF-8"
+    echo "LC_ALL=en_US.UTF-8" >> "/etc/environment"
+
+    ### /etc/default/locale
+
     echo -e 'LC_ALL="en_US.UTF-8"' > "/etc/default/locale"
-
-    export LANG="en_US.UTF-8"
     echo -e 'LANG="en_US.UTF-8"' >> "/etc/default/locale"
-
-    export LANGUAGE="en_US:en"
     echo -e 'LANGUAGE="en_US:en"' >> "/etc/default/locale"
 
-    ### Set "/etc/locale.conf" value
+    ### /etc/locale.conf
 
     echo "LANG=en_US.UTF-8" > "/etc/locale.conf"
 
-    ### Set "/etc/locale.gen" value
+    ### /etc/locale.gen
 
     echo "en_US.UTF-8 UTF-8" > "/etc/locale.gen"
 
     ### Forcefully regenerate locales
 
-    locale-gen --purge en_US.UTF-8
+    locale-gen en_US.UTF-8
     echo
 
     ### Reconfigure locales
