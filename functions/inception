@@ -36,7 +36,9 @@ dna-set_locale() {
     echo
 
     ### Set LC_ALL for this session
+    ### twice as the first one always returns an error
 
+    export LC_ALL="en_US.UTF-8"
     export LC_ALL="en_US.UTF-8"
 
     ### Update locale
