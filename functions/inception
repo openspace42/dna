@@ -35,13 +35,17 @@ dna-set_locale() {
     locale-gen en_US.UTF-8
     echo
 
-    ### Reconfigure locales
+    ### Set LC_ALL for this session
 
-    dpkg-reconfigure --frontend=noninteractive locales
+    export LC_ALL="en_US.UTF-8"
 
     ### Update locale
 
     update-locale LANG=en_US.UTF-8
+
+    ### Reconfigure locales
+
+    dpkg-reconfigure --frontend=noninteractive locales
 
     ### Source locale
 
