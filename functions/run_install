@@ -57,6 +57,9 @@ dna-run_install() {
 
             export selected_vers="${latest_custom_branch_vers_bl_edge}"
 
+            dna-echo $selected_vers
+            dna-press_to_continue
+
             ( cd "${source_dir}" && bash ./install --return-check )
 
         fi
