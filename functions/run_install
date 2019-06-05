@@ -38,11 +38,26 @@ dna-run_install() {
     elif [ "${custom_project_version-}" = "b" ]
     then
 
-        export selected_vers="${latest_vers_bl_edge}"
+        if [ -z "${custom_branch}" ]
+        then
 
-        dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${proj_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
+            export selected_vers="${latest_vers_bl_edge}"
 
-        ( cd "${source_dir}" && git fetch && git reset --hard origin/master && echo && bash ./install --return-check )
+            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${proj_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
+
+            ( cd "${source_dir}" && git fetch && git reset --hard origin/master && echo && bash ./install --return-check )
+
+        else
+
+            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | branch ${n-}${custom_branch}${r-} | of | ${n-}${proj_name}${r-} | as per | ${n-}-b ${custom_branch}${r-} |."
+
+            ( cd "${source_dir}" && git fetch && git reset --hard origin/master && git config advice.detachedHead false && git checkout "${custom_branch}" && git pull && echo && bash ./install --return-check )
+
+            export latest_custom_branch_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
+
+            export selected_vers="${latest_vers_bl_edge}"
+
+        fi
 
     elif [[ "${custom_project_version-}" == *"v"* ]]
     then
