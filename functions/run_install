@@ -55,7 +55,7 @@ dna-run_install() {
 
             export latest_custom_branch_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
 
-            export selected_vers="${latest_vers_bl_edge}"
+            export selected_vers="${latest_custom_branch_vers_bl_edge}"
 
         fi
 
