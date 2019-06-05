@@ -51,14 +51,13 @@ dna-run_install() {
 
             dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | branch ${n-}${custom_branch}${r-} | of | ${n-}${proj_name}${r-} | as per | ${n-}-b ${custom_branch}${r-} |."
 
-            ( cd "${source_dir}" && git fetch && git reset --hard origin/${custom_branch} && git config advice.detachedHead false && echo && bash ./install --return-check )
+            ( cd "${source_dir}" && git fetch && git reset --hard origin/${custom_branch} && git config advice.detachedHead false && echo )
 
             export latest_custom_branch_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
 
             export selected_vers="${latest_custom_branch_vers_bl_edge}"
 
-            echo $selected_vers
-            dna-press_to_continue
+            ( cd "${source_dir}" && bash ./install --return-check )
 
         fi
 
