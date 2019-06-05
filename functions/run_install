@@ -38,7 +38,7 @@ dna-run_install() {
     elif [ "${custom_project_version-}" = "b" ]
     then
 
-        if [ -z "${custom_branch}" ]
+        if [ -z "${custom_branch-}" ]
         then
 
             export selected_vers="${latest_vers_bl_edge}"
