@@ -412,7 +412,7 @@ dna-check_dns_record() {
 
 						if [ "${dns_checks_outcome}" = "recheck" ]
 						then
-							dna-echo -m "As we wait to ensure DNS propagation, ensure you've correctly set the record on your DNS provider."
+							dna-echo -m "As we wait before we check again, ensure you've correctly set the record on your DNS provider."
 						fi
 
 						wait="$[${incorrect_iteration}**2]"
@@ -426,7 +426,7 @@ dna-check_dns_record() {
 						        3 ) j="\\" ;;
 						    esac
 						    tput rc
-						    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
+						    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds before checking again...${x-}"
 						    sleep 1
 						    ((wait=wait-1)) || true
 						done
@@ -436,7 +436,7 @@ dna-check_dns_record() {
 					else
 
 						dna-echo -e "The | ${n-}${type_name}${r-} | record | ${n-}${reference_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears NOT to be registered after several lookups."
-						dna-echo -m "This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
+						dna-echo -m "This could be due to longer than normal systems updating times or incorrect settings on your DNS provider."
 						dna-echo -m "Also ensure you're applying the correct setting to the authoritative DNS provider for this zone."
 
 						read_choice -m "Perform checks for this DNS record once again from the beginning?"
@@ -578,7 +578,7 @@ dna-check_dns_record() {
 
 							if [ "${dns_checks_outcome}" = "recheck" ]
 							then
-								dna-echo -m "As we wait to ensure DNS propagation, ensure you've correctly removed the record on your DNS provider."
+								dna-echo -m "As we wait before we check again, ensure you've correctly removed the record on your DNS provider."
 							fi
 
 							wait="$[${incorrect_iteration}**3]"
@@ -592,7 +592,7 @@ dna-check_dns_record() {
 							        3 ) j="\\" ;;
 							    esac
 							    tput rc
-							    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds to allow for DNS propagation...${x-}"
+							    echo -en "\\r${b-}| ${o-}${j}${n-} | Now waiting ${y-}${wait}${n-} more seconds before checking again...${x-}"
 							    sleep 1
 							    ((wait=wait-1)) || true
 							done
@@ -602,7 +602,7 @@ dna-check_dns_record() {
 						else
 
 							dna-echo -e "The | ${n-}${type_name}${r-} | record | ${n-}${diff_item_name}${r-} | for DNS name | ${n-}${name}${r-} | still appears to be registered after several lookups even though it should NOT be."
-							dna-echo -m "This could be due to longer than normal TTLs on your DNS records [therefore making propagation longer] or an incorrect setting on your DNS provider."
+							dna-echo -m "This could be due to longer than normal systems updating times or incorrect settings on your DNS provider."
 							dna-echo -m "Also ensure you're removing the record from the authoritative DNS provider for this zone."
 
 							read_choice -m "Perform checks for this DNS record once again from the beginning?"
