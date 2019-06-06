@@ -370,7 +370,6 @@ dna-install_nodejs() {
 Package: *
 Pin: origin "deb.nodesource.com"
 Pin-Priority: 1000
-
 EOF
 		fi
 	fi
