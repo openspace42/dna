@@ -19,10 +19,10 @@ dna-setup_backup_restore_s3() {
 
 	mkdir -p "$conf_backups_s3_dir"
 
-	if [ ! ${skip_questions-} = "y" ]
+	if [ -z ${skip_questions-} ]
 	then
 
-		echo  "${r-}${b-}If you're setting up this machine to restore a previous $proj_name installation from another machine, you must specify so now.${x-}"
+		echo "${r-}${b-}If you're setting up this machine to restore a previous $proj_name installation from another machine, you must specify so now.${x-}"
 		echo
 		echo "${b-}Selecting yes at the next prompt will block ALL backups to S3 to avoid overwriting previous valid backups on S3 and give you a chance to restore them on this machine.${x-}"
 		echo
