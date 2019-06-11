@@ -18,7 +18,7 @@ dna-setup_dns_provider() {
 
 	mkdir -p "$conf_dns_dir"
 
-	until [ ${dns_setup_accepted-} = "y" ]
+	until [ ${dns_setup_accepted-null} = "y" ]
 	do
 
 		describe_setting() {

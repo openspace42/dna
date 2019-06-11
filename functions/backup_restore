@@ -209,7 +209,7 @@ dna-br_backup_locally() {
     echo "${b-}Now backing up locally...${x-}"
 	echo
 
-	if [ ! ${skip_install_complete_check-} = "y" ]
+	if [ ! ${skip_install_complete_check-null} = "y" ]
 	then
 
 		### Abort if the current installation was never completed
@@ -236,7 +236,7 @@ dna-br_backup_locally() {
 
 	cd "$backup_local_storage_path/temp"
 
-    if [ ! ${last-} = "y" ]
+    if [ ! ${last-null} = "y" ]
 	then
 
     	### Tar [and - if chosen - bzip2] this backup archive.
@@ -903,7 +903,7 @@ dna-br_launch_restore() {
 	done
     OPTIND=1
 
-	if [ ! ${skip_questions-} = "y" ]
+	if [ ! ${skip_questions-null} = "y" ]
 	then
 
 	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $proj_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"

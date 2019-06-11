@@ -123,7 +123,7 @@ dna-setup_backup_restore_s3() {
 
 	fi
 
-	until [ ${s3_setup_accepted-} = "y" ]
+	until [ ${s3_setup_accepted-null} = "y" ]
 	do
 
 		declare -A s3_options_array=(
