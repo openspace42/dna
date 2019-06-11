@@ -82,8 +82,9 @@ dna-setup_backup_restore_s3() {
 			echo
 
 			backups_passphrase_conf_path="$conf_backups_s3_dir/backups_passphrase"
+			backups_passphrase="$(cat $backups_passphrase_conf_path 2> /dev/null || true)"
 
-			if [ ! -f "$backups_passphrase_conf_path" ]
+			if [ -z "${backups_passphrase}" ];
 			then
 				touch "$backups_passphrase_conf_path"
 				chmod 700 "$backups_passphrase_conf_path"
