@@ -26,6 +26,7 @@ dna-install_certbot() {
 
         dna-enable_debian_backports_repo
         apt-get update
+        echo
 		apt-get -y install certbot -t stretch-backports
 		echo
 
@@ -305,6 +306,7 @@ dna-install_mosh() {
         dna-install_dependencies -p "software-properties-common"
         add-apt-repository -y ppa:keithw/mosh
         apt-get update
+        echo
     fi
 
     ############################################################################
@@ -377,6 +379,7 @@ EOF
     ### Install
 
     apt-get update
+    echo
 
     dna-install_dependencies -p "nodejs"
 
@@ -425,6 +428,7 @@ EOF
 		fi
 
         apt-get update
+        echo
 
         apt-get -y install "postgresql-client-common"
         apt-get -y install "postgresql-client-11"
@@ -433,6 +437,7 @@ EOF
     else
 
         apt-get update
+        echo
 
 	fi
 
@@ -665,6 +670,7 @@ dna-install_tor() {
     echo "deb-src https://deb.torproject.org/torproject.org ${distro_codename} main" >> "/etc/apt/sources.list.d/tor.list"
 
     apt-get update
+    echo
 
     ### Install
 
