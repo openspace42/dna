@@ -335,7 +335,7 @@ dna-setup_backup_restore() {
 	if [ $backup_archival_location = "s3" ]
 	then
 
-		if [ ! "${previous_value_outcome-}" = "kept" ]
+		if [ ! "${previous_value_outcome-null}" = "kept" ]
 		then
 
 			read -rp "${b-}Do you have an S3 file storage server already set up? (Y/n): ${x-}" -n 1
@@ -370,7 +370,7 @@ dna-setup_backup_restore() {
 
 		fi
 
-		if [ "${s3_continue_setup-}" = "y" ]
+		if [ "${s3_continue_setup-null}" = "y" ]
 		then
 
 			dna-setup_backup_restore_s3

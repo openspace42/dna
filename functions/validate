@@ -34,7 +34,7 @@ dna-validate_domain() {
 
     ############################################################################
 
-    if [ "${top_level_only-}" = "y" ]
+    if [ "${top_level_only-null}" = "y" ]
     then
 
         if echo "${domain_to_validate}" | grep -qP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)[a-zA-Z]{2,}$)'

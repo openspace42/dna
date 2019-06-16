@@ -26,7 +26,7 @@ dna-run_install() {
 
     ### Launch the installer
 
-    if [ "${custom_project_version-}" = "l" ]
+    if [ "${custom_project_version-null}" = "l" ]
     then
 
         export selected_vers="v0.0.1-custom-local"
@@ -35,7 +35,7 @@ dna-run_install() {
 
         ( cd "${source_dir}" && bash ./install --return-check )
 
-    elif [ "${custom_project_version-}" = "b" ]
+    elif [ "${custom_project_version-null}" = "b" ]
     then
 
         if [ -z "${custom_branch-}" ]
@@ -61,7 +61,7 @@ dna-run_install() {
 
         fi
 
-    elif [[ "${custom_project_version-}" == *"v"* ]]
+    elif [[ "${custom_project_version-null}" == *"v"* ]]
     then
 
         export selected_vers="${custom_project_version}"
@@ -70,7 +70,7 @@ dna-run_install() {
 
         ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${selected_vers}" && echo && bash ./install --return-check )
 
-    elif [ "${custom_project_version-}" = "t" ]
+    elif [ "${custom_project_version-null}" = "t" ]
     then
 
         export selected_vers="${latest_vers_tagged}"

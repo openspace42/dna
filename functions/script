@@ -2,6 +2,23 @@
 
 dna-log_script() {
 
+	############################################################################
+
+    while getopts ":h" arguments
+    do
+        case $arguments
+        in
+            h)	local include_hostname="y"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+	############################################################################
+
 	script_name=$(basename "${0}")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
 	log_dir="${HOME}/logs/${script_name}"										### Don't store anything else than logs in here!
@@ -18,7 +35,19 @@ dna-log_script() {
 		exec 2> >(tee -ia "${log_file}" >&2)									### Log stderr to log_file
 		chmod -R 700 "${log_dir}"												### Secure logs directory
 	fi
-	echo "Starting ${script_name} script on ${now}..." && echo					### Write heading to log_file
+
+	if [ -n "${include_hostname-}" ]
+	then
+
+		dna-get_hostname
+
+		echo "Starting ${script_name} script on node ${hostname} on ${now}..." && echo																### Write heading to log_file
+
+	else
+
+		echo "Starting ${script_name} script on ${now}..." && echo
+
+	fi																			### Write heading to log_file
 
 }
 

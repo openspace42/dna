@@ -83,7 +83,7 @@ dna-install_dependencies() {
 
         echo
 
-        if [ "${allow_errors-}" = "y" ] || [ "${dna_global_allow_apt_errors-}" = "y" ]
+        if [ "${allow_errors-null}" = "y" ] || [ "${dna_global_allow_apt_errors-null}" = "y" ]
         then
 
             dna-echo -e "An error occured performing APT operations."
@@ -262,7 +262,7 @@ dna-install_mail_notifications() {
 
     }
 
-    if [ "${force-}" = "y" ]
+    if [ "${force-null}" = "y" ]
     then
 
         install_mail_notifications_proceed
@@ -410,6 +410,7 @@ dna-install_postgresql() {
     dna-get_distro_codename
 
     echo "deb http://apt.postgresql.org/pub/repos/apt/ ${distro_codename}"-pgdg main > "/etc/apt/sources.list.d/pgdg.list"
+    echo
 
     dna-get_distro_name
 

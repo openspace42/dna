@@ -36,7 +36,7 @@ dna-check_install_version() {
 
     ### If a previous installation was at the very least initiated...
 
-    if [ "${prev_install_initiated-}" = "y" ]
+    if [ "${prev_install_initiated-null}" = "y" ]
     then
 
         ### If a previous version was successfully finished installing...
@@ -55,7 +55,7 @@ dna-check_install_version() {
                 ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed.
                 ### If instead we're installing a bleeding-edge version, skip any checks as we're certainly intalling a newer version.
 
-                if [ ! "${custom_project_version-}" = "b" ]
+                if [ ! "${custom_project_version-null}" = "b" ]
                 then
 
                     if grep -q "+" "${conf_dir}/version/version_installed"
@@ -105,7 +105,7 @@ dna-check_install_version() {
 
         fi
 
-        if [ "${prev_install_incomplete-}" = "y" ]
+        if [ "${prev_install_incomplete-null}" = "y" ]
         then
             dna-echo -e "It appears you have a previous incomplete installation of ${proj_name}."
             dna-echo -m "Either you intentionally aborted the install or the script got somehow terminated before it finished."
@@ -116,7 +116,7 @@ dna-check_install_version() {
 
         ### In any event, since there is a previous installation, at least partial, prompt for a backup.
 
-        if [ ! "${skip_install_time_backup-}" = "y" ]
+        if [ ! "${skip_install_time_backup-null}" = "y" ]
         then
 
             dna-echo -m "It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run."

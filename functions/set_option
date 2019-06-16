@@ -150,7 +150,7 @@ dna-set_option() {
 			if [ -n "${previous_value}" ]
 			then
 
-				if [ "${validate_input-}" = "y" ]
+				if [ "${validate_input-null}" = "y" ]
 				then
 
 					input="${previous_value}"
@@ -219,12 +219,12 @@ dna-set_option() {
 
 			unset defined
 
-			until [ "${defined-}" = "y" ]
+			until [ "${defined-null}" = "y" ]
 			do
 
 				unset valid
 
-				until [ "${valid-}" = "y" ]
+				until [ "${valid-null}" = "y" ]
 				do
 
 					unset new_val
@@ -234,7 +234,7 @@ dna-set_option() {
 
 						ask_for_value() {
 
-							if [ "${hint_value-}" = "y" ]
+							if [ "${hint_value-null}" = "y" ]
 							then
 
 								### If | -h y | then | hint_value | must be defined immediately prior to calling this function.
@@ -250,14 +250,14 @@ dna-set_option() {
 
 						}
 
-						if [ "${skip_descr-}" = "y" ]
+						if [ "${skip_descr-null}" = "y" ]
 						then
 
 							ask_for_value
 
 						else
 
-							if [ "${describe_setting-}" = "y" ]
+							if [ "${describe_setting-null}" = "y" ]
 							then
 
 								### If | -d y | then | describe_setting | must be defined immediately prior to calling this function.
@@ -272,7 +272,7 @@ dna-set_option() {
 
 					done
 
-					if [ "${validate_input-}" = "y" ]
+					if [ "${validate_input-null}" = "y" ]
 					then
 
 						input="${new_val}"
@@ -291,7 +291,7 @@ dna-set_option() {
 
 				unset acceptable
 
-				until [ "${acceptable-}" = "y" ]
+				until [ "${acceptable-null}" = "y" ]
 				do
 
 					read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;

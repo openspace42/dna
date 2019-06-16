@@ -229,7 +229,7 @@ dna-wait_for() {
     tput sc
     seconds=0
 
-    while [ ! "${condition_verified-}" = "y" ]
+    while [ ! "${condition_verified-null}" = "y" ]
     do
 
         if [ ! -z "${max_seconds-}" ]
@@ -309,14 +309,14 @@ dna-wait_for() {
 
     fi
 
-    if [ "${wait_output-}" = "fixed" ]
+    if [ "${wait_output-null}" = "fixed" ]
     then
 
         echo
 
     fi
 
-    if [ ! "${wait_output-}" = "timeout" ]
+    if [ ! "${wait_output-null}" = "timeout" ]
     then
 
         wait_output="ok"

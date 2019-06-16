@@ -193,7 +193,7 @@ dna-harden_ssh() {
 
     			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
 
-                if [ "${force_alt_ssh_port-}" = "y" ]
+                if [ "${force_alt_ssh_port-null}" = "y" ]
                 then
 
                     alert_force_alt_ssh_port
@@ -242,7 +242,7 @@ dna-harden_ssh() {
 
             dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]. Fixing it now."
 
-            if [ "${force_alt_ssh_port-}" = "y" ]
+            if [ "${force_alt_ssh_port-null}" = "y" ]
             then
 
                 alert_force_alt_ssh_port
@@ -561,12 +561,12 @@ dna-inception() {
 
     ############################################################################
 
-    if [ ! -f "${os_conf_dir}/inception_run_status" ] || [ "${force_rerun-}" = "y" ]
+    if [ ! -f "${os_conf_dir}/inception_run_status" ] || [ "${force_rerun-null}" = "y" ]
     then
 
         ########################################################################
 
-        if [ ! "${skip_hostname-}" = "y" ]
+        if [ ! "${skip_hostname-null}" = "y" ]
         then
 
             dna-set_hostname
@@ -579,7 +579,7 @@ dna-inception() {
 
         dna-set_ssh_pubkey
 
-        if [ "${force_alt_ssh_port-}" = "y" ]
+        if [ "${force_alt_ssh_port-null}" = "y" ]
         then
 
             dna-harden_ssh -p
@@ -600,7 +600,7 @@ dna-inception() {
 
         dna-secure_root_pw
 
-        if [ ! "${skip_mail_notifications-}" = "y" ]
+        if [ ! "${skip_mail_notifications-null}" = "y" ]
         then
 
             dna-install_mail_notifications
