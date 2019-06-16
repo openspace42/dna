@@ -2,6 +2,57 @@
 
 set -eu
 
+dna-generate_dhparam() {
+
+    if [ -f "${tls_dir}/dhparam.pem" ]
+    then
+
+        dna-echo -s "DHparam file found. Skipping generation."
+        export dh_param_outcome=found
+        export dh_param_status=ok
+
+    else
+
+        dna-echo -m "To make your TLS connections even more secure, it is necessary to generate a DH parameters file."
+        dna-echo -m "To do so, simply answer yes, but be aware that this is a very time consuming cryptographic operation, although it must only be performed once."
+        dna-ask_for_boolean -d "y" -q "Generate openssl DHparam file now?"
+
+        if [ "${boolean_output}" = "y" ]
+        then
+
+            operation_message="generating DHparams file"
+
+            dna-echo_operation -h
+
+            export dh_param_outcome="generating"
+            export dh_param_status="no"
+
+            openssl dhparam -out "${tls_dir}/dhparam.pem.incomplete" "4096"
+            echo
+
+            export dh_param_outcome="generated"
+            export dh_param_status="ok"
+
+            mv "${tls_dir}/dhparam.pem.incomplete" "${tls_dir}/dhparam.pem"
+
+        else
+
+            dna-echo -m "Skipping DHparams generation."
+            dna-echo -m "You can always generate them at a later time by executing:"
+            dna-echo -m " | ${o-}openssl dhparam -out ${tls_dir}/dhparam.pem.incomplete 4096${n-} |. "
+            dna-echo -m "[and making sure you let the command run until it exits]."
+            dna-echo -m "Once it's done, execute:"
+            dna-echo -m " | ${o-}mv ${tls_dir}/dhparam.pem.incomplete ${tls_dir}/dhparam.pem${n-} |. "
+
+            export dh_param_outcome="generation_skipped"
+            export dh_param_status="no"
+
+        fi
+
+    fi
+
+}
+
 dna-provision_le_wildcard_cert() {
 
     ############################################################################
