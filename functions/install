@@ -239,6 +239,9 @@ dna-install_mail_notifications() {
 
         ### Reload postfix
 
+        systemctl daemon-reload
+        systemctl enable --now postfix
+
         /etc/init.d/postfix reload
         echo
 
