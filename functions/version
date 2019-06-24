@@ -4,7 +4,7 @@ set -eu
 
 dna-get_dna_version() {
 
-    dna-echo -m "dna version: | ${l-}${dna_version_file_path}${n-} |."
+    dna-echo -m "dna version: | ${l-}$(cat ${dna_version_file_path})${n-} |."
 
 }
 
