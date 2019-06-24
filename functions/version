@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eu
+
+dna-get_dna_version() {
+
+    cat "${dna_version_file_path}"
+
+}
+
+dna-get_project_version() {
+
+    dna-echo -m "${proj_name} version ${y-}initiated${n-}: | ${l-}${version_initiated}${n-} |."
+    dna-echo -m "${proj_name} version ${o-}installed${n-}: | ${l-}${version_installed}${n-} |."
+
+}

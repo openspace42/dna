@@ -4,30 +4,39 @@ dna-define_vars() {
 
 	############################################################################
 
-	### Define variables [Don't change these! | No trailing slash!]
-
-	### Projects will be installed in this location: | /root/${proj_author}/${proj_name} |.
+	### define variables [don't change these! | no trailing slash on paths!].
+	### projects will be installed in: | /root/${proj_author}/${proj_name} |.
 
 	############################################################################
+	############################################################################
 
-	### system
+	### system.
 
 	export tls_dir="/etc/ssl"
 	export www_dir="/var/www"
 	export tmp_dir="/tmp"
 	export le_live_dir="/etc/letsencrypt/live"
 
-	### system ssh
+	############################################################################
+
+	### system ssh.
 
 	export ssh_auth_keys_file="/root/.ssh/authorized_keys"
 	export ssh_config_file="/etc/ssh/sshd_config"
 
 	############################################################################
 
-	### os
+	### os.
 
 	export os_base_dir="/root/openspace42"
 	export os_conf_dir="${os_base_dir}/conf"
+
+	############################################################################
+
+	### dna.
+
+	export dna_dir="${os_base_dir}/dna"
+	export dna_version_file_path="${dna_dir}/version_installed"
 
 	############################################################################
 
@@ -57,6 +66,7 @@ dna-define_vars() {
 	export tls_project_dir="${tls_dir}/${proj_name}"
 	export tmp_project_dir="${tmp_dir}/${proj_name}"
 
+	############################################################################
 	############################################################################
 
 }
