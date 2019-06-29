@@ -526,9 +526,9 @@ dna-install_basic_packages() {
 
     service ntp start
 
-    ### Install mosh
+    ### Install mosh and tmux
 
-    dna-install_mosh
+    dna-install_mosh_tmux
 
 }
 

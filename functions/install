@@ -295,12 +295,18 @@ dna-install_mail_notifications() {
 
 }
 
-dna-install_mosh() {
+dna-install_mosh_tmux() {
+
+    ### ########################################################################
+
+    ### install mosh.
+
+    ### ########################################################################
 
     operation_message="installing Mosh"
     dna-echo_operation -h
 
-    ############################################################################
+    #### install.
 
     dna-get_distro_name
 
@@ -312,11 +318,9 @@ dna-install_mosh() {
         echo
     fi
 
-    ############################################################################
+    dna-install_dependencies -p "mosh tmux"
 
-    dna-install_dependencies -p "mosh"
-
-    ############################################################################
+    #### open ports on firewall if ufw is installed.
 
     if dpkg -s ufw &> /dev/null
     then
@@ -326,9 +330,25 @@ dna-install_mosh() {
     fi
     echo
 
-    ############################################################################
+    #### install config for mouse scroll.
+    #### https://superuser.com/questions/210125/scroll-shell-output-with-mouse-in-tmux
+    #### https://blog.filippo.io/my-remote-shell-session-setup/
+
+    cat <<EOF > "~/.tmux.conf"
+new-session
+set -g mouse on
+set-window-option -g mode-mouse on
+set -g mouse-select-pane on
+set -g terminal-overrides "xterm*:XT:smcup@:rmcup@:kUP5=\eOA:kDN5=\eOB:kLFT5=\eOD:kRIT5=\eOC"
+set -g history-limit 30000
+setw -g alternate-screen on
+set -s escape-time 50
+bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'"
+EOF
 
     dna-echo_operation -t
+
+    ### ########################################################################
 
 }
 
