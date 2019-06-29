@@ -385,6 +385,10 @@ dna-initialize_ufw() {
 
 dna-prompt_ssh_connection_test() {
 
+    ### Fetch public IPv4
+
+    dna-get_public_ipv4 -s
+
     ### Restart SSH
 
     /usr/sbin/service ssh restart
@@ -394,6 +398,8 @@ dna-prompt_ssh_connection_test() {
     dna-echo -m "It's now time to ensure that your SSH configuration on this machine is correct."
     dna-echo -m "Now open a new SSH session to this machine from your workstation with the SSH keypair and SSH port you previously entered and chose."
     dna-echo -e "Make absolutely sure you perform this test before answering the following question or you will be locked out of your machine!"
+
+    dna-echo -m "The public IPv4 for this machine is: | ${l-}${public_ipv4}${n-} |."
 
     dna-ask_for_boolean -d "n" -q "Has the new SSH session worked?"
 
