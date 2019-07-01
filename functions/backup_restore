@@ -676,6 +676,7 @@ dna-br_duplicity_loop() {
 			duplicity --progress --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}"
 
 		elif [ "${1:-null}" = "restore" ]
+		then
 
 			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" 2>&1 | tee "$backup_local_storage_path/temp/duplicity-log"
 
