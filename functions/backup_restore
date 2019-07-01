@@ -617,8 +617,19 @@ dna-br_duplicity_loop() {
 		if [ "${1:-null}" = "backup" ]
 		then
 
-			# The source of your backup
-			SOURCE="$backup_local_storage_path/latest/" # Use / for full system backup [not the case here]
+			## set the source for the backup.
+			## use / for full system backup [not the case here].
+
+			if [ "${backup_locally_mode}" = "enabled" ]
+			then
+
+				SOURCE="${backup_local_storage_path}/latest/"
+
+			else
+
+				SOURCE="${backup_ref_dir}"
+
+			fi
 
 		fi
 
@@ -659,9 +670,15 @@ dna-br_duplicity_loop() {
 
 		if [ "${1:-null}" = "backup" ]
 		then
-			duplicity --progress --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}" # Insert --encrypt-key and --sign-key after ${FULL} if using GPG
-		else
+
+			## insert '--encrypt-key' and '--sign-key' after '${full}' if using gpg.
+
+			duplicity --progress --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}"
+
+		elif [ "${1:-null}" = "restore" ]
+
 			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" 2>&1 | tee "$backup_local_storage_path/temp/duplicity-log"
+
 		fi
 
 		set -e
@@ -738,8 +755,9 @@ dna-br_backup_to_S3() {
 
 	today_day_of_month="$(date +%-d)"
 
-	if [ $today_day_of_month = "1" ] && [ $interactive = "n" ]
+	if [ ${today_day_of_month} = "1" ] && [ ${interactive} = "n" ] && [ "${backup_locally_mode}" = "enabled" ]
 	then
+
 		echo "${b-}Now also performing duplicity-independent first-of-the-month upload of | "$output_file_name" | to S3 as well."
 		echo
 
