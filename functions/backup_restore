@@ -237,7 +237,7 @@ dna-backuprestore_backup_subloop() {
 
 	dna-br_create_dirs backup
 
-	if [ "${backup_locally_mode}" = "enabled" ]
+	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
 
 		dna-br_purge_incomplete_archives
@@ -259,7 +259,7 @@ dna-backuprestore_backup_subloop() {
 
 	fi
 
-	if [ "${backup_locally_mode}" = "enabled" ]
+	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
 
 		dna-br_backup_locally "${skip_install_complete_check-}"
@@ -280,7 +280,7 @@ dna-backuprestore_backup_subloop() {
 
 	    else
 
-			if [ "${backup_locally_mode}" = "enabled" ]
+			if [ "${backup_locally_mode_default}" = "enabled" ]
 			then
 
 		    	mv "${tmp_backup_dir}"/* "${backup_local_storage_path}/latest"
@@ -295,7 +295,7 @@ dna-backuprestore_backup_subloop() {
 
 	else
 
-		if [ "${backup_locally_mode}" = "disabled" ]
+		if [ "${backup_locally_mode_default}" = "disabled" ]
 		then
 
 			dna-echo -e "Local backups disabled and S3 backups not enabled. Not performing any backups."
@@ -763,7 +763,7 @@ dna-br_duplicity_loop() {
 			## set the source for the backup.
 			## use / for full system backup [not the case here].
 
-			if [ "${backup_locally_mode}" = "enabled" ]
+			if [ "${backup_locally_mode_default}" = "enabled" ]
 			then
 
 				SOURCE="${backup_local_storage_path}/latest/"
@@ -899,7 +899,7 @@ dna-br_backup_to_S3() {
 
 	today_day_of_month="$(date +%-d)"
 
-	if [ ${today_day_of_month} = "1" ] && [ ${interactive} = "n" ] && [ "${backup_locally_mode}" = "enabled" ]
+	if [ ${today_day_of_month} = "1" ] && [ ${interactive} = "n" ] && [ "${backup_locally_mode_default}" = "enabled" ]
 	then
 
 		echo "${b-}Now also performing duplicity-independent first-of-the-month upload of | "$output_file_name" | to S3 as well."
