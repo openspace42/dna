@@ -5,9 +5,8 @@ set -eu
 dna-br_update_storage_info() {
 
 	free_disk_space="$(df -m --output=avail "$backup_local_storage_path" | xargs | sed -e 's/Avail //g')"
-	ref_dir_size="$(du -sm "$backup_ref_dir" | xargs | sed -e "s|"${backup_ref_dir}"||g" | xargs)"
 
-	est_backup_size=$(($ref_dir_size * 2))
+	synthia-calculate_backup_size
 
 	local_archive_items="$(ls -1q $backup_local_storage_path/archive | wc -l)"
 	local_archive_size="$(du -sm $backup_local_storage_path/archive | xargs | sed "s|${backup_local_storage_path}/archive||g" | xargs)"
@@ -114,10 +113,10 @@ dna-br_purge_backups() {
 
 	fi
 
-	if [ $est_backup_size -gt $free_disk_space ]
+	if [ $backup_size_estimate -gt $free_disk_space ]
 	then
 
-		echo "${r-}${b-}Estimated backup size [$est_backup_size MB] LARGER than available disk space [$free_disk_space MB].${x-}"
+		echo "${r-}${b-}Estimated backup size [$backup_size_estimate MB] LARGER than available disk space [$free_disk_space MB].${x-}"
 		echo
 		echo "${b-}Now purging old backups while respecting your specified number of minimum backups to keep...${x-}"
 		echo
@@ -125,7 +124,7 @@ dna-br_purge_backups() {
 
 		counter=$max_local_backups
 
-		while [ $est_backup_size -gt $free_disk_space ]
+		while [ $backup_size_estimate -gt $free_disk_space ]
 		do
 			dna-br_purge_loop
 		done
