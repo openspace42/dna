@@ -170,6 +170,8 @@ dna-br_create_dirs() {
 		mkdir -p "$backup_local_storage_path/latest"
 		backup_name=$script_name-$now
 		tmp_backup_dir="$backup_local_storage_path/temp/$backup_name"
+		tmp_backup_conf_dir="${tmp_backup_dir}/conf"
+		tmp_backup_data_dir="${tmp_backup_dir}/data"
 		mkdir -p "$tmp_backup_dir"
 
 	fi
@@ -230,7 +232,7 @@ dna-backuprestore_check_set_lockfile() {
 
 }
 
-dna-backuprestore_backup_subloop() {
+dna-backuprestore_backup() {
 
 	dna-br_purge_dirs
 
@@ -266,7 +268,7 @@ dna-backuprestore_backup_subloop() {
 	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
 
-		dna-br_backup_locally "${skip_install_complete_check-}"
+		synthia-backup_locally # "${skip_install_complete_check-}"
 
 	fi
 
