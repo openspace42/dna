@@ -144,9 +144,9 @@ dna-br_purge_dirs() {
 
 	### Purge temp and create directories
 
-	if [ -d "$backup_local_storage_path/temp" ]
+	if [ -d "$backup_local_storage_path/tmp" ]
 	then
-		rm -r "${backup_local_storage_path:?}/temp"
+		rm -r "${backup_local_storage_path:?}/tmp"
 	fi
 
 	if [ -d "$backup_local_storage_path/latest" ]
@@ -166,23 +166,28 @@ dna-br_create_dirs() {
 	if [ "${1:-null}" = "backup" ]
 	then
 
-		mkdir -p "$backup_local_storage_path/archive"
-		mkdir -p "$backup_local_storage_path/latest"
-		backup_name=$script_name-$now
-		tmp_backup_dir="$backup_local_storage_path/temp/$backup_name"
-		tmp_backup_conf_dir="${tmp_backup_dir}/conf"
-		tmp_backup_data_dir="${tmp_backup_dir}/data"
-		mkdir -p "$tmp_backup_dir"
+		backup_name="${script_name}-${now}"
+
+		backup_archive_dir="${backup_local_storage_path}/archive"
+		backup_latest_dir="${backup_local_storage_path}/latest"
+		backup_tmp_dir="${backup_local_storage_path}/tmp"
+
+		backup_tmp_name_dir="${backup_local_storage_path}/tmp/${backup_name}"
+		backup_tmp_name_conf_dir="${backup_tmp_name_dir}/conf"
+		backup_tmp_name_data_dir="${backup_tmp_name_dir}/data"
+
+		mkdir -p "${backup_archive_dir}"
+		mkdir -p "${backup_latest_dir}"
 
 	fi
 
-	mkdir -p "$backup_local_storage_path/temp"
+	mkdir -p "${backup_tmp_name_dir}"
 
 }
 
 dna-br_purge_incomplete_archives() {
 
-	if [ -d "$backup_local_storage_path/archive" ]
+	if [ -d "${backup_local_storage_path}/archive" ]
 	then
 		find "$backup_local_storage_path/archive" -type f -name '*.incomplete' -delete
 	fi
@@ -268,7 +273,7 @@ dna-backuprestore_backup() {
 	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
 
-		synthia-backup_locally # "${skip_install_complete_check-}"
+		dna-backuprestore_backup_locally "${skip_install_complete_check-}"
 
 	fi
 
@@ -282,14 +287,14 @@ dna-backuprestore_backup() {
 
 	        dna-echo -e "Skipping S3 backup because of a previous test restore failure."
 
-	        rm -r "${tmp_backup_dir}"
+	        rm -r "${backup_tmp_dir}"
 
 	    else
 
 			if [ "${backup_locally_mode_default}" = "enabled" ]
 			then
 
-		    	mv "${tmp_backup_dir}"/* "${backup_local_storage_path}/latest"
+		    	mv "${backup_tmp_dir}"/* "${backup_local_storage_path}/latest"
 
 			fi
 
@@ -308,7 +313,7 @@ dna-backuprestore_backup() {
 
 		fi
 
-		rm -r "$tmp_backup_dir"
+		rm -r "$backup_tmp_dir"
 
 	fi
 
@@ -316,9 +321,9 @@ dna-backuprestore_backup() {
 
 dna-backuprestore_backup_cleanup() {
 
-	if [ -d "$backup_local_storage_path/temp" ]
+	if [ -d "$backup_local_storage_path/tmp" ]
 	then
-		rm -r "${backup_local_storage_path:?}/temp"
+		rm -r "${backup_local_storage_path:?}/tmp"
 	fi
 
 	dna-br_purge_dirs
@@ -337,83 +342,96 @@ dna-backuprestore_backup_cleanup() {
 
 }
 
-dna-br_backup_locally() {
+dna-backuprestore_backup_locally() {
 
-    while getopts ":ls" arguments; do
+    while getopts ":ls" arguments;
+	do
 		case $arguments in
 			l)	last="y"
-			;;
+				;;
 			s)	skip_install_complete_check="y"
-			;;
-			\?)	echo "${r-}${b-}Invalid option | -$OPTARG | for function | ${FUNCNAME[0]} |.${x-}"
-			echo
-			dna-exit
-			;;
+				;;
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+		        dna-exit
+		        ;;
 		esac
 	done
     OPTIND=1
 
-    ### backup_locally_loop is project-specific and must be defined before calling this function
+    ## backup_locally_loop is project-specific and must be defined in project.
 
-    echo "${b-}Now backing up locally...${x-}"
-	echo
+    operation_message="backing up locally"
+	dna-echo_operation -h
 
-	if [ ! ${skip_install_complete_check-null} = "y" ]
+	if [ -z ${skip_install_complete_check-} ]
 	then
 
-		### Abort if the current installation was never completed
+		## abort if the current installation was never completed.
 
 		dna-check_install_complete
 
-		if [ $install_complete = "n" ]
+		if [ "${install_complete}" = "n" ]
 		then
-			echo "${r-}${b-}It appears $proj_name is not currently installed or there is an incomplete installation on this machine.${x-}"
-	        echo
-	        echo "${b-}This backup script only works on a fully installed $proj_name instance.${x-}"
-	        echo
-	        echo "${b-}Please finish installing $proj_name before running this script.${x-}"
-	        echo
+
+			dna-echo -e "It appears ${proj_name} is not currently installed or there is an incomplete installation on this machine."
+	        dna-echo -m "This backup script only works on a fully installed ${proj_name} instance."
+	        dna-echo -m "Please finish installing ${proj_name} before running this script."
 			dna-exit
+
 		fi
 
 	fi
 
-    backup_locally_loop
+    synthia-backup_locally
 
-    echo "${b-}Now archiving backup...${x-}"
-	echo
+    operation_message="archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
+	dna-echo_operation -h
 
-	cd "$backup_local_storage_path/temp"
+	cd "${backup_tmp_dir}"
 
-    if [ ! ${last-null} = "y" ]
+    if [ -z ${last-} ]
 	then
 
-    	### Tar [and - if chosen - bzip2] this backup archive.
+    	## tar [and - if chosen - bzip2] this backup archive.
 
 		if [ "$backup_compression_type" = "bz2" ]
 		then
-			output_file_name="$backup_name.tar.bz2"
-			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
-	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
+
+			output_file_name="${backup_name}.tar.bz2"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+	    	tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
+
 		else
-			output_file_name="$backup_name.tar"
-			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
-			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') > "${output_file_path}.incomplete"
+
+			output_file_name="${backup_name}.tar"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+			tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') > "${output_file_path}.incomplete"
+
 		fi
 
     else
 
-        ### Tar [and - if chosen - bzip2] this backup archive. Give local backup a custom name so that it's clear it's the last one before a restore
+        ## tar [and - if chosen - bzip2] this backup archive.
+		## give local backup a custom name so that it's clear it's the last one
+		## before a restore.
 
-		if [ "$backup_compression_type" = "bz2" ]
+		if [ "${backup_compression_type}" = "bz2" ]
 		then
-			output_file_name="$backup_name-last-backup-before-$now-restore.tar.bz2"
-			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
-	    	tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
+
+			output_file_name="${backup_name}-last-backup-before-${now}-restore.tar.bz2"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+	    	tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
+
 		else
-			output_file_name="$backup_name-last-backup-before-$now-restore.tar"
-			output_file_path="$backup_local_storage_path/archive/${output_file_name}"
-			tar cSf - $backup_name -P | pv -s $(du -sb $backup_name | awk '{print $1}')> "${output_file_path}.incomplete"
+
+			output_file_name="${backup_name}-last-backup-before-${now}-restore.tar"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+			tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}')> "${output_file_path}.incomplete"
+
 		fi
 
     fi
@@ -422,11 +440,7 @@ dna-br_backup_locally() {
 
 	mv "${output_file_path}.incomplete" "${output_file_path}"
 
-	echo "${g-}${b-}Finished archiving backup and storing it in: | $backup_local_storage_path/archive/ | ${x-}"
-	echo
-
-	echo "${g-}${b-}Finished local backup.${x-}"
-	echo
+	dna-echo_operation -t
 
 }
 
@@ -827,7 +841,7 @@ dna-br_duplicity_loop() {
 		elif [ "${1:-null}" = "restore" ]
 		then
 
-			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" 2>&1 | tee "$backup_local_storage_path/temp/duplicity-log"
+			duplicity "${DEST}" "$backup_local_storage_path/restores/s3/" 2>&1 | tee "$backup_local_storage_path/tmp/duplicity-log"
 
 		fi
 
@@ -912,7 +926,7 @@ dna-br_backup_to_S3() {
 		echo
 
 		encrypt() {
-			echo "$backups_passphrase" | gpg --output  "$backup_local_storage_path/temp/$@.gpg" --passphrase-fd 0 --batch --yes --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
+			echo "$backups_passphrase" | gpg --output  "$backup_local_storage_path/tmp/$@.gpg" --passphrase-fd 0 --batch --yes --symmetric -z 9 --require-secmem --cipher-algo AES256 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-mode 3 --s2k-count 65000000 --compress-algo BZIP2 $@
 		}
 
 		decrypt() {
@@ -939,7 +953,7 @@ dna-br_backup_to_S3() {
 		}
 
 		( cd "$backup_local_storage_path/archive/" && encrypt "$output_file_name" )
-		putS3 "$backup_local_storage_path/temp/" "$output_file_name.gpg" "/$proj_name/archive/" 2> /dev/null
+		putS3 "$backup_local_storage_path/tmp/" "$output_file_name.gpg" "/$proj_name/archive/" 2> /dev/null
 
 	fi
 
@@ -963,7 +977,7 @@ dna-br_restore_from_S3() {
 
 	dna-br_duplicity_loop restore
 
-	if grep -q "No backup chains found" "$backup_local_storage_path/temp/duplicity-log"
+	if grep -q "No backup chains found" "$backup_local_storage_path/tmp/duplicity-log"
 	then
 
 		if [ "${1:-null}" = "test" ]
@@ -984,7 +998,7 @@ dna-br_restore_from_S3() {
 
 	else
 
-		if grep -q "gpg: decryption failed: bad key" "$backup_local_storage_path/temp/duplicity-log" || [ ! -d "$backup_local_storage_path/restores/s3/" ]
+		if grep -q "gpg: decryption failed: bad key" "$backup_local_storage_path/tmp/duplicity-log" || [ ! -d "$backup_local_storage_path/restores/s3/" ]
 		then
 
 			if [ "${1:-null}" = "test" ]
