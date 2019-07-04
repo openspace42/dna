@@ -140,7 +140,7 @@ dna-br_purge_backups() {
 
 }
 
-dna-br_purge_dirs() {
+dna-backuprestore_purge_dirs() {
 
 	### Purge temp and create directories
 
@@ -180,7 +180,6 @@ dna-backuprestore_create_dirs() {
 		mkdir -p "${backup_latest_dir}"
 		mkdir -p "${backup_tmp_dir}"
 
-		mkdir -p "${backup_tmp_name_conf_dir}"
 		mkdir -p "${backup_tmp_name_data_dir}"
 
 	fi
@@ -189,7 +188,7 @@ dna-backuprestore_create_dirs() {
 
 }
 
-dna-br_purge_incomplete_archives() {
+dna-backuprestore_purge_incomplete_archives() {
 
 	if [ -d "${backup_local_storage_path}/archive" ]
 	then
@@ -241,6 +240,27 @@ dna-backuprestore_check_set_lockfile() {
 
 }
 
+dna-backuprestore_calculate_backup_paths_size() {
+
+	### fetch sizes for the directories that have the most impactful sizes that
+	### will affect backups [such as '/var/www/' for nginx-related projects].
+	### all sizes in MB.
+
+	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+
+	backup_paths_size_estimate=0
+
+	for this_backup_path in ${backup_paths}
+	do
+
+		this_backup_path_size="$(du -sm ${this_backup_path} | cut -f1)"
+
+		backup_paths_size_estimate="$((${backup_paths_size_estimate} + ${this_backup_path_size}))"
+
+	done
+
+}
+
 dna-backuprestore_backup_locally() {
 
     while getopts ":ls" arguments;
@@ -280,6 +300,8 @@ dna-backuprestore_backup_locally() {
 		fi
 
 	fi
+
+	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
 
     synthia-backup_locally
 
