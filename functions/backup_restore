@@ -140,7 +140,7 @@ dna-br_purge_backups() {
 
 }
 
-dna-backuprestore_purge_dirs() {
+dna_purge_dirs() {
 
 	### Purge temp and create directories
 
@@ -161,7 +161,7 @@ dna-backuprestore_purge_dirs() {
 
 }
 
-dna-backuprestore_create_dirs() {
+dna_create_dirs() {
 
 	if [ "${1:-null}" = "backup" ]
 	then
@@ -188,7 +188,7 @@ dna-backuprestore_create_dirs() {
 
 }
 
-dna-backuprestore_purge_incomplete_archives() {
+dna_purge_incomplete_archives() {
 
 	if [ -d "${backup_local_storage_path}/archive" ]
 	then
@@ -197,7 +197,7 @@ dna-backuprestore_purge_incomplete_archives() {
 
 }
 
-dna-backuprestore_check_set_lockfile() {
+dna_check_set_lockfile() {
 
 	### Check for lockfile to avoid multiple simultaneous backups
 
@@ -240,7 +240,7 @@ dna-backuprestore_check_set_lockfile() {
 
 }
 
-dna-backuprestore_calculate_backup_paths_size() {
+dna-calculate_backup_paths_size() {
 
 	### fetch sizes for the directories that have the most impactful sizes that
 	### will affect backups [such as '/var/www/' for nginx-related projects].
@@ -261,56 +261,37 @@ dna-backuprestore_calculate_backup_paths_size() {
 
 }
 
-dna-backuprestore_backup_locally() {
-
-    while getopts ":ls" arguments;
-	do
-		case $arguments in
-			l)	last="y"
-				;;
-			s)	skip_install_complete_check="y"
-				;;
-			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
-		        dna-exit
-		        ;;
-		esac
-	done
-    OPTIND=1
-
-    ## backup_locally_loop is project-specific and must be defined in project.
-
-    operation_message="backing up locally"
-	dna-echo_operation -h
-
-	if [ -z ${skip_install_complete_check-} ]
-	then
-
-		## abort if the current installation was never completed.
-
-		dna-check_install_complete
-
-		if [ "${install_complete}" = "n" ]
-		then
-
-			dna-echo -e "It appears ${proj_name} is not currently installed or there is an incomplete installation on this machine."
-	        dna-echo -m "This backup script only works on a fully installed ${proj_name} instance."
-	        dna-echo -m "Please finish installing ${proj_name} before running this script."
-			dna-exit
-
-		fi
-
-	fi
+dna-backup_locally_conf_dir() {
 
 	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
 
-    synthia-backup_locally
+}
 
-    operation_message="archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
+dna-backup_locally_data_backup_paths() {
+
+	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
+
+	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+
+	for this_backup_path in ${backup_paths}
+	do
+
+		this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|_|g" | sed "s|^_||g" | sed "s|-$||g")"
+
+		rsync -aAXxL "${this_backup_path}/" "${backup_tmp_name_data_dir}/${this_backup_path_name}"
+
+	done
+
+}
+
+dna-archive_local_backup() {
+
+	operation_message="archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
 	dna-echo_operation -h
 
 	cd "${backup_tmp_dir}"
 
-    if [ -z ${last-} ]
+    if [ -z "${backup_last_before_restore-}" ]
 	then
 
     	## tar [and - if chosen - bzip2] this backup archive.
@@ -367,11 +348,82 @@ dna-backuprestore_backup_locally() {
 
 }
 
-dna-backuprestore_backup() {
+dna-check_install_complete() {
+
+	if [ -z ${skip_install_complete_check-} ]
+	then
+
+		### abort if the current installation was never completed.
+
+		dna-check_install_complete
+
+		if [ "${install_complete}" = "n" ]
+		then
+
+			dna-echo -e "It appears ${proj_name} is not currently installed or there is an incomplete installation on this machine."
+	        dna-echo -m "This backup script only works on a fully installed ${proj_name} instance."
+	        dna-echo -m "Please finish installing ${proj_name} before running this script."
+			dna-exit
+
+		fi
+
+	fi
+
+}
+
+dna-backup_locally() {
+
+	if [ -z "${backup_skip_install_complete_check-}" ]
+	then
+
+		dna-check_install_complete
+
+	fi
+
+	dna-backup_locally_conf_dir
+
+    synthia-backup_locally
+
+    dna-archive_local_backup
+
+	if [ -n "${backup_last_before_restore-}" ]
+	then
+
+		### if not restoring a previous state of this same installation, then
+		### move the backups directory to an "old" named one.
+
+		if [ "${restore_source}" = "here" ]
+		then
+
+			dna-echo -m "Last backup before restore archived to directory: | ${l-}${backup_local_storage_path}/archive${n-} |."
+
+		else
+
+			mkdir -p "${backup_local_storage_path}/old"
+
+			mv "${backup_local_storage_path}/archive" "${backup_local_storage_path}/old/archive-old-before-restore-on-${now}"
+
+			if [ -d "${duplicity_log_dir}/backup" ]
+			then
+				mkdir -p "${duplicity_log_dir}/old"
+				mv "${duplicity_log_dir}/backup/" "${duplicity_log_dir}/old/backup-old-before-restore-on-${now}"
+			fi
+
+			dna-echo -m "Last backup before restore archived to directory: | ${l-}${backup_local_storage_path}/old/archive-old-before-restore-on-${now}${n-} |."
+
+		fi
+
+	fi
+
+}
+
+dna-backup() {
+
+	### initiate.
 
 	dna-br_purge_dirs
 
-	dna-backuprestore_create_dirs backup
+	dna-create_dirs backup
 
 	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
@@ -384,7 +436,9 @@ dna-backuprestore_backup() {
 
 	fi
 
-	if [ "$backup_archival_location" = "s3" ]
+	### initiate s3 and test restore.
+
+	if [ "$backup_archival_location" = "s3" ] && [ -z "${backup_locally_only-}" ]
 	then
 
 		if [ "${backup_test_restore_mode_default}" = "enabled" ]
@@ -396,18 +450,20 @@ dna-backuprestore_backup() {
 
 	    dna-br_purge_dirs
 
-	    dna-backuprestore_create_dirs backup
+	    dna-create_dirs backup
 
 	fi
 
-	if [ "${backup_locally_mode_default}" = "enabled" ]
+	### backup locally.
+
+	if [ "${backup_locally_mode_default}" = "enabled" ] && [ -z "${backup_s3_only-}" ]
 	then
 
-		dna-backuprestore_backup_locally "${skip_install_complete_check-}"
+		dna-backup_locally
 
 	fi
 
-	################################################################################
+	### backup to s3.
 
 	if [ "${backup_archival_location}" = "s3" ]
 	then
@@ -449,7 +505,7 @@ dna-backuprestore_backup() {
 
 }
 
-dna-backuprestore_backup_cleanup() {
+dna-backup_cleanup() {
 
 	if [ -d "$backup_local_storage_path/tmp" ]
 	then
@@ -474,39 +530,7 @@ dna-backuprestore_backup_cleanup() {
 
 dna-br_last_local_backup() {
 
-    echo "${b-}Now performing a last backup [locally - no S3 of course] this machine's currently running $proj_name installation just in case...${x-}"
-	echo
-
-	dna-backuprestore_create_dirs backup
-
-	dna-br_update_storage_info noS3
-
-	dna-br_purge_backups
-
-	dna-br_backup_locally last
-
-	### If not restoring a previous state of this same installation, then move the backups directory to an "old" named one.
-
-	if [ $restore_source = "here" ]
-	then
-
-		echo "${b-}Backed up current installation to | $backup_local_storage_path/archive |.${x-}"
-		echo
-
-	else
-
-		mkdir -p "$backup_local_storage_path"/old
-		mv "$backup_local_storage_path/archive" "$backup_local_storage_path/old/archive-old-before-$now-restore"
-
-		if [ ! -z "${duplicity_log_dir-}" ]
-		then
-			mkdir -p "$duplicity_log_dir"/old
-			mv "$duplicity_log_dir"/backup/ "$duplicity_log_dir"/old/backup-old-before-"$now"-restore 2> /dev/null || true
-		fi
-
-		echo "${b-}Backed up current installation to local backups directory and moved the latter to $backup_local_storage_path/old/archive-old-before-$now-restore.${x-}"
-		echo
-	fi
+    dna-echo "Now performing a last backup [locally - no S3 of course] this machine's currently running $proj_name installation just in case..."
 
 }
 
