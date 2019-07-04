@@ -188,7 +188,7 @@ dna-backup_create_dirs() {
 
 }
 
-dna-purge_incomplete_archives() {
+dna-backup_purge_incomplete_archives() {
 
 	if [ -d "${backup_local_storage_path}/archive" ]
 	then
@@ -423,7 +423,7 @@ dna-backup() {
 
 	dna-backup_purge_dirs
 
-	dna-create_dirs backup
+	dna-backup_create_dirs backup
 
 	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
@@ -450,7 +450,7 @@ dna-backup() {
 
 	    dna-backup_purge_dirs
 
-	    dna-create_dirs backup
+	    dna-backup_create_dirs backup
 
 	fi
 
