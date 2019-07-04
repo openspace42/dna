@@ -237,6 +237,110 @@ dna-backuprestore_check_set_lockfile() {
 
 }
 
+dna-backuprestore_backup_locally() {
+
+    while getopts ":ls" arguments;
+	do
+		case $arguments in
+			l)	last="y"
+				;;
+			s)	skip_install_complete_check="y"
+				;;
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+		        dna-exit
+		        ;;
+		esac
+	done
+    OPTIND=1
+
+    ## backup_locally_loop is project-specific and must be defined in project.
+
+    operation_message="backing up locally"
+	dna-echo_operation -h
+
+	if [ -z ${skip_install_complete_check-} ]
+	then
+
+		## abort if the current installation was never completed.
+
+		dna-check_install_complete
+
+		if [ "${install_complete}" = "n" ]
+		then
+
+			dna-echo -e "It appears ${proj_name} is not currently installed or there is an incomplete installation on this machine."
+	        dna-echo -m "This backup script only works on a fully installed ${proj_name} instance."
+	        dna-echo -m "Please finish installing ${proj_name} before running this script."
+			dna-exit
+
+		fi
+
+	fi
+
+    synthia-backup_locally
+
+    operation_message="archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
+	dna-echo_operation -h
+
+	cd "${backup_tmp_dir}"
+
+    if [ -z ${last-} ]
+	then
+
+    	## tar [and - if chosen - bzip2] this backup archive.
+
+		if [ "$backup_compression_type" = "bz2" ]
+		then
+
+			output_file_name="${backup_name}.tar.bz2"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+	    	tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
+
+		else
+
+			output_file_name="${backup_name}.tar"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+			tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') > "${output_file_path}.incomplete"
+
+		fi
+
+    else
+
+        ## tar [and - if chosen - bzip2] this backup archive.
+		## give local backup a custom name so that it's clear it's the last one
+		## before a restore.
+
+		if [ "${backup_compression_type}" = "bz2" ]
+		then
+
+			output_file_name="${backup_name}-last-backup-before-${now}-restore.tar.bz2"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+	    	tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
+
+		else
+
+			output_file_name="${backup_name}-last-backup-before-${now}-restore.tar"
+			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
+
+			tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}')> "${output_file_path}.incomplete"
+
+		fi
+
+    fi
+
+	cd -
+
+	echo
+
+	mv "${output_file_path}.incomplete" "${output_file_path}"
+
+	dna-echo_operation -t
+
+}
+
 dna-backuprestore_backup() {
 
 	dna-br_purge_dirs
@@ -339,108 +443,6 @@ dna-backuprestore_backup_cleanup() {
 	fi
 
 	dna-echo -s "Backup complete!"
-
-}
-
-dna-backuprestore_backup_locally() {
-
-    while getopts ":ls" arguments;
-	do
-		case $arguments in
-			l)	last="y"
-				;;
-			s)	skip_install_complete_check="y"
-				;;
-			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
-		        dna-exit
-		        ;;
-		esac
-	done
-    OPTIND=1
-
-    ## backup_locally_loop is project-specific and must be defined in project.
-
-    operation_message="backing up locally"
-	dna-echo_operation -h
-
-	if [ -z ${skip_install_complete_check-} ]
-	then
-
-		## abort if the current installation was never completed.
-
-		dna-check_install_complete
-
-		if [ "${install_complete}" = "n" ]
-		then
-
-			dna-echo -e "It appears ${proj_name} is not currently installed or there is an incomplete installation on this machine."
-	        dna-echo -m "This backup script only works on a fully installed ${proj_name} instance."
-	        dna-echo -m "Please finish installing ${proj_name} before running this script."
-			dna-exit
-
-		fi
-
-	fi
-
-    synthia-backup_locally
-
-    operation_message="archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
-	dna-echo_operation -h
-
-	cd "${backup_tmp_dir}"
-
-    if [ -z ${last-} ]
-	then
-
-    	## tar [and - if chosen - bzip2] this backup archive.
-
-		if [ "$backup_compression_type" = "bz2" ]
-		then
-
-			output_file_name="${backup_name}.tar.bz2"
-			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
-
-	    	tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
-
-		else
-
-			output_file_name="${backup_name}.tar"
-			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
-
-			tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') > "${output_file_path}.incomplete"
-
-		fi
-
-    else
-
-        ## tar [and - if chosen - bzip2] this backup archive.
-		## give local backup a custom name so that it's clear it's the last one
-		## before a restore.
-
-		if [ "${backup_compression_type}" = "bz2" ]
-		then
-
-			output_file_name="${backup_name}-last-backup-before-${now}-restore.tar.bz2"
-			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
-
-	    	tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}') | bzip2 > "${output_file_path}.incomplete"
-
-		else
-
-			output_file_name="${backup_name}-last-backup-before-${now}-restore.tar"
-			output_file_path="${backup_local_storage_path}/archive/${output_file_name}"
-
-			tar cSf - ${backup_name} -P | pv -s $(du -sb ${backup_name} | awk '{print $1}')> "${output_file_path}.incomplete"
-
-		fi
-
-    fi
-
-	echo
-
-	mv "${output_file_path}.incomplete" "${output_file_path}"
-
-	dna-echo_operation -t
 
 }
 
