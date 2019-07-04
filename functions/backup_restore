@@ -140,7 +140,7 @@ dna-backup_purge_backups() {
 
 }
 
-dna-purge_dirs() {
+dna-backup_purge_dirs() {
 
 	### Purge temp and create directories
 
@@ -161,7 +161,7 @@ dna-purge_dirs() {
 
 }
 
-dna-create_dirs() {
+dna-backup_create_dirs() {
 
 	if [ "${1:-null}" = "backup" ]
 	then
