@@ -2,7 +2,7 @@
 
 set -eu
 
-dna-br_update_storage_info() {
+dna-backup_update_storage_info() {
 
 	free_disk_space="$(df -m --output=avail "$backup_local_storage_path" | xargs | sed -e 's/Avail //g')"
 
@@ -13,7 +13,7 @@ dna-br_update_storage_info() {
 
 }
 
-dna-br_purge_loop() {
+dna-backup_purge_loop() {
 
 	if [ $local_archive_items -gt $min_local_backups ]
 	then
@@ -34,7 +34,7 @@ dna-br_purge_loop() {
 			( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
 		fi
 
-		dna-br_update_storage_info
+		dna-backup_update_storage_info
 
 	else
 
@@ -73,7 +73,7 @@ dna-br_purge_loop() {
 
 }
 
-dna-br_purge_backups() {
+dna-backup_purge_backups() {
 
 	### Purge backups older than the latest $max_local_backups
 
@@ -82,7 +82,7 @@ dna-br_purge_backups() {
 	then
 		tail_number=$(( $max_local_backups + 1 ))
 		( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
-		dna-br_update_storage_info
+		dna-backup_update_storage_info
 	fi
 
 	echo "${b-}You have $local_archive_items local backups occupying $local_archive_size MB of space.${x-}"
@@ -101,7 +101,7 @@ dna-br_purge_backups() {
 
 		while [ $local_archive_size -gt $max_local_storage ]
 		do
-			dna-br_purge_loop
+			dna-backup_purge_loop
 		done
 
 		echo "${g-}${b-}Local archive size now low enough [$local_archive_size MB] to respect your settings.${x-}"
@@ -126,7 +126,7 @@ dna-br_purge_backups() {
 
 		while [ $backup_size_estimate -gt $free_disk_space ]
 		do
-			dna-br_purge_loop
+			dna-backup_purge_loop
 		done
 
 		echo "${g-}${b-}Enough free space [$free_disk_space MB] now available for new backup.${x-}"
@@ -421,18 +421,18 @@ dna-backup() {
 
 	### initiate.
 
-	dna-br_purge_dirs
+	dna-backup_purge_dirs
 
 	dna-create_dirs backup
 
 	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
 
-		dna-br_purge_incomplete_archives
+		dna-backup_purge_incomplete_archives
 
-		dna-br_update_storage_info
+		dna-backup_update_storage_info
 
-		dna-br_purge_backups
+		dna-backup_purge_backups
 
 	fi
 
@@ -444,11 +444,11 @@ dna-backup() {
 		if [ "${backup_test_restore_mode_default}" = "enabled" ]
 		then
 
-		    dna-br_restore_from_S3 test
+		    dna_restore_from_S3 test
 
 		fi
 
-	    dna-br_purge_dirs
+	    dna-backup_purge_dirs
 
 	    dna-create_dirs backup
 
@@ -486,7 +486,7 @@ dna-backup() {
 
 	    	############################################################################
 
-	    	dna-br_backup_to_S3
+	    	dna_backup_to_S3
 
 	    fi
 
@@ -512,7 +512,7 @@ dna-backup_cleanup() {
 		rm -r "${backup_local_storage_path:?}/tmp"
 	fi
 
-	dna-br_purge_dirs
+	dna-backup_purge_dirs
 
 	if [ -f "/tmp/${proj_name}-backup-running-lockfile" ]
 	then
@@ -528,13 +528,13 @@ dna-backup_cleanup() {
 
 }
 
-dna-br_last_local_backup() {
+dna-last_local_backup() {
 
     dna-echo "Now performing a last backup [locally - no S3 of course] this machine's currently running $proj_name installation just in case..."
 
 }
 
-dna-br_restore_from_here() {
+dna-restore_from_here() {
 
 	if [ ! -d "$backup_local_storage_path/archive" ]
 	then
@@ -663,7 +663,7 @@ dna-br_restore_from_here() {
 
 }
 
-dna-br_restore_from_standalone() {
+dna-restore_from_standalone() {
 
 	echo "${b-}Ok, restoring from a standalone $proj_name backup file.${x-}"
 	echo
@@ -763,7 +763,7 @@ dna-br_restore_from_standalone() {
 
 }
 
-dna-br_duplicity_loop() {
+dna-duplicity_loop() {
 
 	### Raise ulimit for open files
 
@@ -947,7 +947,7 @@ dna-br_duplicity_loop() {
 
 
 
-dna-br_backup_to_S3() {
+dna-backup_to_S3() {
 
 	echo "${b-}Now backing up to S3...${x-}"
 	echo
@@ -965,7 +965,7 @@ dna-br_backup_to_S3() {
 		dna-exit
     fi
 
-	dna-br_duplicity_loop backup
+	dna-duplicity_loop backup
 
 	### Also upload today's full backup file to S3 if s3_monthly_uploads=y [only if this is NOT a manual run]
 
@@ -1013,7 +1013,7 @@ dna-br_backup_to_S3() {
 
 
 
-dna-br_restore_from_S3() {
+dna-restore_from_S3() {
 
 	if [ "${1:-null}" = "test" ]
 	then
@@ -1027,7 +1027,7 @@ dna-br_restore_from_S3() {
 	echo "${b-}This is going to take some time and will NOT output any progress information until it's done.${x-}"
 	echo
 
-	dna-br_duplicity_loop restore
+	dna-duplicity_loop restore
 
 	if grep -q "No backup chains found" "$backup_local_storage_path/tmp/duplicity-log"
 	then
@@ -1121,7 +1121,7 @@ dna-br_restore_from_S3() {
 
 }
 
-dna-br_launch_restore() {
+dna-launch_restore() {
 
 	while getopts ":s" arguments; do
 		case $arguments in
@@ -1171,7 +1171,7 @@ dna-br_launch_restore() {
 	    if [ $restore_source = "here" ]
 	    then
 
-	    	dna-br_restore_from_here
+	    	dna-restore_from_here
 
 	    else
 
@@ -1212,11 +1212,11 @@ dna-br_launch_restore() {
 			if [ $restore_type = "s3" ]
 			then
 
-				dna-br_restore_from_S3
+				dna-restore_from_S3
 
 			else
 
-				dna-br_restore_from_standalone
+				dna-restore_from_standalone
 
 				echo
 
@@ -1226,7 +1226,7 @@ dna-br_launch_restore() {
 
 	else
 
-		dna-br_restore_from_S3
+		dna-restore_from_S3
 
 	fi
 
