@@ -113,10 +113,10 @@ dna-backup_purge_backups() {
 
 	fi
 
-	if [ $backup_size_estimate -gt $free_disk_space ]
+	if [ $backup_total_size_estimate -gt $free_disk_space ]
 	then
 
-		echo "${r-}${b-}Estimated backup size [$backup_size_estimate MB] LARGER than available disk space [$free_disk_space MB].${x-}"
+		echo "${r-}${b-}Estimated backup size [$backup_total_size_estimate MB] LARGER than available disk space [$free_disk_space MB].${x-}"
 		echo
 		echo "${b-}Now purging old backups while respecting your specified number of minimum backups to keep...${x-}"
 		echo
