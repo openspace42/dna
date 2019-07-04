@@ -140,7 +140,7 @@ dna-backup_purge_backups() {
 
 }
 
-dna_purge_dirs() {
+dna-purge_dirs() {
 
 	### Purge temp and create directories
 
@@ -161,7 +161,7 @@ dna_purge_dirs() {
 
 }
 
-dna_create_dirs() {
+dna-create_dirs() {
 
 	if [ "${1:-null}" = "backup" ]
 	then
@@ -188,7 +188,7 @@ dna_create_dirs() {
 
 }
 
-dna_purge_incomplete_archives() {
+dna-purge_incomplete_archives() {
 
 	if [ -d "${backup_local_storage_path}/archive" ]
 	then
@@ -197,7 +197,7 @@ dna_purge_incomplete_archives() {
 
 }
 
-dna_check_set_lockfile() {
+dna-check_set_lockfile() {
 
 	### Check for lockfile to avoid multiple simultaneous backups
 
