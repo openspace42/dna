@@ -349,7 +349,7 @@ dna-backuprestore_backup() {
 
 	dna-br_purge_dirs
 
-	dna-br_create_dirs backup
+	dna-backuprestore_create_dirs backup
 
 	if [ "${backup_locally_mode_default}" = "enabled" ]
 	then
@@ -374,7 +374,7 @@ dna-backuprestore_backup() {
 
 	    dna-br_purge_dirs
 
-	    dna-br_create_dirs backup
+	    dna-backuprestore_create_dirs backup
 
 	fi
 
@@ -455,7 +455,7 @@ dna-br_last_local_backup() {
     echo "${b-}Now performing a last backup [locally - no S3 of course] this machine's currently running $proj_name installation just in case...${x-}"
 	echo
 
-	dna-br_create_dirs backup
+	dna-backuprestore_create_dirs backup
 
 	dna-br_update_storage_info noS3
 
