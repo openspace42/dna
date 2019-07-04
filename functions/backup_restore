@@ -161,7 +161,7 @@ dna-br_purge_dirs() {
 
 }
 
-dna-br_create_dirs() {
+dna-backuprestore_create_dirs() {
 
 	if [ "${1:-null}" = "backup" ]
 	then
@@ -178,6 +178,10 @@ dna-br_create_dirs() {
 
 		mkdir -p "${backup_archive_dir}"
 		mkdir -p "${backup_latest_dir}"
+		mkdir -p "${backup_tmp_dir}"
+
+		mkdir -p "${backup_tmp_name_conf_dir}"
+		mkdir -p "${backup_tmp_name_data_dir}"
 
 	fi
 
