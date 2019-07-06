@@ -844,11 +844,11 @@ dna-duplicity_loop() {
 			if [ "${backup_locally_mode_default}" = "enabled" ]
 			then
 
-				SOURCE="${backup_local_storage_path}/latest/"
+				SOURCE="--include ${backup_local_storage_path}/latest/"
 
 			else
 
-				SOURCE="${backup_ref_dir}"
+				SOURCE="--include /var/www/ --include /etc/ssl/"
 
 			fi
 
@@ -894,7 +894,7 @@ dna-duplicity_loop() {
 
 			## insert '--encrypt-key' and '--sign-key' after '${full}' if using gpg.
 
-			duplicity --progress --allow-source-mismatch ${FULL} "${SOURCE}" "${DEST}"
+			duplicity --progress --allow-source-mismatch ${FULL} / "${SOURCE}" --exclude '**' "${DEST}"
 
 		elif [ "${1:-null}" = "restore" ]
 		then
