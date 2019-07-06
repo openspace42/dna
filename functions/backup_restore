@@ -458,12 +458,20 @@ dna-backup() {
 
 	fi
 
+	### perform pre-backup operations.
+
+	synthia-backup_pre_operations
+
 	### backup locally.
 
 	if [ "${backup_locally_mode_default}" = "enabled" ] && [ -z "${backup_s3_only-}" ]
 	then
 
 		dna-backup_locally
+
+		### perform post-backup operations.
+
+		synthia-backup_post_operations
 
 	fi
 
@@ -492,6 +500,15 @@ dna-backup() {
 
 	    	dna-backup_to_S3
 
+			if [ "${backup_locally_mode_default}" = "disabled" ]
+			then
+
+				### perform post-backup operations.
+
+				synthia-backup_post_operations
+
+			fi
+
 	    fi
 
 	else
@@ -500,6 +517,10 @@ dna-backup() {
 		then
 
 			dna-echo -e "Local backups disabled and S3 backups not enabled. Not performing any backups."
+
+			### perform post-backup operations.
+
+			synthia-backup_post_operations
 
 		fi
 

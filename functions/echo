@@ -111,11 +111,12 @@ dna-echo_operation() {
         dna-exit
     fi
 
-    while getopts ":ht" arguments; do
+    while getopts ":h:t" arguments; do
         case $arguments in
-            h)	status="head"
+            h)	echo_operation_status="head"
+                export echo_operation_message="${OPTARG}"
                 ;;
-            t)	status="tail"
+            t)	echo_operation_status="tail"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -124,13 +125,13 @@ dna-echo_operation() {
     done
     OPTIND=1
 
-    if [ -z "${status-}" ]
+    if [ -z "${echo_operation_status-}" ]
     then
         dna-echo -e "Status flag | ${n-}head [-h] || tail [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    if [ -z "${operation_message-}" ]
+    if [ "${echo_operation_status}" = "head" ] && [ -z "${echo_operation_message-}" ]
     then
         dna-echo -e "The variable | ${n-}operation_message${r-} | must be exported before calling the function | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
@@ -138,15 +139,15 @@ dna-echo_operation() {
 
     ############################################################################
 
-    if [ "${status}" = "head" ]
+    if [ "${echo_operation_status}" = "head" ]
     then
 
-        dna-echo -m "Now ${operation_message}..."
+        dna-echo -m "Now ${echo_operation_message}..."
 
-    elif [ "${status}" = "tail" ]
+    elif [ "${echo_operation_status}" = "tail" ]
     then
 
-        dna-echo -s "Finished ${operation_message}."
+        dna-echo -s "Finished ${echo_operation_message}."
 
     fi
 
