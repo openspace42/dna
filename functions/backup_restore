@@ -4,12 +4,16 @@ set -eu
 
 dna-backup_update_storage_info() {
 
-	free_disk_space="$(df -m --output=avail "$backup_local_storage_path" | xargs | sed -e 's/Avail //g')"
+	### fetch system / existing locally stored data.
 
-	synthia-calculate_backup_size
+	free_disk_space="$(df -m --output=avail "$backup_local_storage_path" | xargs | sed -e 's/Avail //g')"
 
 	local_archive_items="$(ls -1q $backup_local_storage_path/archive | wc -l)"
 	local_archive_size="$(du -sm $backup_local_storage_path/archive | xargs | sed "s|${backup_local_storage_path}/archive||g" | xargs)"
+
+	### calculate upcoming backup size estimate.
+
+	synthia-calculate_backup_size
 
 }
 
@@ -75,66 +79,68 @@ dna-backup_purge_loop() {
 
 dna-backup_purge_backups() {
 
-	### Purge backups older than the latest $max_local_backups
+	## purge backups older than the latest $max_local_backups.
 
-	local_archive_items="$(ls -1q $backup_local_storage_path/archive | wc -l)"
-	if [ $local_archive_items -gt $max_local_backups ]
+	local_archive_items="$(ls -1q ${backup_local_storage_path}/archive | wc -l)"
+
+	if [ "${local_archive_items}" -gt "${max_local_backups}" ]
 	then
-		tail_number=$(( $max_local_backups + 1 ))
-		( cd "$backup_local_storage_path/archive" && ls -t | tail -n +"$tail_number" | xargs -d '\n' rm )
+
+		tail_number=$(( "${max_local_backups}" + 1 ))
+
+		( cd "${backup_local_storage_path}/archive" && ls -t | tail -n +"${tail_number}" | xargs -d '\n' rm )
+
 		dna-backup_update_storage_info
+
 	fi
 
-	echo "${b-}You have $local_archive_items local backups occupying $local_archive_size MB of space.${x-}"
-	echo
+	dna-echo -m "You have: | ${o-}${local_archive_items}${n-} | local backups occupying: | ${y-}${local_archive_size} MB${n-} | of space."
 
-	if [ $local_archive_size -gt $max_local_storage ]
+	if [ "${local_archive_size}" -gt "${max_local_storage}" ]
 	then
 
-		echo "${r-}${b-}Local archive size [$local_archive_size MB] LARGER than | max_local_storage | setting [$max_local_storage MB].${x-}"
-		echo
-		echo "${b-}Now purging old backups while respecting your specified number of minimum backups to keep...${x-}"
-		echo
-		error_description="to stay below the | max_local_storage | setting you chose"
+		dna-echo -e "Local archive size: [ ${n-}${local_archive_size} MB${r-} ] larger than: | ${n-}max_local_storage${r-} | setting [ ${n-}${max_local_storage} MB${r-} ]."
 
-		counter=$max_local_backups
+		operation_message="purging old backups while respecting your specified number of minimum backups to keep"
+		dna-echo_operation -h
 
-		while [ $local_archive_size -gt $max_local_storage ]
+		error_description="to stay below the: | ${n-}max_local_storage${r-} | setting you chose"
+
+		counter="${max_local_backups}"
+
+		while [ "${local_archive_size}" -gt "${max_local_storage}" ]
 		do
+
 			dna-backup_purge_loop
+
 		done
 
-		echo "${g-}${b-}Local archive size now low enough [$local_archive_size MB] to respect your settings.${x-}"
-		echo
-		echo "${b-}Purged all backups older than the most recent | $counter |.${x-}"
-		echo
-		echo "${b-}Continuing...${x-}"
-		echo
+		dna-echo -s "Local archive size now low enough: [ ${n-}${local_archive_size} MB${g-} ] to respect your settings."
+		dna-echo -m "Purged all backups older than the most recent: | ${y-}${counter}${n-} |."
+		dna-echo -m "Continuing..."
 
 	fi
 
-	if [ $backup_total_size_estimate -gt $free_disk_space ]
+	if [ "${backup_total_size_estimate}" -gt "${free_disk_space}" ]
 	then
 
-		echo "${r-}${b-}Estimated backup size [$backup_total_size_estimate MB] LARGER than available disk space [$free_disk_space MB].${x-}"
-		echo
-		echo "${b-}Now purging old backups while respecting your specified number of minimum backups to keep...${x-}"
-		echo
+		dna-echo -e "Estimated backup size: [ ${n-}${backup_total_size_estimate} MB${r-} ] larger than available disk space: [ ${n-}${free_disk_space} MB${r-} ]."
+		dna-echo -m "Now purging old backups while respecting your specified number of minimum backups to keep..."
+
 		error_description="to free enough disk space for the next backup"
 
-		counter=$max_local_backups
+		counter="${max_local_backups}"
 
-		while [ $backup_size_estimate -gt $free_disk_space ]
+		while [ "${backup_total_size_estimate}" -gt "${free_disk_space}" ]
 		do
+
 			dna-backup_purge_loop
+
 		done
 
-		echo "${g-}${b-}Enough free space [$free_disk_space MB] now available for new backup.${x-}"
-		echo
-		echo "${b-}Purged all backups older than the most recent | $counter |.${x-}"
-		echo
-		echo "${b-}Continuing...${x-}"
-		echo
+		dna-echo -s "Enough free space: [ ${n-}${free_disk_space} MB${r-} ] now available for new backup."
+		dna-echo -m "Purged all backups older than the most recent: | ${y-}${counter}${n-} |."
+		dna-echo -m "Continuing..."
 
 	fi
 
@@ -142,21 +148,21 @@ dna-backup_purge_backups() {
 
 dna-backup_purge_dirs() {
 
-	### Purge temp and create directories
+	### purge temp and create directories.
 
-	if [ -d "$backup_local_storage_path/tmp" ]
+	if [ -d "${backup_local_storage_path}/tmp" ]
 	then
 		rm -r "${backup_local_storage_path:?}/tmp"
 	fi
 
-	if [ -d "$backup_local_storage_path/latest" ]
+	if [ -d "${backup_local_storage_path}/latest" ]
 	then
 		rm -r "${backup_local_storage_path:?}/latest"
 	fi
 
 	if [ -d "$backup_local_storage_path/restores" ]
 	then
-		rm -r ${backup_local_storage_path:?}/restores
+		rm -r "${backup_local_storage_path:?}/restores"
 	fi
 
 }
