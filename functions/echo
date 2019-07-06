@@ -103,7 +103,9 @@ dna-echo() {
 
 dna-echo_operation() {
 
-    ############################################################################
+    ### evaluate arguments.
+
+    ### ########################################################################
 
     if [ $# -eq 0 ]
     then
@@ -111,7 +113,8 @@ dna-echo_operation() {
         dna-exit
     fi
 
-    while getopts ":h:t" arguments; do
+    while getopts ":h:t" arguments
+    do
         case $arguments in
             h)	echo_operation_status="head"
                 export echo_operation_message="${OPTARG}"
@@ -127,30 +130,38 @@ dna-echo_operation() {
 
     if [ -z "${echo_operation_status-}" ]
     then
-        dna-echo -e "Status flag | ${n-}head [-h] || tail [-t]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Either status flag: | ${n-}head [-h] || tail [-t]${r-} | must be supplied for function: | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
     if [ "${echo_operation_status}" = "head" ] && [ -z "${echo_operation_message-}" ]
     then
-        dna-echo -e "The variable | ${n-}operation_message${r-} | must be exported before calling the function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-echo -e "Variable | ${n-}operation_message${r-} | must be specified in addition to the status flag: | ${n-}head [-h]${r-} | for function: | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
-    ############################################################################
+    if [ "${echo_operation_status}" = "tail" ] && [ -z "${echo_operation_message-}" ]
+    then
+        dna-echo -e "Variable | ${n-}operation_message${r-} | was undefined between: | ${n-}head [-h]${r-} | and now for function: | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ### ########################################################################
 
     if [ "${echo_operation_status}" = "head" ]
     then
 
         dna-echo -m "Now ${echo_operation_message}..."
 
+        unset echo_operation_status
+
     elif [ "${echo_operation_status}" = "tail" ]
     then
 
         dna-echo -s "Finished ${echo_operation_message}."
 
-    fi
+        unset echo_operation_message
 
-    ############################################################################
+    fi
 
 }
