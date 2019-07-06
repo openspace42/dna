@@ -863,7 +863,7 @@ dna-duplicity_loop() {
 
 				dna-backup_generate_duplicity_includes
 
-				SOURCE="--include ${tmp_project_dir}/duplicity-include"
+				SOURCE="--include-filelist ${tmp_project_dir}/duplicity-include"
 
 			fi
 
