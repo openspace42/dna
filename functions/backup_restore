@@ -275,8 +275,6 @@ dna-backup_locally_conf_dir() {
 
 dna-backup_locally_data_backup_paths() {
 
-	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
-
 	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
 	for this_backup_path in ${backup_paths}
@@ -486,7 +484,7 @@ dna-backup() {
 			if [ "${backup_locally_mode_default}" = "enabled" ]
 			then
 
-		    	mv "${backup_tmp_dir}"/* "${backup_local_storage_path}/latest"
+		    	mv "${backup_tmp_dir}"/* "${backup_latest_dir}"
 
 			fi
 
@@ -769,6 +767,19 @@ dna-restore_from_standalone() {
 
 }
 
+dna-backup_generate_duplicity_includes() {
+
+	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+
+	echo > "${tmp_project_dir}/duplicity-include"
+
+	for backup_path in ${backup_paths}
+	do
+		echo "${backup_path}" >> "${tmp_project_dir}/duplicity-include"
+	done
+
+}
+
 dna-duplicity_loop() {
 
 	### Raise ulimit for open files
@@ -848,7 +859,11 @@ dna-duplicity_loop() {
 
 			else
 
-				SOURCE="--include /var/www/ --include /etc/ssl/"
+				synthia-backup_additional_backup_paths
+
+				dna-backup_generate_duplicity_includes
+
+				SOURCE="--include ${tmp_project_dir}/duplicity-include"
 
 			fi
 
@@ -894,7 +909,7 @@ dna-duplicity_loop() {
 
 			## insert '--encrypt-key' and '--sign-key' after '${full}' if using gpg.
 
-			duplicity --progress --allow-source-mismatch ${FULL} / "${SOURCE}" --exclude '**' "${DEST}"
+			duplicity --progress --allow-source-mismatch ${FULL} / ${SOURCE} --exclude '**' "${DEST}"
 
 		elif [ "${1:-null}" = "restore" ]
 		then
