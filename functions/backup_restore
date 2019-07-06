@@ -771,7 +771,7 @@ dna-backup_generate_duplicity_includes() {
 
 	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
-	echo > "${tmp_project_dir}/duplicity-include"
+	> "${tmp_project_dir}/duplicity-include"
 
 	for backup_path in ${backup_paths}
 	do
