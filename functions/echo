@@ -117,6 +117,11 @@ dna-echo_operation() {
     do
         case $arguments in
             h)	echo_operation_status="head"
+                if [ -z "${OPTARG}" ]
+                then
+                    dna-echo -e "Argument | ${n-}operation_message${r-} | must be specified in addition to the status flag: | ${n-}head [-h]${r-} | for function: | ${n-}${FUNCNAME[0]}${r-} |."
+                    dna-exit
+                fi
                 export echo_operation_message="${OPTARG}"
                 ;;
             t)	echo_operation_status="tail"
@@ -131,12 +136,6 @@ dna-echo_operation() {
     if [ -z "${echo_operation_status-}" ]
     then
         dna-echo -e "Either status flag: | ${n-}head [-h] || tail [-t]${r-} | must be supplied for function: | ${n-}${FUNCNAME[0]}${r-} |."
-        dna-exit
-    fi
-
-    if [ "${echo_operation_status}" = "head" ] && [ -z "${echo_operation_message-}" ]
-    then
-        dna-echo -e "Variable | ${n-}operation_message${r-} | must be specified in addition to the status flag: | ${n-}head [-h]${r-} | for function: | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
     fi
 
