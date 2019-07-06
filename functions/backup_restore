@@ -269,7 +269,7 @@ dna-calculate_backup_paths_size() {
 
 dna-backup_locally_conf_dir() {
 
-	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
+	rsync -aAXxRL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
 
 }
 
@@ -280,9 +280,9 @@ dna-backup_locally_data_backup_paths() {
 	for this_backup_path in ${backup_paths}
 	do
 
-		this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|_|g" | sed "s|^_||g" | sed "s|-$||g")"
+		# this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|_|g" | sed "s|^_||g" | sed "s|-$||g")"
 
-		rsync -aAXxL "${this_backup_path}/" "${backup_tmp_name_data_dir}/${this_backup_path_name}"
+		rsync -aAXxRL "${this_backup_path}/" "${backup_tmp_name_data_dir}/"
 
 	done
 
