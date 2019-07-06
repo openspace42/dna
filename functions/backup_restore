@@ -19,12 +19,12 @@ dna-backup_update_storage_info() {
 
 dna-backup_purge_loop() {
 
-	if [ $local_archive_items -gt $min_local_backups ]
+	if [ "${local_archive_items}" -gt "${min_local_backups}" ]
 	then
 
-		counter=$(($counter - 1))
+		counter=$(("${counter}" - 1))
 
-		### Prevent infinite loops in case of rm failure
+		### prevent infinite loops in case of rm failure.
 
 		if [ $counter = -1 ]
 		then
@@ -45,7 +45,7 @@ dna-backup_purge_loop() {
 		if [ $counter = 0 ]
 		then
 
-			echo "${r-}${b-}Even though there are no backups currently archived in local storage, meeting your setting of minimum backups to keep at | 0 |, there still isn't enough storage on the local storage's [$backup_local_storage_path] underlying volume.${x-}"
+			dna-echo -e "Even though there are no backups currently archived in local storage, meeting your setting of minimum backups to keep at | 0 |, there still isn't enough storage on the local storage's [$backup_local_storage_path] underlying volume."
 			echo
 			echo "${b-}Please inspect your disk for any files you don't need, or consider using an[other] external location by re-running the installer and choosing | custom | for the | backup_local_storage_location | setting.${x-}"
 			echo
@@ -492,7 +492,7 @@ dna-backup() {
 
 	    	############################################################################
 
-	    	dna_backup_to_S3
+	    	dna-backup_to_S3
 
 	    fi
 
