@@ -450,7 +450,7 @@ dna-backup() {
 		if [ "${backup_test_restore_mode_default}" = "enabled" ]
 		then
 
-		    dna_restore_from_S3 test
+		    dna-restore_from_S3 test
 
 		fi
 
