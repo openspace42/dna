@@ -803,6 +803,13 @@ dna-duplicity_source_vars() {
 
 	### export some ENV variables so you don't have to type anything.
 
+	dna-get_hostname
+
+	export HOST="$(hostname)"
+	export DATE="$(date +%Y-%m-%d)"
+	export MAILADDR="${admin_mail-}"
+	export TODAY="$(date +%d%m%Y)"
+
 	export AWS_ACCESS_KEY_ID="${s3_access_key_id}"
 	export AWS_SECRET_ACCESS_KEY="${s3_secret_access_key}"
 	export PASSPHRASE="${backups_passphrase}"
@@ -829,12 +836,7 @@ dna-duplicity_loop() {
 
 	DEST="s3://$s3_endpoint/$s3_bucket_name/$proj_name/latest/"
 
-	dna-get_hostname
-
-	HOST="$(hostname)"
-	DATE="$(date +%Y-%m-%d)"
-	MAILADDR="${admin_mail-}"
-	TODAY="$(date +%d%m%Y)"
+	dna-duplicity_source_vars
 
 	if [ "${1:-null}" = "backup" ]
 	then
