@@ -117,7 +117,7 @@ dna-echo_operation() {
     do
         case $arguments in
             h)	echo_operation_status="head"
-                local echo_operation_message="${OPTARG}"
+                echo_operation_message_${FUNCNAME[0]}="${OPTARG}"
                 ;;
             t)	echo_operation_status="tail"
                 ;;
