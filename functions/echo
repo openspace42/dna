@@ -117,9 +117,23 @@ dna-echo_operation() {
     do
         case $arguments in
             h)	echo_operation_status="head"
-                echo_operation_message_${FUNCNAME[0]}="${OPTARG}"
+                if [ -n "${FUNCNAME[1]-}" ]
+                then
+                    variable_name_suffix="$(echo ${FUNCNAME[1]} | sed 's|-|_|g')"
+                    declare -g echo_operation_message_$variable_name_suffix="${OPTARG}"
+                    export localized_echo_operation_message="echo_operation_message_${variable_name_suffix}"
+                    unset variable_name_suffix
+                else
+                    echo_operation_message_${FUNCNAME[1]}="${OPTARG}"
+                fi
                 ;;
             t)	echo_operation_status="tail"
+                if [ -n "${FUNCNAME[1]-}" ]
+                then
+                    variable_name_suffix="$(echo ${FUNCNAME[1]} | sed 's|-|_|g')"
+                    localized_echo_operation_message="echo_operation_message_${variable_name_suffix}"
+                    unset variable_name_suffix
+                fi
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -135,7 +149,7 @@ dna-echo_operation() {
         dna-exit
     fi
 
-    if [ "${echo_operation_status}" = "tail" ] && [ -z "${echo_operation_message-}" ]
+    if [ "${echo_operation_status}" = "tail" ] && [ -z "${echo_operation_message-}" ] && [ -z "${localized_echo_operation_message-}" ]
     then
         dna-echo -e "Variable | ${n-}operation_message${r-} | was undefined between: | ${n-}head [-h]${r-} | and now for function: | ${n-}${FUNCNAME[0]}${r-} |."
         dna-exit
@@ -146,14 +160,32 @@ dna-echo_operation() {
     if [ "${echo_operation_status}" = "head" ]
     then
 
-        dna-echo -m "Now ${echo_operation_message}..."
+        if [ -n "${localized_echo_operation_message-}" ]
+        then
+
+            dna-echo -m "Now ${!localized_echo_operation_message}..."
+
+        else
+
+            dna-echo -m "Now ${echo_operation_message}..."
+
+        fi
 
         unset echo_operation_status
 
     elif [ "${echo_operation_status}" = "tail" ]
     then
 
-        dna-echo -s "Finished ${echo_operation_message}."
+        if [ -n "${localized_echo_operation_message-}" ]
+        then
+
+            dna-echo -s "Finished ${!localized_echo_operation_message}."
+
+        else
+
+            dna-echo -s "Finished ${echo_operation_message}."
+
+        fi
 
     fi
 
