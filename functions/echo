@@ -117,7 +117,7 @@ dna-echo_operation() {
     do
         case $arguments in
             h)	echo_operation_status="head"
-                export echo_operation_message="${OPTARG}"
+                local echo_operation_message="${OPTARG}"
                 ;;
             t)	echo_operation_status="tail"
                 ;;
@@ -154,8 +154,6 @@ dna-echo_operation() {
     then
 
         dna-echo -s "Finished ${echo_operation_message}."
-
-        unset echo_operation_message
 
     fi
 

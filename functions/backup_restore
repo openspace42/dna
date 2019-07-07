@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -eu
-
 dna-backup_update_storage_info() {
 
 	### fetch system / existing locally stored data.
@@ -816,6 +814,14 @@ dna-duplicity_source_vars() {
 
 }
 
+dna-duplicity_unset_vars() {
+
+	### reset the env variables. don't need them sitting around.
+
+	unset HOST DATE MAILADDR TODAY AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY PASSPHRASE
+
+}
+
 dna-duplicity_loop() {
 
 	### raise ulimit for open files.
@@ -984,11 +990,7 @@ dna-duplicity_loop() {
 
 		cat "${DAILYLOGFILE}" >> "${LOGFILE}"
 
-		### reset the ENV variables. don't need them sitting around.
-
-		unset AWS_ACCESS_KEY_ID
-		unset AWS_SECRET_ACCESS_KEY
-		unset PASSPHRASE
+		dna-duplicity_unset_vars
 
 	else
 
