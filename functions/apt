@@ -50,8 +50,7 @@ dna-apt_full_upgrade() {
 
     ############################################################################
 
-    operation_message="performing APT upgrade, dist-upgrade, and autoremove"
-    dna-echo_operation -h
+    dna-echo_operation -h "performing APT upgrade, dist-upgrade, and autoremove"
 
     if [ "${allow_errors-null}" = "y" ]
     then

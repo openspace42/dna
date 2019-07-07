@@ -20,9 +20,7 @@ dna-generate_dhparam() {
         if [ "${boolean_output}" = "y" ]
         then
 
-            operation_message="generating DHparams file"
-
-            dna-echo_operation -h
+            dna-echo_operation -h "generating DHparams file"
 
             export dh_param_outcome="generating"
             export dh_param_status="no"
@@ -85,9 +83,7 @@ dna-provision_le_wildcard_cert() {
 
     dna-install_certbot
 
-    operation_message="provisioning a wildcard LetsEncrypt TLS [SSL] certificate for: | ${c-}${cert_domain}${n-} |."
-
-    dna-echo_operation -h
+    dna-echo_operation -h "provisioning a wildcard LetsEncrypt TLS [SSL] certificate for: | ${c-}${cert_domain}${n-} |."
 
     if [ ! -z "${admin_mail-}" ]
     then

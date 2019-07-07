@@ -59,8 +59,7 @@ dna-add_cron_job() {
 
     ############################################################################
 
-    operation_message="adding job to daily crontab via cronic"
-    dna-echo_operation -h
+    dna-echo_operation -h "adding job to daily crontab via cronic"
 
     job_path="/etc/cron.d/${name}"
     touch "${job_path}"

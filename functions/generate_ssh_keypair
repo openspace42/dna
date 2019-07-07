@@ -31,9 +31,7 @@ dna-generate_ssh_keypair() {
 
     ########################################################################
 
-    operation_message="generating SSH keypair for | ${y-}${name}${n-} |"
-
-    dna-echo_operation -h
+    dna-echo_operation -h "generating SSH keypair for | ${y-}${name}${n-} |"
 
     if [ -n "${hostname-}" ]
     then

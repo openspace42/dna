@@ -8,8 +8,7 @@ dna-install_build_tools() {
 
 dna-install_certbot() {
 
-	operation_message="installing certbot/letsencrypt"
-	dna-echo_operation -h
+	dna-echo_operation -h "installing certbot/letsencrypt"
 
 	dna-get_distro_name
 
@@ -70,9 +69,7 @@ dna-install_dependencies() {
 
     ############################################################################
 
-    local operation_message="installing dependencies"
-
-    dna-echo_operation -h
+    dna-echo_operation -h "installing dependencies"
 
     dna-check_dpkg_availability
 
@@ -121,9 +118,7 @@ dna-install_dependencies() {
 
 dna-install_duplicity() {
 
-	operation_message="installing the duplicity backup utility"
-
-	dna-echo_operation -h
+	dna-echo_operation -h "installing the duplicity backup utility"
 
 	dna-get_distro_name
 
@@ -154,9 +149,7 @@ dna-install_easyengine() {
 
     ############################################################################
 
-	operation_message="[re-]installing and updating EasyEngine..."
-
-	dna-echo_operation -h
+	dna-echo_operation -h "[re-]installing and updating EasyEngine"
 
 	wget -qO ee https://raw.githubusercontent.com/easyengine/installer/master/setup.sh
 	bash ee || true
@@ -246,9 +239,7 @@ dna-install_mail_notifications() {
 
     install_mail_notifications_proceed() {
 
-        operation_message="[purging and re-]installing the local mailserver"
-
-        dna-echo_operation -h
+        dna-echo_operation -h "[purging and re-]installing the local mailserver"
 
         ### Purge any existing local server installation
 
@@ -300,8 +291,7 @@ dna-install_mosh_tmux() {
 
     ### ########################################################################
 
-    operation_message="installing Mosh"
-    dna-echo_operation -h
+    dna-echo_operation -h "installing Mosh"
 
     #### install.
 
@@ -351,8 +341,7 @@ EOF
 
 dna-install_nginx() {
 
-    operation_message="installing NGINX"
-    dna-echo_operation -h
+    dna-echo_operation -h "installing NGINX"
 
     dna-get_distro_name
     dna-get_distro_codename
@@ -422,8 +411,7 @@ dna-install_postgresql() {
 
     ############################################################################
 
-    operation_message="installing PostgreSQL"
-    dna-echo_operation -h
+    dna-echo_operation -h "installing PostgreSQL"
 
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
@@ -499,8 +487,7 @@ dna-localize_sslh_install() {
 
 dna-install_sslh() {
 
-	operation_message="installing SSLH"
-    dna-echo_operation -h
+    dna-echo_operation -h "installing SSLH"
 
     ############################################################################
 
@@ -673,8 +660,7 @@ dna-install_tor() {
 
     ### https://2019.www.torproject.org/docs/debian.html.en
 
-    operation_message="installing Tor"
-    dna-echo_operation -h
+    dna-echo_operation -h "installing Tor"
 
     ### Import key
 

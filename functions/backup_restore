@@ -101,8 +101,7 @@ dna-backup_purge_backups() {
 
 		dna-echo -e "Local archive size: [ ${n-}${local_archive_size} MB${r-} ] larger than: | ${n-}max_local_storage${r-} | setting [ ${n-}${max_local_storage} MB${r-} ]."
 
-		operation_message="purging old backups while respecting your specified number of minimum backups to keep"
-		dna-echo_operation -h
+		dna-echo_operation -h "purging old backups while respecting your specified number of minimum backups to keep"
 
 		error_description="to stay below the: | ${n-}max_local_storage${r-} | setting you chose"
 
@@ -290,8 +289,7 @@ dna-backup_locally_data_backup_paths() {
 
 dna-archive_local_backup() {
 
-	operation_message="archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
-	dna-echo_operation -h
+	dna-echo_operation -h "archiving backup and storing it in: | ${l-}${backup_archive_dir}${n-} |."
 
 	cd "${backup_tmp_dir}"
 
