@@ -59,6 +59,10 @@ dna-define_vars() {
 
 	export tools_dir="${install_dir}/tools"
 
+	### synthia logs
+
+	export logs_dir="/root/logs"
+
 	############################################################################
 
 	### system project-specific
