@@ -31,7 +31,7 @@ dna-run_install() {
 
         export selected_vers="v0.0.1-custom-local"
 
-        dna-echo -e "Installing | ${n-}local version${r-} | of | ${n-}${proj_name}${r-} | respecting any local alteration performed as per | ${n-}-p l${r-} |."
+        dna-echo -e "Installing | ${n-}local version${r-} | of | ${n-}${project_name}${r-} | respecting any local alteration performed as per | ${n-}-p l${r-} |."
 
         ( cd "${source_dir}" && bash ./install --return-check )
 
@@ -43,13 +43,13 @@ dna-run_install() {
 
             export selected_vers="${latest_vers_bl_edge}"
 
-            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${proj_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
+            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${project_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
 
             ( cd "${source_dir}" && git fetch && git reset --hard origin/master && echo && bash ./install --return-check )
 
         else
 
-            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | branch ${n-}${custom_branch}${r-} | of | ${n-}${proj_name}${r-} | as per | ${n-}-b ${custom_branch}${r-} |."
+            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | branch ${n-}${custom_branch}${r-} | of | ${n-}${project_name}${r-} | as per | ${n-}-b ${custom_branch}${r-} |."
 
             ( cd "${source_dir}" && git fetch && git reset --hard origin/${custom_branch} && git config advice.detachedHead false && git checkout "${custom_branch}" && git pull && echo )
 
@@ -66,7 +66,7 @@ dna-run_install() {
 
         export selected_vers="${custom_project_version}"
 
-        dna-echo -m "${c-}Installing | ${n-}version ${selected_vers}${c-} | of | ${n-}${proj_name}${c-} | as per | ${n-}-p ${selected_vers}${c-} |."
+        dna-echo -m "${c-}Installing | ${n-}version ${selected_vers}${c-} | of | ${n-}${project_name}${c-} | as per | ${n-}-p ${selected_vers}${c-} |."
 
         ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${selected_vers}" && echo && bash ./install --return-check )
 
@@ -75,7 +75,7 @@ dna-run_install() {
 
         export selected_vers="${latest_vers_tagged}"
 
-        dna-echo -m "${o-}Installing | ${n-}latest-tagged version [${selected_vers}]${o-} | of | ${n-}${proj_name}${o-} | [independently of its stability type] as per | ${n-}-p t${o-} |."
+        dna-echo -m "${o-}Installing | ${n-}latest-tagged version [${selected_vers}]${o-} | of | ${n-}${project_name}${o-} | [independently of its stability type] as per | ${n-}-p t${o-} |."
 
         ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_tagged}" && echo && bash ./install --return-check )
 
@@ -83,7 +83,7 @@ dna-run_install() {
 
         export selected_vers="${latest_vers_final}"
 
-        dna-echo -m "Installing | ${g-}version [${selected_vers}]${n-} | of | ${g-}${proj_name}${n-} |."
+        dna-echo -m "Installing | ${g-}version [${selected_vers}]${n-} | of | ${g-}${project_name}${n-} |."
 
         ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_final}" && echo && bash ./install --return-check )
 
@@ -106,7 +106,7 @@ dna-run_install() {
 
         dna-echo -m "Now removing installer directory..."
 
-        dna-echo -m "Run | ${y-}git clone ${git_host}/${author_name}/${proj_name}${n-} | once again to download the latest installer."
+        dna-echo -m "Run | ${y-}git clone ${git_host}/${author_name}/${project_name}${n-} | once again to download the latest installer."
 
         rm -r "${source_dir}"
 

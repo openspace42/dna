@@ -10,7 +10,7 @@ dna-get_dna_version() {
 
 dna-get_project_version() {
 
-    dna-echo -m "${proj_name} version ${y-}initiated${n-}: | ${l-}${version_initiated}${n-} |."
-    dna-echo -m "${proj_name} version ${o-}installed${n-}: | ${l-}${version_installed}${n-} |."
+    dna-echo -m "${project_name} version ${y-}initiated${n-}: | ${l-}${version_initiated}${n-} |."
+    dna-echo -m "${project_name} version ${o-}installed${n-}: | ${l-}${version_installed}${n-} |."
 
 }

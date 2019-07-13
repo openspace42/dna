@@ -349,7 +349,7 @@ dna-set_admin_email() {
 
 	describe_setting() {
 
-		dna-echo -m "${proj_name} sends you email notifications for any scheduled job runtime errors and / or failures."
+		dna-echo -m "${project_name} sends you email notifications for any scheduled job runtime errors and / or failures."
 
 	}
 

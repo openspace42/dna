@@ -5,7 +5,7 @@ dna-link_tools() {
     (
         cd "${tools_dir}"
 
-        for tool_script in "${proj_name}"-*
+        for tool_script in "${project_name}"-*
         do
 
             chmod +x "${tool_script}"

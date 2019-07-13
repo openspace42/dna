@@ -5,7 +5,7 @@ dna-define_vars() {
 	############################################################################
 
 	### define variables [don't change these! | no trailing slash on paths!].
-	### projects will be installed in: | /root/${proj_author}/${proj_name} |.
+	### projects will be installed in: | /root/${proj_author}/${project_name} |.
 
 	############################################################################
 	############################################################################
@@ -42,9 +42,9 @@ dna-define_vars() {
 
 	### synthia
 
-	export source_dir="/root/${proj_name}"
+	export source_dir="/root/${project_name}"
 	export base_dir="/root/${author_name}"
-	export install_dir="${base_dir}/${proj_name}"
+	export install_dir="${base_dir}/${project_name}"
 	export modules_dir="${install_dir}/modules"
 
 	### synthia conf
@@ -67,8 +67,8 @@ dna-define_vars() {
 
 	### system project-specific
 
-	export tls_project_dir="${tls_dir}/${proj_name}"
-	export tmp_project_dir="${tmp_dir}/${proj_name}"
+	export tls_project_dir="${tls_dir}/${project_name}"
+	export tmp_project_dir="${tmp_dir}/${project_name}"
 
 	############################################################################
 	############################################################################

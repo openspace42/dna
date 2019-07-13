@@ -127,7 +127,7 @@ dna-harden_ssh() {
 
     alert_force_alt_ssh_port() {
 
-        dna-echo -e "${proj_name} requires your SSH port to be changed to: | ${n-}42022${r-} |."
+        dna-echo -e "${project_name} requires your SSH port to be changed to: | ${n-}42022${r-} |."
         dna-echo -m "This will happen automatically if you choose to continue the installation."
         dna-echo -m "To connect once again to this machine in the future simply use:"
         dna-echo -m " | ssh ${c-}-p 42022${n-} [...] | "

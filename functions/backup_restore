@@ -204,10 +204,10 @@ dna-check_set_lockfile() {
 
 	### Check for lockfile to avoid multiple simultaneous backups
 
-	if [ -f "/tmp/${proj_name}-backup-running-lockfile" ]
+	if [ -f "/tmp/${project_name}-backup-running-lockfile" ]
 	then
 
-	    dna-echo -e "It appears a ${proj_name} backup is already running, perhaps an automated daily one, or perhaps the last one was interrupted."
+	    dna-echo -e "It appears a ${project_name} backup is already running, perhaps an automated daily one, or perhaps the last one was interrupted."
 	    dna-echo -m "If this *is* an automated daily one, please check that you're not running a manual one or that the last run was interrupted."
 	    dna-echo -m "Running multiple simultaneous backups is absolutely not supported and will make both fail."
 
@@ -217,7 +217,7 @@ dna-check_set_lockfile() {
 	        if [ "${boolean_output}" = "y" ]
 	        then
 	            dna-echo -m "Ok, continuing anyway..."
-	            export lockfile_set="/tmp/${proj_name}-backup-running-lockfile"
+	            export lockfile_set="/tmp/${project_name}-backup-running-lockfile"
 	        else
 	            dna-echo -m "Ok, aborting..."
 	            dna-exit
@@ -226,7 +226,7 @@ dna-check_set_lockfile() {
 	    else
 
 	        dna-echo -m "If you're certain that another backup is NOT running, run this script manually and select to ignore the lockfile and continue when prompted."
-	        dna-echo -m "Alternatively, you can also log into this machine and | ${o-}rm /tmp/${proj_name}-backup-running-lockfile${n-} |."
+	        dna-echo -m "Alternatively, you can also log into this machine and | ${o-}rm /tmp/${project_name}-backup-running-lockfile${n-} |."
 	        dna-echo -e "Aborting backup for now."
 	        dna-exit
 
@@ -236,7 +236,7 @@ dna-check_set_lockfile() {
 
 	    ### Set lockfile.
 
-	    export lockfile_set="/tmp/${proj_name}-backup-running-lockfile"
+	    export lockfile_set="/tmp/${project_name}-backup-running-lockfile"
 	    touch "${lockfile_set}"
 
 	fi
@@ -360,9 +360,9 @@ dna-check_install_complete() {
 		if [ "${install_complete}" = "n" ]
 		then
 
-			dna-echo -e "It appears ${proj_name} is not currently installed or there is an incomplete installation on this machine."
-	        dna-echo -m "This backup script only works on a fully installed ${proj_name} instance."
-	        dna-echo -m "Please finish installing ${proj_name} before running this script."
+			dna-echo -e "It appears ${project_name} is not currently installed or there is an incomplete installation on this machine."
+	        dna-echo -m "This backup script only works on a fully installed ${project_name} instance."
+	        dna-echo -m "Please finish installing ${project_name} before running this script."
 			dna-exit
 
 		fi
@@ -535,9 +535,9 @@ dna-backup_cleanup() {
 
 	dna-backup_purge_dirs
 
-	if [ -f "/tmp/${proj_name}-backup-running-lockfile" ]
+	if [ -f "/tmp/${project_name}-backup-running-lockfile" ]
 	then
-	    rm "/tmp/${proj_name}-backup-running-lockfile"
+	    rm "/tmp/${project_name}-backup-running-lockfile"
 	fi
 
 	if [ "${s3_restore_test_failed-null}" = "y" ]
@@ -551,7 +551,7 @@ dna-backup_cleanup() {
 
 dna-last_local_backup() {
 
-    dna-echo "Now performing a last backup [locally - no S3 of course] this machine's currently running $proj_name installation just in case..."
+    dna-echo "Now performing a last backup [locally - no S3 of course] this machine's currently running $project_name installation just in case..."
 
 }
 
@@ -586,7 +586,7 @@ dna-restore_from_here() {
 
 	echo "${b-}These are the backup dates available for restore:${x-}"
 	echo
-	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${proj_name}-backup-//g" | sed -e 's/.tar//g' | sed -e 's/.bz2//g'
+	ls -1 "$backup_local_storage_path/archive" | sed -e "s/${project_name}-backup-//g" | sed -e 's/.tar//g' | sed -e 's/.bz2//g'
 	echo
 	read -rp "${b-}[press enter to continue...]${x-}"
 	clear
@@ -686,10 +686,10 @@ dna-restore_from_here() {
 
 dna-restore_from_standalone() {
 
-	echo "${b-}Ok, restoring from a standalone $proj_name backup file.${x-}"
+	echo "${b-}Ok, restoring from a standalone $project_name backup file.${x-}"
 	echo
-	mkdir -p "/root/$proj_name-restore/"
-	read -p "${b-}Do you have a file called | $proj_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x-}" -n 1 -r
+	mkdir -p "/root/$project_name-restore/"
+	read -p "${b-}Do you have a file called | $project_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x-}" -n 1 -r
 	echo
 	if [[ ! $REPLY =~ ^[Nn]$ ]]
 	then
@@ -756,17 +756,17 @@ dna-restore_from_standalone() {
 		echo
 		if [ ${standalone_backup_file: -4} == ".bz2" ]
 		then
-			tar -xvjf "$standalone_backup_file" -C "/root/$proj_name-restore/"
+			tar -xvjf "$standalone_backup_file" -C "/root/$project_name-restore/"
 		else
-			tar -xvf "$standalone_backup_file" -C "/root/$proj_name-restore/"
+			tar -xvf "$standalone_backup_file" -C "/root/$project_name-restore/"
 		fi
-		subdir=("/root/$proj_name-restore/"*/)
-		restoresubdir="$(echo "$subdir" | sed "s|/root/${proj_name}-restore/||" | tr -d '/')"
-		mv "/root/$proj_name-restore/$restoresubdir"/* "/root/$proj_name-restore/"
-		rm -r "/root/$proj_name-restore/$restoresubdir"
+		subdir=("/root/$project_name-restore/"*/)
+		restoresubdir="$(echo "$subdir" | sed "s|/root/${project_name}-restore/||" | tr -d '/')"
+		mv "/root/$project_name-restore/$restoresubdir"/* "/root/$project_name-restore/"
+		rm -r "/root/$project_name-restore/$restoresubdir"
 	else
 		echo
-		echo "${b-}Ok, no problem. Make sure you populate the | /root/$proj_name-restore/ | directory with the following files/directories from your standalone backup:${x-}"
+		echo "${b-}Ok, no problem. Make sure you populate the | /root/$project_name-restore/ | directory with the following files/directories from your standalone backup:${x-}"
 		echo
 		restore_from_standalone_content_description
 		echo
@@ -840,7 +840,7 @@ dna-duplicity_loop() {
 
 	### the S3 destination followed by bucket name.
 
-	DEST="s3://$s3_endpoint/$s3_bucket_name/$proj_name/latest/"
+	DEST="s3://$s3_endpoint/$s3_bucket_name/$project_name/latest/"
 
 	dna-duplicity_source_vars
 
@@ -851,7 +851,7 @@ dna-duplicity_loop() {
 		duplicity_mode="restore"
 	fi
 
-	duplicity_base_dir="${logs_dir}/${proj_name}-duplicity"
+	duplicity_base_dir="${logs_dir}/${project_name}-duplicity"
 	duplicity_log_dir="${duplicity_base_dir}/${duplicity_mode}"
 
 	### set up some variables for logging.
@@ -1014,7 +1014,7 @@ dna-backup_to_s3() {
     if [ -f "${conf_backups_s3_dir}/block_s3_backups" ]
     then
         dna-echo -e "Not performing backup as: | ${n-}${conf_backups_s3_dir}/block_s3_backups${r-} | file found."
-        dna-echo -m "This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of ${proj_name} backed up on S3."
+        dna-echo -m "This should indicate that during installation you specified your intent to use this machine as a restore for a previous instance of ${project_name} backed up on S3."
         dna-echo -m "Ff this is the case, simply run the restore script right away. If it is not, and you want to use this machine for a new installation and OVERWRITE all backups currently on S3, erase this file."
         dna-echo -e "No backups will run on this instance until you perform the restore script or remove the file to specify your intent to use this machine as it is for a new installation."
 		dna-exit
@@ -1061,7 +1061,7 @@ dna-backup_to_s3() {
 
 		( cd "${backup_local_storage_path}/archive/" && encrypt "${output_file_name}" )
 
-		putS3 "${backup_local_storage_path}/tmp/" "${output_file_name}.gpg" "/${proj_name}/archive/" 2> /dev/null
+		putS3 "${backup_local_storage_path}/tmp/" "${output_file_name}.gpg" "/${project_name}/archive/" 2> /dev/null
 
 	fi
 
@@ -1101,7 +1101,7 @@ dna-restore_from_S3() {
 			### no backups found on server, something's wrong.
 
 			dna-echo -e "Restore from S3 failed."
-			dna-echo -m "It appears there are no backups on the S3 server under the path: | ${y-}${proj_name}/latest${n-} | [check the above output for messages like: | ${r-}No backup chains found${n-} |]."
+			dna-echo -m "It appears there are no backups on the S3 server under the path: | ${y-}${project_name}/latest${n-} | [check the above output for messages like: | ${r-}No backup chains found${n-} |]."
 			dna-exit
 
 		fi
@@ -1115,7 +1115,7 @@ dna-restore_from_S3() {
 			then
 
 				dna-echo -e "Testing restore from S3 failed."
-				dna-echo -m "Is appears this instance of ${proj_name} has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${n-} |]."
+				dna-echo -m "Is appears this instance of ${project_name} has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${n-} |]."
 				dna-echo -m "If this is the case, you've likely changed your backups encryption passphrase on this machine between your last backup and this one."
 				dna-echo -m "This would cause S3 backups to be encrypted with two or more encryption keys at the same time, which would render them unusable in the future should you ever need them."
 				dna-echo -m "Edit the file: | ${y-}${conf_backups_s3_dir}/backups_passphrase${n-} | and set once again your previous encryption passphrase, then re-run this script."
@@ -1150,7 +1150,7 @@ dna-restore_from_S3() {
 			else
 
 				dna-echo -e "Restore from S3 failed."
-				dna-echo -m "Is appears this instance of ${proj_name} has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${n-} |]."
+				dna-echo -m "Is appears this instance of ${project_name} has on file an incorrect S3 encryption passphrase [check the above output for messages like: | ${r-}gpg: decryption failed: bad key${n-} |]."
 				dna-echo -m "Edit the file: | ${y-}${conf_backups_s3_dir}/backups_passphrase${n-} | and replace the currently specified passphrase with the old one from your previous machine, then re-run this script."
 				dna-echo -m "If you have lost your previous encryption passphrase, you've also lost access to your backups."
 				dna-exit
@@ -1197,7 +1197,7 @@ dna-launch_restore() {
 	if [ ! ${skip_questions-null} = "y" ]
 	then
 
-	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $proj_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
+	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $project_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
 	    echo "$choice"
 	    echo
 	    options=("backup file stored locally" "backup file stored elsewhere" "exit")
@@ -1236,7 +1236,7 @@ dna-launch_restore() {
 	    	then
 	    		echo "${b-}You've previously set up an S3 file storage server connection on this machine.${x-}"
 	    		echo
-	    		choice="${b-}Do you want to restore from S3 or from a standalone $proj_name backup file you have stored individually? ${x-}"
+	    		choice="${b-}Do you want to restore from S3 or from a standalone $project_name backup file you have stored individually? ${x-}"
 	    		echo "$choice"
 	    		echo
 	    		options=("S3" "standalone" "exit")
@@ -1296,7 +1296,7 @@ dna-launch_restore() {
     	then
     		export restore_file_path="$backup_local_storage_path/restores/s3"
     	else
-    		export restore_file_path="/root/$proj_name-restore"
+    		export restore_file_path="/root/$project_name-restore"
     	fi
     fi
 
