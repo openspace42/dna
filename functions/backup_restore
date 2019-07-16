@@ -278,7 +278,7 @@ dna-calculate_backup_paths_size() {
 
 dna-backup_locally_conf_dir() {
 
-	rsync -aAXxRL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
+	rsync -aAXxL "${conf_dir}/" "${backup_tmp_name_conf_dir}"
 
 }
 
@@ -296,7 +296,8 @@ dna-backup_locally_data_backup_paths() {
 
 		else
 
-			rsync -aAXxRL "${tmp_project_dir}/${this_backup_path}/" "${backup_tmp_name_data_dir}/"
+			mkdir -p "${backup_tmp_name_data_dir}/other/"
+			rsync -aAXxL "${tmp_project_dir}/${this_backup_path}/" "${backup_tmp_name_data_dir}/other/${this_backup_path}/"
 
 		fi
 
