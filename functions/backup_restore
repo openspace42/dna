@@ -249,16 +249,28 @@ dna-calculate_backup_paths_size() {
 	### will affect backups [such as '/var/www/' for nginx-related projects].
 	### all sizes in MB.
 
-	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
-
 	backup_paths_size_estimate=0
 
-	for this_backup_path in ${backup_paths}
+	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
 
-		this_backup_path_size="$(du -sm ${this_backup_path} | cut -f1)"
+		if [ ${backup_paths_default_array[$backup_path]} = "existing" ]
+		then
 
-		backup_paths_size_estimate="$((${backup_paths_size_estimate} + ${this_backup_path_size}))"
+			### this is an existing backup path, calculate its size and add it
+			### to the total.
+
+			this_backup_path_size="$(du -sm ${this_backup_path} | cut -f1)"
+			backup_paths_size_estimate="$((${backup_paths_size_estimate} + ${this_backup_path_size}))"
+
+		else
+
+			### this is a generated backup path, synthia will take care of
+			### calculating its size afterwards.
+
+			true
+
+		fi
 
 	done
 
@@ -272,9 +284,9 @@ dna-backup_locally_conf_dir() {
 
 dna-backup_locally_data_backup_paths() {
 
-	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
+	#backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
 
-	for this_backup_path in ${backup_paths}
+	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
 
 		# this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|_|g" | sed "s|^_||g" | sed "s|-$||g")"
@@ -790,9 +802,11 @@ dna-backup_generate_duplicity_includes() {
 
 	> "${tmp_project_dir}/duplicity-include"
 
-	for backup_path in ${backup_paths}
+	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
+
 		echo "${backup_path}" >> "${tmp_project_dir}/duplicity-include"
+
 	done
 
 }
