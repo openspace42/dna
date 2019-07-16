@@ -284,8 +284,6 @@ dna-backup_locally_conf_dir() {
 
 dna-backup_locally_data_backup_paths() {
 
-	#backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
-
 	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
 
