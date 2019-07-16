@@ -254,7 +254,7 @@ dna-calculate_backup_paths_size() {
 	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
 
-		if [ ${backup_paths_default_array[$backup_path]} = "existing" ]
+		if [ ${backup_paths_default_array[$this_backup_path]} = "existing" ]
 		then
 
 			### this is an existing backup path, calculate its size and add it
@@ -798,14 +798,12 @@ dna-restore_from_standalone() {
 
 dna-backup_generate_duplicity_includes() {
 
-	backup_paths=$(echo ${backup_paths_default} | tr " " "\n")
-
 	> "${tmp_project_dir}/duplicity-include"
 
 	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
 
-		echo "${backup_path}" >> "${tmp_project_dir}/duplicity-include"
+		echo "${this_backup_path}" >> "${tmp_project_dir}/duplicity-include"
 
 	done
 
