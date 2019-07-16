@@ -289,7 +289,16 @@ dna-backup_locally_data_backup_paths() {
 
 		# this_backup_path_name="$(echo ${this_backup_path} | sed "s|/|_|g" | sed "s|^_||g" | sed "s|-$||g")"
 
-		rsync -aAXxRL "${this_backup_path}/" "${backup_tmp_name_data_dir}/"
+		if [ ${backup_paths_default_array[$this_backup_path]} = "existing" ]
+		then
+
+			rsync -aAXxRL "${this_backup_path}/" "${backup_tmp_name_data_dir}/"
+
+		else
+
+			rsync -aAXxRL "${tmp_project_dir}/${this_backup_path}/" "${backup_tmp_name_data_dir}/"
+
+		fi
 
 	done
 
