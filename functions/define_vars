@@ -70,6 +70,8 @@ dna-define_vars() {
 	export tls_project_dir="${tls_dir}/${project_name}"
 	export tmp_project_dir="${tmp_dir}/${project_name}"
 
+	export tmp_project_backup_dir="${tmp_project_dir}/backup"
+
 	############################################################################
 	############################################################################
 
