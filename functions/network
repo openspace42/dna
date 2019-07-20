@@ -8,7 +8,7 @@ dna-get_public_ipv4() {
     do
         case $arguments
         in
-            s)	export silent="y"
+            s)	export get_public_ipv4_silent="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -63,7 +63,7 @@ dna-get_public_ipv4() {
                 valid="n"
             fi
 
-            unset silent
+            unset get_public_ipv4_silent
 
         }
 
@@ -73,7 +73,7 @@ dna-get_public_ipv4() {
 
     else
 
-        if [ ! "${silent-null}" = "y" ]
+        if [ ! -n "${get_public_ipv4_silent-}" ]
         then
 
             dna-echo -m "Public IPv4 for this machine previously set during this installation to: | ${y-}${public_ipv4}${n-} |."
@@ -82,7 +82,7 @@ dna-get_public_ipv4() {
 
     fi
 
-    unset silent
+    unset get_public_ipv4_silent
 
     ############################################################################
 
@@ -102,7 +102,7 @@ dna-check_ipv6_connectivity() {
 
     while getopts ":s" arguments; do
         case $arguments in
-            s)	export silent="y"
+            s)	export check_ipv6_connectivity_silent="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -157,6 +157,6 @@ dna-check_ipv6_connectivity() {
         dna-echo -m "Your IPv6 global [public] address appears to be: | ${y-}${this_ipv6}${n-} |."
     fi
 
-    unset silent
+    unset check_ipv6_connectivity_silent
 
 }
