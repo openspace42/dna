@@ -62,7 +62,7 @@ dna-get_public_ipv4() {
                 valid="n"
             fi
 
-            unset get_public_ipv4_silent
+            unset silent
 
         }
 
