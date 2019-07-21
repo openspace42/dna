@@ -876,7 +876,9 @@ dna-duplicity_loop() {
 
 	### the S3 destination followed by bucket name.
 
-	DEST="s3://$s3_endpoint/$s3_bucket_name/$project_name/latest/"
+	dna-get_hostname
+
+	DEST="s3://${s3_endpoint}/${s3_bucket_name}/${project_name}/${hostname}/latest/"
 
 	dna-duplicity_source_vars
 
