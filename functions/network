@@ -40,12 +40,11 @@ dna-get_public_ipv4() {
             then
 
                 dna-echo -m "Ok, using this IPv4..."
-                new_val="${apparent_public_ipv4}"
+                new_value="${apparent_public_ipv4}"
 
             else
 
-                read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
-                echo
+                dna-echo -m "Ok, not using this IPv4."
 
             fi
 

@@ -227,9 +227,9 @@ dna-set_option() {
 				until [ "${valid-null}" = "y" ]
 				do
 
-					unset new_val
+					unset new_value
 
-					until [ ! -z "${new_val-}" ]
+					until [ ! -z "${new_value-}" ]
 					do
 
 						ask_for_value() {
@@ -243,7 +243,7 @@ dna-set_option() {
 
 							else
 
-								read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_val
+								read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_value
 								echo
 
 							fi
@@ -275,7 +275,7 @@ dna-set_option() {
 					if [ "${validate_input-null}" = "y" ]
 					then
 
-						input="${new_val}"
+						input="${new_value}"
 
 						### validate_input must be defined immediately prior to calling this function.
 
@@ -294,7 +294,7 @@ dna-set_option() {
 				until [ "${acceptable-null}" = "y" ]
 				do
 
-					read -n 1 -rp "${b-}Is | ${y-}${new_val}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;
+					read -n 1 -rp "${b-}Is | ${y-}${new_value}${n-} | correct? (Y/n/e[xit]) ${x-}" answer;
 					case $answer in
 						"")	echo
 							acceptable="y"
@@ -323,9 +323,9 @@ dna-set_option() {
 
 			done
 
-			echo "${new_val}" > "${opt_path}"
+			echo "${new_value}" > "${opt_path}"
 
-			dna-echo -m "Option | ${o-}${option}${n-} | set to value | ${y-}${new_val}${n-} |."
+			dna-echo -m "Option | ${o-}${option}${n-} | set to value | ${y-}${new_value}${n-} |."
 
 		fi
 
@@ -341,7 +341,7 @@ dna-set_option() {
 	value="$(cat ${opt_path})"
 	export "${option}"="${value}"
 
-	unset arguments option path describe choices hint validate setting validate_input describe_setting hint_value valid value skip_descr defined new_val
+	unset arguments option path describe choices hint validate setting validate_input describe_setting hint_value valid value skip_descr defined new_value
 
 }
 
