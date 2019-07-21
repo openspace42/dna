@@ -276,7 +276,7 @@ dna-calculate_backup_paths_size() {
 
 }
 
-dna-backup_generate_additional_paths_dir() {
+dna-backup_generate_additional_paths_dirs() {
 
 	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
