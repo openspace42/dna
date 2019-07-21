@@ -229,7 +229,7 @@ dna-set_option() {
 
 					unset new_value
 
-					until [ ! -z "${new_value-}" ]
+					until [ -n "${new_value-}" ]
 					do
 
 						ask_for_value() {
@@ -241,7 +241,10 @@ dna-set_option() {
 
 								hint_value
 
-							else
+							fi
+
+							if [ -z "${new_value-}" ]
+							then
 
 								read -rp "${b-}Now specify your new value for option | ${o-}${option}${n-} | ${y-}${choices-}${n-}: ${x-}" new_value
 								echo
