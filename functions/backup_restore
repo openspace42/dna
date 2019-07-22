@@ -937,7 +937,7 @@ dna-duplicity_loop() {
 
 			else
 
-				synthia-backup_additional_backup_paths
+				synthia-backup_generate_additional_paths
 
 				dna-backup_generate_duplicity_includes
 

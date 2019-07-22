@@ -50,9 +50,9 @@ dna-define_vars() {
 	### synthia conf
 
 	export conf_dir="${install_dir}/conf"
-	export conf_backups_dir="${conf_dir}/backups"
-	export conf_backups_local_dir="${conf_backups_dir}/local"
-	export conf_backups_s3_dir="${conf_backups_dir}/s3"
+	export conf_backup_dir="${conf_dir}/backups"
+	export conf_backups_local_dir="${conf_backup_dir}/local"
+	export conf_backups_s3_dir="${conf_backup_dir}/s3"
 	export conf_dns_dir="${conf_dir}/dns"
 
 	### synthia tools

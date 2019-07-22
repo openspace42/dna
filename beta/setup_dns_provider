@@ -126,7 +126,7 @@ dna-setup_dns_provider() {
 					echo "${b-}Ok, skipping S3 setup and REMOVING S3 setting from $project_name...${x-}"
 					echo
 					backup_archival_location=local
-					echo "local" > $conf_backups_dir/backup_archival_location
+					echo "local" > $conf_backup_dir/backup_archival_location
 					read -rp "${b-}[press enter to continue reading...]${x-}"
 					clear
 				fi
