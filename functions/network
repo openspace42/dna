@@ -30,6 +30,8 @@ dna-get_public_ipv4() {
 
         hint_value() {
 
+            dna-install_dependencies -p "curl"
+
             apparent_public_ipv4="$(curl -s http://whatismyip.akamai.com/)"
 
             dna-echo -m "Your IPv4 public address appears to be: | ${y-}${apparent_public_ipv4}${n-} |."
