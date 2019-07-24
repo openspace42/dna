@@ -321,7 +321,7 @@ dna-install_mosh_tmux() {
     #### https://superuser.com/questions/210125/scroll-shell-output-with-mouse-in-tmux
     #### https://blog.filippo.io/my-remote-shell-session-setup/
 
-    touch "~/.tmux.conf"
+    touch ~/.tmux.conf
 
     cat <<EOF > "~/.tmux.conf"
 new-session
