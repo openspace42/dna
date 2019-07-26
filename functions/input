@@ -82,3 +82,27 @@ dna-ask_for_boolean() {
     unset default question
 
 }
+
+dna-read_input() {
+
+    ### evaluate arguments.
+
+	### ########################################################################
+
+    while getopts ":p" arguments
+	do
+		case $arguments in
+			l)	local read_input_prompt="y"
+				;;
+			\?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+		        dna-exit
+		        ;;
+		esac
+	done
+    OPTIND=1
+
+	### ########################################################################
+
+    read -n 1 -p "${b-}${read_input_prompt} ${x-}" read_input_answer;
+
+}

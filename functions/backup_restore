@@ -200,9 +200,9 @@ dna-backup_purge_incomplete_archives() {
 
 }
 
-dna-check_set_lockfile() {
+dna-backup_check_set_lockfile() {
 
-	### Check for lockfile to avoid multiple simultaneous backups
+	### check for lockfile to avoid multiple simultaneous backups.
 
 	if [ -f "/tmp/${project_name}-backup-running-lockfile" ]
 	then
@@ -234,7 +234,7 @@ dna-check_set_lockfile() {
 
 	else
 
-	    ### Set lockfile.
+	    ### set backup lockfile.
 
 	    export lockfile_set="/tmp/${project_name}-backup-running-lockfile"
 	    touch "${lockfile_set}"
@@ -428,7 +428,7 @@ dna-backup_locally() {
 		### if not restoring a previous state of this same installation, then
 		### move the backups directory to an "old" named one.
 
-		if [ "${restore_source}" = "here" ]
+		if [ "${restore_type}" = "here" ]
 		then
 
 			dna-echo -m "Last backup before restore archived to directory: | ${l-}${backup_local_storage_path}/archive${n-} |."
@@ -480,7 +480,7 @@ dna-backup() {
 		if [ "${backup_test_restore_mode_default}" = "enabled" ]
 		then
 
-		    dna-restore_from_S3 test
+		    dna-restore_reinstate_s3 test
 
 		fi
 
@@ -591,13 +591,13 @@ dna-last_local_backup() {
 
 }
 
-dna-restore_from_here() {
+dna-restore_rollback() {
 
 	if [ ! -d "$backup_local_storage_path/archive" ]
 	then
 		echo "${r-}${b-}Local backups directory [$backup_local_storage_path/archive] not found.${x-}"
 		echo
-		echo "${b-}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x-}"
+		echo "${b-}It's possible you've already partially run this restore script choosing the | reinstate | option, or that this machine never successfully ran a backup.${x-}"
 		echo
 		echo "${b-}Check your $install_dir for a directory called | backups(-[something]) | and if you find something rename the most recently datestamped directory to | backups | ."
 		echo
@@ -611,7 +611,7 @@ dna-restore_from_here() {
 	then
 		echo "${r-}${b-}No backup archives found in local backups directory [$backup_local_storage_path/archive].${x-}"
 		echo
-		echo "${b-}It's possible you've already partially run this restore script choosing the | elsewhere | option, or that this machine never successfully ran a backup.${x-}"
+		echo "${b-}It's possible you've already partially run this restore script choosing the | reinstate | option, or that this machine never successfully ran a backup.${x-}"
 		echo
 		echo "${b-}Check your $install_dir for a directory called | backups(-[something]) | and if you find something rename the most recently datestamped directory to | backups | ."
 		echo
@@ -720,7 +720,7 @@ dna-restore_from_here() {
 
 }
 
-dna-restore_from_standalone() {
+dna-restore_reinstate_standalone() {
 
 	echo "${b-}Ok, restoring from a standalone $project_name backup file.${x-}"
 	echo
@@ -1107,7 +1107,7 @@ dna-backup_to_s3() {
 
 
 
-dna-restore_from_S3() {
+dna-restore_reinstate_s3() {
 
 	if [ "${1:-null}" = "test" ]
 	then
@@ -1216,14 +1216,18 @@ dna-restore_from_S3() {
 
 }
 
-dna-launch_restore() {
+dna-restore() {
+
+	### evaluate arguments.
+
+	### ########################################################################
 
 	while getopts ":s" arguments
 	do
 		case $arguments in
-			s)	restore_type="s3"
-				skip_questions="y"
-				restore_source="elsewhere"
+			s)	restore_reinstate_source="s3"
+				restore_skip_questions="y"
+				restore_type="reinstate"
 				;;
 			\?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -1232,86 +1236,99 @@ dna-launch_restore() {
 	done
     OPTIND=1
 
-	if [ ! ${skip_questions-null} = "y" ]
+	### ########################################################################
+
+	### initiate.
+
+	if [ -n ${restore_skip_questions-} ]
 	then
 
-	    choice="${b-}Is the backup you're trying to restore stored locally on this machine [i.e. you're trying to restore a previous state of this running instance of $project_name] or is it stored elsewhere [i.e. you're changing machine or your previous machine's data was wiped or lost]? ${x-}"
-	    echo "$choice"
-	    echo
-	    options=("backup file stored locally" "backup file stored elsewhere" "exit")
-	    select opt in "${options[@]}"
-	    do
-	    	echo
-	    	case $opt in
-	    		"backup file stored locally")
-	    		export restore_source=here
-	    		break
-	    		;;
-	    		"backup file stored elsewhere")
-	    		export restore_source=elsewhere
-	    		break
-	    		;;
-	    		"exit")
-	    		echo "${b-}Exiting...${x-}"
-	    		echo
-	    		exit
-	    		;;
-	    		*)
-	    		echo "${r-}${b-}Invalid option. Retry...${x-}"
-	    		echo
-	    		;;
-	    	esac
-	    done
+		dna-echo -m "A restore can be performed in two ways."
+		dna-echo -m "A] by rolling back the running instance of ${project_name} on this machine from a backup file generated and archived locally in the backups directory [rollback]"
+		dna-echo -m "B] by fetching and unpacking a backup archive stored remotely on S3 or provided in a standalone fashion by you during the restore phase [reinstate]"
 
-	    if [ $restore_source = "here" ]
+		dna-read_input -p "Are you trying to restore by performing a rollback or a reinstate? [b/s]"
+
+		case $read_input_answer in
+		    b)	export restore_type="rollback"
+				;;
+		    s)	export restore_type="reinstate"
+				;;
+		    \?)	exit
+				;;
+		esac
+
+	    if [ "${restore_type}" = "rollback" ]
 	    then
 
-	    	dna-restore_from_here
+	    	dna-restore_rollback
 
-	    else
+	    elif [ "${restore_type}" = "reinstate" ]
+		then
 
-	    	if [ "${backup_archival_location-null}" = "s3" ]
+			dna-read_input -p "Are you trying to reinstate a backup archive stored on S3 or a standalone file you have from elsewhere? [3/a]"
+
+			case $read_input_answer in
+			    3)	export restore_reinstate_source="s3"
+					;;
+			    a)	export restore_reinstate_source="standalone"
+					;;
+			    \?)	exit
+					;;
+			esac
+
+			if [ "${backup_archival_location-null}" = "s3" ]
 	    	then
-	    		echo "${b-}You've previously set up an S3 file storage server connection on this machine.${x-}"
-	    		echo
-	    		choice="${b-}Do you want to restore from S3 or from a standalone $project_name backup file you have stored individually? ${x-}"
-	    		echo "$choice"
-	    		echo
-	    		options=("S3" "standalone" "exit")
-	    		select opt in "${options[@]}"
-	    		do
-	    			echo
-	    			case $opt in
-	    				"S3")
-	    				export restore_type=s3
-	    				break
-	    				;;
-	    				"standalone")
-	    				export restore_type=standalone
-	    				break
-	    				;;
-	    				"exit")
-	    				echo "${b-}Exiting...${x-}"
-	    				echo
-	    				exit
-	    				;;
-	    				*)  echo "${r-}${b-}Invalid option. Retry...${x-}"
-	    				echo
-	    				;;
-	    			esac
-	    		done
-	    	else
-	    		export restore_type=standalone
-	    	fi
 
-			if [ $restore_type = "s3" ]
-			then
+				dna-echo -m "You've previously setup an S3 file storage server connection for backups on this machine."
+				dna-echo -m "The current S3 connection is set to bucket: | ${y-}${s3s3_bucket_name}${n-} | on endpoint: | ${o-}${s3s3_endpoint}${n-} |."
 
-				dna-restore_from_S3
+				dna-ask_for_boolean -d y -q "Would you like to use this existing S3 connection for the reinstate?"
+
+				if [ "${boolean_output}" = "y" ]
+				then
+
+					dna-echo -m "Ok, using the existing S3 connection for the reinstate."
+
+				else
+
+					dna-echo -m "Ok, setting up the new S3 connection now."
+
+					dna-setup_backup_restore_s3
+
+				fi
 
 			else
 
-				dna-restore_from_standalone
+				dna-echo -m "There is no S3 file storage server connection present for backups on this machine."
+
+				dna-ask_for_boolean -d y -q "Would you like to setup a connection to the S3 endpoint where the backup archive you intend to reinstate is stored now?"
+
+				if [ "${boolean_output}" = "y" ]
+				then
+
+					dna-echo -m "Ok, setting up the new S3 connection now."
+
+					dna-setup_backup_restore_s3
+
+				else
+
+					dna-echo -m "Ok, falling back to a standalone reinstate from a manually provided file."
+
+					export restore_reinstate_source="standalone"
+
+				fi
+
+	    	fi
+
+			if [ $restore_reinstate_source = "s3" ]
+			then
+
+				dna-restore_reinstate_s3
+
+			else
+
+				dna-restore_reinstate_standalone
 
 				echo
 
@@ -1321,16 +1338,18 @@ dna-launch_restore() {
 
 	else
 
-		dna-restore_from_S3
+		dna-restore_reinstate_s3
 
 	fi
 
-    if [ $restore_source = "here" ]
+	## devline
+
+    if [ $restore_type = "rollback" ]
     then
     	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar//g' | sed 's/.bz2//g')"
     	export restore_file_path="$backup_local_storage_path/restores/local/$restore_file_name"
     else
-    	if [ $restore_type = "s3" ]
+    	if [ $restore_reinstate_source = "s3" ]
     	then
     		export restore_file_path="$backup_local_storage_path/restores/s3"
     	else
