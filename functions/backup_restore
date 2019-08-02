@@ -722,100 +722,66 @@ dna-restore_rollback() {
 
 dna-restore_reinstate_standalone() {
 
-	echo "${b-}Ok, restoring from a standalone $project_name backup file.${x-}"
-	echo
-	mkdir -p "/root/$project_name-restore/"
-	read -p "${b-}Do you have a file called | $project_name-backup-[date].tar[.bz2] | [or similar]? (Y/n): ${x-}" -n 1 -r
-	echo
-	if [[ ! $REPLY =~ ^[Nn]$ ]]
+	dna-echo -m "Ok, restoring from a standalone ${project_name} backup file."
+
+	reinstate_standalone_basedir="/root/${project_name}-restore"
+
+	mkdir -p "${reinstate_standalone_basedir}"
+
+	dna-ask_for_boolean -d y -q "Do you have a file called | $project_name-backup-[date].tar[.bz2] | [or similar]? [Y/n]"
+
+	if [ "${boolean_output}" = "y" ]
 	then
-		defined=n
-		until [ $defined = "y" ]
-		do
-			exists=n
-			until [ $exists = "y" ]
-			do
-				standalone_backup_file=""
-				until [ ! $standalone_backup_file = "" ]
-				do
-					read -rp "${b-}Ok, specify the path to that file now: ${x-}" standalone_backup_file
-					echo
-				done
-				if [ -f "$standalone_backup_file" ]
-				then
-					exists=y
-				else
-					echo "${r-}${b-}The specified file does not exists. Please retry...${x-}"
-					echo
-					exists=n
-				fi
-			done
-			valid=n
-			until [ $valid = "y" ]
-			do
-				read -n 1 -rp "${b-}Is | $standalone_backup_file | correct? (Y/n/e[xit]) ${x-}" answer;
-				case $answer in
-					"")
-					echo
-					valid=y
-					defined=y
-					;;
-					y)
-					echo -e "\\n"
-					valid=y
-					defined=y
-					;;
-					n)
-					echo -e "\\n"
-					echo "${b-}Ok, then please try again...${x-}"
-					echo
-					valid=y
-					defined=n
-					;;
-					e)
-					echo -e "\\n"
-					echo "${b-}Exiting...${x-}"
-					echo
-					exit
-					;;
-					*)
-					echo -e "\\n"
-					echo "${r-}${b-}Invalid option. Retry...${x-}"
-					echo
-					valid=n
-					defined=n
-					;;
-				esac
-			done
-		done
-		echo "${b-}Backup file $standalone_backup_file selected.${x-}"
-		echo
-		if [ ${standalone_backup_file: -4} == ".bz2" ]
+
+		validate_input() {
+
+			if [ -f "${reinstate_standalone_file_chosen}" ]
+			then
+				valid="y"
+			else
+				dna-echo -e "The specified file does not exists."
+				valid="n"
+			fi
+
+		}
+
+        dna-set_value -d "Ok, specify the path to that file now:" -v "y"
+
+		reinstate_standalone_file_chosen="${value}"
+
+		dna-echo -s "Backup file ${reinstate_standalone_file_chosen} selected."
+
+		if [ ${reinstate_standalone_file_chosen: -4} == ".bz2" ]
 		then
-			tar -xvjf "$standalone_backup_file" -C "/root/$project_name-restore/"
+			tar -xvjf "${reinstate_standalone_file_chosen}" -C "${reinstate_standalone_basedir}"
 		else
-			tar -xvf "$standalone_backup_file" -C "/root/$project_name-restore/"
+			tar -xvf "${reinstate_standalone_file_chosen}" -C "${reinstate_standalone_basedir}"
 		fi
-		subdir=("/root/$project_name-restore/"*/)
-		restoresubdir="$(echo "$subdir" | sed "s|/root/${project_name}-restore/||" | tr -d '/')"
-		mv "/root/$project_name-restore/$restoresubdir"/* "/root/$project_name-restore/"
-		rm -r "/root/$project_name-restore/$restoresubdir"
+
+		reinstate_standalone_subdir=("${reinstate_standalone_basedir}"*/)
+
+		reinstate_standalone_subdir_name="$(echo "${reinstate_standalone_subdir}" | sed "s|${reinstate_standalone_basedir}/||" | tr -d '/')"
+
+		mv "${reinstate_standalone_basedir}/${reinstate_standalone_subdir_name}"/* "${reinstate_standalone_basedir}/"
+		rm -r "${reinstate_standalone_basedir}/${reinstate_standalone_subdir_name}"
+
 	else
-		echo
-		echo "${b-}Ok, no problem. Make sure you populate the | /root/$project_name-restore/ | directory with the following files/directories from your standalone backup:${x-}"
-		echo
+
+		dna-echo -m "Ok, no problem. Make sure you populate the: | ${l-}${reinstate_standalone_basedir${n-}} | directory with the following files/directories from your standalone backup:"
+
 		restore_from_standalone_content_description
-		echo
-		echo "${r-}${b-}If you don't correctly place all the above files/directories, the restore will not work correctly [you will be alerted if something is wrong further along this script]${x-}"
-		echo
-		echo "${b-}As soon as you're done moving these items into place...${x-}"
-		echo
-		read -rp "${b-}[press enter to continue...]${x-}"
-		clear
-		if [ $validate_standalone_restore_content = "y" ]
+
+		dna-echo -e "If you don't correctly place all the above files/directories, the restore will not work correctly [you will be alerted if something is wrong further along this script]."
+
+		dna-echo -m "As soon as you're done moving these items into place..."
+
+		dna-press_to_continue
+
+		if [ "${validate_standalone_restore_content}" = "y" ]
 		then
 			restore_from_standalone_content_validation
 		fi
+
 	fi
 
 }
@@ -1342,9 +1308,7 @@ dna-restore() {
 
 	fi
 
-	## devline
-
-    if [ $restore_type = "rollback" ]
+    if [ "${restore_type}" = "rollback" ]
     then
     	export restore_file_name="$(echo "$sel_backup_file" | sed 's|./||g' | sed 's/-last-backup.*-restore//' | sed 's/.tar//g' | sed 's/.bz2//g')"
     	export restore_file_path="$backup_local_storage_path/restores/local/$restore_file_name"
