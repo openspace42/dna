@@ -151,7 +151,7 @@ dna-install_easyengine() {
 
 	dna-echo_operation -h "[re-]installing and updating EasyEngine"
 
-	wget -qO ee https://raw.githubusercontent.com/easyengine/installer/master/setup.sh
+	wget -qO ee https://raw.githubusercontent.com/easyengine/installer/master/setup.sh || true
 	bash ee || true
 	rm ee
 	echo
