@@ -29,7 +29,7 @@ dna-log_script() {
 	if [ "${interactive}" = "n" ] || [ -n "${force_log_even_when_interactive-}" ]												### If non-interactive, then...
 	then
 		mkdir -p "${log_dir}"
-		savelog -lc 42 "${log_file}"
+		savelog -qdlc 42 "${log_file}"
         exec &> >(tee "${log_file}")
 		chmod -R 700 "${log_dir}"
 	fi
