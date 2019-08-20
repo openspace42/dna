@@ -200,7 +200,6 @@ dna-set_option() {
 
 			else
 
-				skip_descr="y"
 				unset valid
 				previous_value_outcome="not-kept"
 
