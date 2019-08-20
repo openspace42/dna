@@ -21,21 +21,17 @@ dna-log_script() {
 
 	############################################################################
 
-	script_name=$(basename "${0}")												### The name of this script
-	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
-	log_dir="${HOME}/logs/${project_name}/${script_name}"						### Don't store anything else than logs in here!
-	log_file="${log_dir}/${now}"												### The new log_file
-	if [[ -t 1 ]]; then interactive="y"; else interactive="n"; fi				### Determine if this is an interactive shell
-	if [ "${interactive}" = "n" ] && [ -z "${force_log_even_when_interactive-}" ]												### If non-interactive, then...
+	script_name=$(basename "${0}")
+	now="$(date +"%Y-%m-%d_%H-%M-%S")"
+	log_dir="${HOME}/logs/${project_name}/${script_name}"
+	log_file="${log_dir}/${project_name}_${script_name}.log"
+	if [[ -t 1 ]]; then interactive="y"; else interactive="n"; fi
+	if [ "${interactive}" = "n" ] || [ -n "${force_log_even_when_interactive-}" ]												### If non-interactive, then...
 	then
-		mkdir -p "${log_dir}"													### Touch the log_dir
-		touch "${log_file}"														### Touch the log_file
-		if [ -f "${log_dir}/latest-log" ]; then rm "${log_dir}/latest-log"; fi	### Remove the old latest-log symlink
-		ln -s "${log_file}" "${log_dir}/latest-log"								### Recreate the latest-log symlink
-		( cd "${log_dir}" && rm "$(ls -t | awk 'NR>43')" ) 2> /dev/null || true	### Delete all logs older than the newest 42
-		exec >  >(tee -ia "${log_file}")										### Log stdout to log_file
-		exec 2> >(tee -ia "${log_file}" >&2)									### Log stderr to log_file
-		chmod -R 700 "${log_dir}"												### Secure logs directory
+		mkdir -p "${log_dir}"
+		savelog -lc 42 "${log_file}"
+        exec &> >(tee "${log_file}")
+		chmod -R 700 "${log_dir}"
 	fi
 
 	if [ -n "${include_hostname-}" ]
@@ -49,14 +45,14 @@ dna-log_script() {
 
 		echo "Starting ${o-}${project_name}${n-} ${y-}${script_name}${n-} script on ${l-}${now}${n-}..." && echo
 
-	fi																			### Write heading to log_file
+	fi
 
 }
 
 dna-head_script() {
 
-	script_name=$(basename "${0}")												### The name of this script
-	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
-	echo "Starting ${script_name} script on ${now}..." && echo					### Write heading to log_file
+	script_name=$(basename "${0}")
+	now="$(date +"%Y-%m-%d_%H-%M-%S")"
+	echo "Starting ${script_name} script on ${now}..." && echo
 
 }
