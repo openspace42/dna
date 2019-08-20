@@ -4,11 +4,13 @@ dna-log_script() {
 
 	############################################################################
 
-    while getopts ":h" arguments
+    while getopts ":hi" arguments
     do
         case $arguments
         in
             h)	local include_hostname="y"
+                ;;
+            i)  local force_log_even_when_interactive="y"
                 ;;
             \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
                 dna-exit
@@ -21,10 +23,10 @@ dna-log_script() {
 
 	script_name=$(basename "${0}")												### The name of this script
 	now="$(date +"%Y-%m-%d_%H-%M-%S")"											### The current timestamp
-	log_dir="${HOME}/logs/${script_name}"										### Don't store anything else than logs in here!
+	log_dir="${HOME}/logs/${project_name}/${script_name}"						### Don't store anything else than logs in here!
 	log_file="${log_dir}/${now}"												### The new log_file
 	if [[ -t 1 ]]; then interactive="y"; else interactive="n"; fi				### Determine if this is an interactive shell
-	if [ "${interactive}" = "n" ]												### If non-interactive, then...
+	if [ "${interactive}" = "n" ] && [ -z "${force_log_even_when_interactive-}" ]												### If non-interactive, then...
 	then
 		mkdir -p "${log_dir}"													### Touch the log_dir
 		touch "${log_file}"														### Touch the log_file
@@ -41,11 +43,11 @@ dna-log_script() {
 
 		dna-get_hostname
 
-		echo "Starting ${script_name} script on node ${hostname} on ${now}..." && echo																### Write heading to log_file
+		echo "Starting ${o-}${project_name}${n-} ${y-}${script_name}${n-} script on node ${hostname} on ${l-}${now}${n-}..." && echo																### Write heading to log_file
 
 	else
 
-		echo "Starting ${script_name} script on ${now}..." && echo
+		echo "Starting ${o-}${project_name}${n-} ${y-}${script_name}${n-} script on ${l-}${now}${n-}..." && echo
 
 	fi																			### Write heading to log_file
 
