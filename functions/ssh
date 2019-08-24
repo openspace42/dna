@@ -39,12 +39,12 @@ dna-sshd_set_config_value() {
 
     	dna-echo -m " | ${o-}${sshd_option_name}${n-} | line found."
 
-    	if grep -Eq '^ *${sshd_option_name} ' "${sshd_config_file}"
+    	if grep -Eq "^ *${sshd_option_name} " "${sshd_config_file}"
     	then
 
     		dna-echo -m " | ${o-}${sshd_option_name}${n-} | syntax correct."
 
-    		if grep -Eq '^ *${sshd_option_name} ${sshd_option_value}' "${sshd_config_file}"
+    		if grep -Eq "^ *${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
     		then
 
     			dna-echo -m " | ${o-}${sshd_option_name}${n-} | already set to | ${y-}${sshd_option_value}${n-} |."
