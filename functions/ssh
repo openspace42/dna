@@ -57,7 +57,7 @@ dna-sshd_set_config_value() {
 
                 sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
 
-                dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | set to | ${y-}${sshd_option_value}${n-} |."
+                dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | now set to | ${y-}${sshd_option_value}${n-} |."
 
             fi
 
@@ -66,7 +66,7 @@ dna-sshd_set_config_value() {
             dna-echo -e "SSHd | ${n-}${sshd_option_name}${r-} | syntax abnormal [commented, or other]."
             dna-echo -m "Fixing syntax and setting | ${o-}${sshd_option_name}${n-} | to | ${y-}${sshd_option_value}${n-} |."
 
-            sed -i "/${sshd_option_name} /c\${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+            sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
 
             dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | line syntax fixed and value set to | ${y-}${sshd_option_value}${n-} |."
 
