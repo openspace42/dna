@@ -51,7 +51,7 @@ dna-sshd_set_config_value() {
 
     		else
 
-                sshd_option_value_current="$(grep "^ *${sshd_option_name} *' ${sshd_config_file} | sed "s|${sshd_option_name} ||g")"
+                sshd_option_value_current="$(grep "^ *${sshd_option_name} *" ${sshd_config_file} | sed "s|${sshd_option_name} ||g")"
 
     			dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | currently set to: | ${y-}${sshd_option_value_current}${n-} |."
 
