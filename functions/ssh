@@ -48,7 +48,6 @@ dna-sshd_set_config_value() {
     		then
 
     			dna-echo -m " | ${o-}${sshd_option_name}${n-} | already set to | ${y-}${sshd_option_value}${n-} |."
-    			ssh_port="42022"
 
     		else
 
@@ -60,8 +59,8 @@ dna-sshd_set_config_value() {
 
         else
 
-            dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]."
-            dna-echo -m "Fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
+            dna-echo -e " | ${n-}${sshd_option_name}${r-} | syntax abnormal [commented, or other]."
+            dna-echo -m "Fixing syntax and setting | ${o-}${sshd_option_name}${n-} | to | ${y-}${sshd_option_value}${n-} |."
 
             sed -i "/${sshd_option_name} /c\${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
 
@@ -74,7 +73,7 @@ dna-sshd_set_config_value() {
         dna-echo -e " | ${n-}${sshd_option_name}${r-} | line not found. Adding it now."
         dna-echo -m "Adding | ${o-}${sshd_option_name}${n-} | line and setting value to | ${y-}${sshd_option_value}${n-} |."
 
-        sed -i '1i${sshd_option_name} ${sshd_option_value}' "${sshd_config_file}"
+        sed -i "1i${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
 
         dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | line added and value set to | ${y-}${sshd_option_value}${n-} |."
 
