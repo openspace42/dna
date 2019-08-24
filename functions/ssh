@@ -1,0 +1,83 @@
+dna-sshd_set_config_value() {
+
+    ### ########################################################################
+
+	### evaluate arguments.
+
+	### ########################################################################
+
+	while getopts ":n:v:" arguments
+	do
+		case "${arguments}" in
+			n)	sshd_option_name="${OPTARG}"
+				;;
+            v)  sshd_option_value="${OPTARG}"
+                ;;
+			\?)	dna-echo -e "Invalid option | ${n-}-$OPTARG${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+				dna-exit
+				;;
+		esac
+	done
+	OPTIND=1
+
+    if [ -z "${sshd_option_name-}" ]
+    then
+        dna-echo -e "Argument | ${n-}sshd_option_name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    if [ -z "${sshd_option_value-}" ]
+    then
+        dna-echo -e "Argument | ${n-}sshd_option_value [-v]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+	### ########################################################################
+
+    if grep -Fq "${sshd_option_name} " "${sshd_config_file}"
+    then
+
+    	dna-echo -m " | ${o-}${sshd_option_name}${n-} | line found."
+
+    	if grep -Eq '^ *${sshd_option_name} ' "${sshd_config_file}"
+    	then
+
+    		dna-echo -m " | ${o-}${sshd_option_name}${n-} | syntax correct."
+
+    		if grep -Eq '^ *${sshd_option_name} ${sshd_option_value}' "${sshd_config_file}"
+    		then
+
+    			dna-echo -m " | ${o-}${sshd_option_name}${n-} | already set to | ${y-}${sshd_option_value}${n-} |."
+    			ssh_port="42022"
+
+    		else
+
+                sed -i "/${sshd_option_name} /c\${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+
+                dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | set to | ${y-}${sshd_option_value}${n-} |."
+
+            fi
+
+        else
+
+            dna-echo -e " | ${n-}Port${r-} | syntax abnormal [commented, or other]."
+            dna-echo -m "Fixing syntax and setting | ${o-}Port${n-} | to | ${y-}42022${n-} |."
+
+            sed -i "/${sshd_option_name} /c\${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+
+            dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | line syntax fixed and value set to | ${y-}${sshd_option_value}${n-} |."
+
+        fi
+
+    else
+
+        dna-echo -e " | ${n-}${sshd_option_name}${r-} | line not found. Adding it now."
+        dna-echo -m "Adding | ${o-}${sshd_option_name}${n-} | line and setting value to | ${y-}${sshd_option_value}${n-} |."
+
+        sed -i '1i${sshd_option_name} ${sshd_option_value}' "${sshd_config_file}"
+
+        dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | line added and value set to | ${y-}${sshd_option_value}${n-} |."
+
+    fi
+
+}

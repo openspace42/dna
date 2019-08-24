@@ -155,11 +155,11 @@ dna-harden_ssh() {
     if [ "${boolean_output}" = "y" ]
     then
 
-        sed -i "s/^PermitRootLogin yes/PermitRootLogin without-password/" "${ssh_config_file}"
+        sed -i "s/^PermitRootLogin yes/PermitRootLogin without-password/" "${sshd_config_file}"
 
         dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to | ${y-}without-password${n-} |."
 
-        sed -i "0, /sftp_access/ s/^PasswordAuthentication yes/PasswordAuthentication no/" "${ssh_config_file}"
+        sed -i "0, /sftp_access/ s/^PasswordAuthentication yes/PasswordAuthentication no/" "${sshd_config_file}"
 
         dna-echo -m "Set | ${o-}PasswordAuthentication${n-} | to | ${y-}no${n-} |."
 
@@ -171,17 +171,17 @@ dna-harden_ssh() {
 
     dna-echo -m "Now checking current SSH port setting..."
 
-    if grep -Fq "Port " "${ssh_config_file}"
+    if grep -Fq "Port " "${sshd_config_file}"
     then
 
     	dna-echo -m " | ${o-}Port${n-} | line found."
 
-    	if grep -Eq '^ *Port ' "${ssh_config_file}"
+    	if grep -Eq '^ *Port ' "${sshd_config_file}"
     	then
 
     		dna-echo -m " | ${o-}Port${n-} | syntax correct."
 
-    		if grep -Eq '^ *Port 42022' "${ssh_config_file}"
+    		if grep -Eq '^ *Port 42022' "${sshd_config_file}"
     		then
 
     			dna-echo -m " | ${o-}Port${n-} | already set to | ${y-}42022${n-} |."
@@ -189,7 +189,7 @@ dna-harden_ssh() {
 
     		else
 
-    			curr_ssh_port="$(grep '^ *Port *' ${ssh_config_file} | sed 's|Port ||g')"
+    			curr_ssh_port="$(grep '^ *Port *' ${sshd_config_file} | sed 's|Port ||g')"
 
     			dna-echo -m "SSH port currently set to: | ${y-}${curr_ssh_port}${n-} |."
 
@@ -224,7 +224,7 @@ dna-harden_ssh() {
                 if [ "${set_alt_ssh_port}" = "y" ]
                 then
 
-    				sed -i "/Port /c\Port 42022" "${ssh_config_file}"
+    				sed -i "/Port /c\Port 42022" "${sshd_config_file}"
 
     				dna-echo -s "SSH Port changed to 42022"
 
@@ -273,7 +273,7 @@ dna-harden_ssh() {
             if [ "${set_alt_ssh_port}" = "y" ]
             then
 
-                sed -i "/Port /c\Port 42022" "${ssh_config_file}"
+                sed -i "/Port /c\Port 42022" "${sshd_config_file}"
 
                 dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}42022${n-} |."
 
@@ -281,7 +281,7 @@ dna-harden_ssh() {
 
             else
 
-                sed -i "/Port /c\Port 22" "${ssh_config_file}"
+                sed -i "/Port /c\Port 22" "${sshd_config_file}"
 
                 dna-echo -m "Line re-inserted with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
@@ -326,7 +326,7 @@ dna-harden_ssh() {
         if [ "${set_alt_ssh_port}" = "y" ]
         then
 
-            sed -i '1iPort 42022' "${ssh_config_file}"
+            sed -i '1iPort 42022' "${sshd_config_file}"
 
             dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 
@@ -334,7 +334,7 @@ dna-harden_ssh() {
 
         else
 
-            sed -i '1iPort 22' "${ssh_config_file}"
+            sed -i '1iPort 22' "${sshd_config_file}"
 
             dna-echo -m "Line added with | ${o-}Port${n-} | set to | ${y-}22${n-} [standard] |."
 

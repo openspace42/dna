@@ -22,7 +22,7 @@ dna-define_vars() {
 	### system ssh.
 
 	export ssh_auth_keys_file="/root/.ssh/authorized_keys"
-	export ssh_config_file="/etc/ssh/sshd_config"
+	export sshd_config_file="/etc/ssh/sshd_config"
 
 	############################################################################
 
