@@ -155,13 +155,9 @@ dna-harden_ssh() {
     if [ "${boolean_output}" = "y" ]
     then
 
-        sed -i "s/^PermitRootLogin yes/PermitRootLogin without-password/" "${sshd_config_file}"
+        dna-sshd_set_config_value -n "PermitRootLogin" -v "without-password"
 
-        dna-echo -m "Set | ${o-}PermitRootLogin${n-} | to | ${y-}without-password${n-} |."
-
-        sed -i "0, /sftp_access/ s/^PasswordAuthentication yes/PasswordAuthentication no/" "${sshd_config_file}"
-
-        dna-echo -m "Set | ${o-}PasswordAuthentication${n-} | to | ${y-}no${n-} |."
+        dna-sshd_set_config_value -n "PasswordAuthentication" -v "no"
 
     else
 

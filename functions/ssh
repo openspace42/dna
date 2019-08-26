@@ -1,5 +1,15 @@
 dna-sshd_set_config_value() {
 
+	### ########################################################################
+
+	### define vars.
+
+	### ########################################################################
+
+	sshd_config_extr_before="${tmp_project_dir}/sshd_config_extr_before"
+	sshd_config_extr_after="${tmp_project_dir}/sshd_config_extr_after"
+	sshd_config_extr_recombined="${tmp_project_dir}/sshd_config_extr_recombined"
+
     ### ########################################################################
 
 	### evaluate arguments.
@@ -34,28 +44,40 @@ dna-sshd_set_config_value() {
 
 	### ########################################################################
 
-    if grep -Fq "${sshd_option_name} " "${sshd_config_file}"
+	### create a temp version of sshd_config and split out any match directive
+	### stanzas in order to avoid affecting them with any change.
+
+	### ########################################################################
+
+	sed '/^Match /Q' "${sshd_config_file}" > "${sshd_config_extr_before}"
+	sed -ne '/^Match /,$ p' "${sshd_config_file}" > "${sshd_config_extr_after}"
+
+	### ########################################################################
+
+	### execute substitution in sshd_config_extr_before file
+
+    if grep -Fq "${sshd_option_name} " "${sshd_config_extr_before}"
     then
 
     	dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | line found."
 
-    	if grep -Eq "^ *${sshd_option_name} " "${sshd_config_file}"
+    	if grep -Eq "^ *${sshd_option_name} " "${sshd_config_extr_before}"
     	then
 
     		dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | syntax correct."
 
-    		if grep -Eq "^ *${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+    		if grep -Eq "^ *${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
     		then
 
     			dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | already set to | ${y-}${sshd_option_value}${n-} |."
 
     		else
 
-                sshd_option_value_current="$(grep "^ *${sshd_option_name} *" ${sshd_config_file} | sed "s|${sshd_option_name} ||g")"
+                sshd_option_value_current="$(grep "^ *${sshd_option_name} *" ${sshd_config_extr_before} | sed "s|${sshd_option_name} ||g")"
 
     			dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | currently set to: | ${y-}${sshd_option_value_current}${n-} |."
 
-                sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+                sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
 
                 dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | now set to | ${y-}${sshd_option_value}${n-} |."
 
@@ -66,7 +88,7 @@ dna-sshd_set_config_value() {
             dna-echo -e "SSHd | ${n-}${sshd_option_name}${r-} | syntax abnormal [commented, or other]."
             dna-echo -m "Fixing syntax and setting | ${o-}${sshd_option_name}${n-} | to | ${y-}${sshd_option_value}${n-} |."
 
-            sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+            sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
 
             dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | line syntax fixed and value set to | ${y-}${sshd_option_value}${n-} |."
 
@@ -77,10 +99,33 @@ dna-sshd_set_config_value() {
         dna-echo -e "SSHd | ${n-}${sshd_option_name}${r-} | line not found. Adding it now."
         dna-echo -m "Adding | ${o-}${sshd_option_name}${n-} | line and setting value to | ${y-}${sshd_option_value}${n-} |."
 
-        sed -i "1i${sshd_option_name} ${sshd_option_value}" "${sshd_config_file}"
+        sed -i "1i${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
 
         dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | line added and value set to | ${y-}${sshd_option_value}${n-} |."
 
     fi
+
+	### ########################################################################
+
+	### recombine sshd_config into a single file with performed edits.
+
+	cat "${sshd_config_extr_before}" "${sshd_config_extr_after}" > "${sshd_config_extr_recombined}"
+
+	### diff the original and the recombined sshd_condig files to ensure only
+	### one line at maximum has been altered.
+
+	if ! [[ "$(diff --changed-group-format='%<%>' --unchanged-group-format='' "${sshd_config_file}" "${sshd_config_extr_recombined}" | wc -l)" -le 1 ]]
+	then
+		dna-echo -e "More than one line alteration detected during: | ${n-}${FUNCNAME[0]}${r-} |."
+		return 1
+	fi
+
+	### install the new config file now that it has been validated.
+
+	mv "${sshd_config_extr_recombined}" "${sshd_config_file}"
+
+	### restart sshd
+
+	service sshd restart
 
 }
