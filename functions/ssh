@@ -56,15 +56,28 @@ dna-sshd_set_config_value() {
 
 	### execute substitution in sshd_config_extr_before file
 
-    if grep -Fq "${sshd_option_name} " "${sshd_config_extr_before}"
+	#### if $sshd_option_name is found [commented or not, but not inside a
+	#### prase such as in a description commented paragraph block], then mark
+	#### it as a match and determine that the setting line is present in the
+	#### config file.
+
+	if grep -oP "^[\s#]*${sshd_option_name}.*" "${sshd_config_extr_before}"
     then
 
     	dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | line found."
+
+		#### if $sshd_option_name is not commented then mark it as a match and
+		#### determine that the setting line is present and active in the config
+		#### file.
 
     	if grep -Eq "^ *${sshd_option_name} " "${sshd_config_extr_before}"
     	then
 
     		dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | syntax correct."
+
+			#### if $sshd_option_name is already set to $sshd_option_value, then
+			#### echo this, otherwise return its current value and then set it
+			#### to the desired one.
 
     		if grep -Eq "^ *${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
     		then
@@ -85,6 +98,9 @@ dna-sshd_set_config_value() {
 
         else
 
+			#### $sshd_option_name is present but commented or syntax is
+			#### abnormal. Fix syntax and set it to $sshd_option_value.
+
             dna-echo -e "SSHd | ${n-}${sshd_option_name}${r-} | syntax abnormal [commented, or other]."
             dna-echo -m "Fixing syntax and setting | ${o-}${sshd_option_name}${n-} | to | ${y-}${sshd_option_value}${n-} |."
 
@@ -95,6 +111,9 @@ dna-sshd_set_config_value() {
         fi
 
     else
+
+		#### $sshd_option_name is not present. Add its line and set it to
+		#### $sshd_option_value.
 
         dna-echo -e "SSHd | ${n-}${sshd_option_name}${r-} | line not found. Adding it now."
         dna-echo -m "Adding | ${o-}${sshd_option_name}${n-} | line and setting value to | ${y-}${sshd_option_value}${n-} |."
