@@ -61,7 +61,7 @@ dna-sshd_set_config_value() {
 	#### it as a match and determine that the setting line is present in the
 	#### config file.
 
-	if grep -oP "^[\s#]*${sshd_option_name}.*" "${sshd_config_extr_before}"
+	if grep -qoP "^[\s#]*${sshd_option_name}.*" "${sshd_config_extr_before}"
     then
 
     	dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | line found."
@@ -133,9 +133,19 @@ dna-sshd_set_config_value() {
 	### diff the original and the recombined sshd_condig files to ensure only
 	### one line at maximum has been altered.
 
-	if ! [[ "$(diff --changed-group-format='%<%>' --unchanged-group-format='' "${sshd_config_file}" "${sshd_config_extr_recombined}" | wc -l)" -le 1 ]]
+	if ! [[ "$(diff "${sshd_config_file}" "${sshd_config_extr_recombined}" | grep ^[\>] | wc -l)" -le 1 ]]
 	then
 		dna-echo -e "More than one line alteration detected during: | ${n-}${FUNCNAME[0]}${r-} |."
+		return 1
+	fi
+
+	### validate new config file before re-installing it.
+
+	if ! sshd -f "${sshd_config_extr_recombined}" -t
+	then
+		echo
+		dna-echo -e "The alternation performed has resulted in an invalid SSHd configuration."
+		dna-echo -m "Aborting commiting the change to the live configuration file."
 		return 1
 	fi
 
