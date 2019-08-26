@@ -165,6 +165,20 @@ dna-harden_ssh() {
 
     fi
 
+    dna-echo -m "It is recommended to increase the: | ${o-}MaxAuthTries${n-} | value to allow for automatic connections via ssh/mosh without the need to specify a keyfile on the client side every time."
+    dna-ask_for_boolean -d "y" -q "Also increase the: | ${o-}MaxAuthTries${n-} | value to: | ${y-}16${n-} |?"
+
+    if [ "${boolean_output}" = "y" ]
+    then
+
+        dna-sshd_set_config_value -n "MaxAuthTries" -v "16"
+
+    else
+
+        dna-echo -m "Ok, skipping increasing MaxAuthTries value."
+
+    fi
+
     dna-echo -m "Now checking current SSH port setting..."
 
     if grep -Fq "Port " "${sshd_config_file}"
