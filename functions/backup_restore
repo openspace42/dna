@@ -11,7 +11,7 @@ dna-backup_update_storage_info() {
 
 	### calculate upcoming backup size estimate.
 
-	dna-calculate_backup_size
+	synthia-calculate_backup_size
 
 }
 
@@ -418,7 +418,7 @@ dna-backup_locally() {
 
 	dna-backup_locally_conf_dir
 
-    dna-backup_locally
+    synthia-backup_locally
 
     dna-archive_local_backup
 
@@ -492,7 +492,7 @@ dna-backup() {
 
 	### perform pre-backup operations.
 
-	dna-backup_pre_operations
+	synthia-backup_pre_operations
 
 	### backup locally.
 
@@ -503,7 +503,7 @@ dna-backup() {
 
 		### perform post-backup operations.
 
-		dna-backup_post_operations
+		synthia-backup_post_operations
 
 	fi
 
@@ -537,7 +537,7 @@ dna-backup() {
 
 				### perform post-backup operations.
 
-				dna-backup_post_operations
+				synthia-backup_post_operations
 
 			fi
 
@@ -552,7 +552,7 @@ dna-backup() {
 
 			### perform post-backup operations.
 
-			dna-backup_post_operations
+			synthia-backup_post_operations
 
 		fi
 
@@ -903,7 +903,7 @@ dna-duplicity_loop() {
 
 			else
 
-				dna-backup_generate_additional_paths
+				synthia-backup_generate_additional_paths
 
 				dna-backup_generate_duplicity_includes
 
