@@ -125,7 +125,7 @@ dna-install_duplicity() {
 	if [ "${distro_name}" = "ubuntu" ]
 	then
 		dna-install_dependencies -p "software-properties-common"
-		apt-add-repository ppa:duplicity-team/ppa -y
+		add-apt-repository -y ppa:duplicity-team/duplicity-release-git
 		echo
 	fi
 

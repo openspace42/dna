@@ -75,9 +75,9 @@ dna-sshd_set_config_value() {
 
     		dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | syntax correct."
 
-			#### if $sshd_option_name is already set to $sshd_option_value, then
-			#### echo this, otherwise return its current value and then set it
-			#### to the desired one.
+				#### if $sshd_option_name is already set to $sshd_option_value, then
+				#### echo this, otherwise return its current value and then set it
+				#### to the desired one.
 
     		if grep -Eq "^ *${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
     		then
@@ -86,15 +86,15 @@ dna-sshd_set_config_value() {
 
     		else
 
-                sshd_option_value_current="$(grep "^ *${sshd_option_name} *" ${sshd_config_extr_before} | sed "s|${sshd_option_name} ||g")"
+          sshd_option_value_current="$(grep "^ *${sshd_option_name} *" ${sshd_config_extr_before} | sed "s|${sshd_option_name} ||g")"
 
     			dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | currently set to: | ${y-}${sshd_option_value_current}${n-} |."
 
-                sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
+          sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
 
-                dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | now set to | ${y-}${sshd_option_value}${n-} |."
+          dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | now set to | ${y-}${sshd_option_value}${n-} |."
 
-            fi
+          fi
 
         else
 
