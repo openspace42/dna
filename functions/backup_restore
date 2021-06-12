@@ -276,7 +276,7 @@ dna-calculate_backup_paths_size() {
 
 }
 
-dna-backup_generate_additional_paths_dirs() {
+dna-backup_create_additional_paths_dirs() {
 
 	for this_backup_path in "${!backup_paths_default_array[@]}"
 	do
@@ -351,7 +351,7 @@ dna-archive_local_backup() {
 
     else
 
-        ## tar [and - if chosen - bzip2] this backup archive.
+    ## tar [and - if chosen - bzip2] this backup archive.
 		## give local backup a custom name so that it's clear it's the last one
 		## before a restore.
 
@@ -418,9 +418,9 @@ dna-backup_locally() {
 
 	dna-backup_locally_conf_dir
 
-    synthia-backup_locally
+ 	synthia-backup_locally
 
-    dna-archive_local_backup
+ 	dna-archive_local_backup
 
 	if [ -n "${backup_last_before_restore-}" ]
 	then
