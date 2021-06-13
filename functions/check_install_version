@@ -21,12 +21,28 @@ dna-check_install_version() {
         fi
         clear
 
+        if [ "${skip_intro}" = "y" ]
+        then
+            
+            dna-ask_for_boolean -d "n" -q "[development only] Skip full installation and only pull updated project files?"
+
+            if [ "${boolean_output}" = "y" ]
+            then
+                skip_full_installation="y"
+            else
+                skip_full_installation="n"
+            fi
+            clear
+            
+        fi
+
     else
 
         ### If instead this is the first install...
 
         mkdir -p "${conf_dir}/version/"
         skip_intro="n"
+        skip_full_installation="n"
 
     fi
 
