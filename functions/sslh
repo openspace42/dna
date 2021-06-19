@@ -1,5 +1,58 @@
 #!/usr/bin/env bash
 
+dna-generate_ssh_keypair() {
+
+    ########################################################################
+
+    if [ $# -eq 0 ]
+    then
+        dna-echo -e "No argument supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    while getopts ":n:h:" arguments; do
+        case $arguments in
+            n)	name="${OPTARG}"
+                ;;
+            h)	hostname="${OPTARG}"
+                ;;
+            \?)	dna-echo -e "Invalid option | ${n-}-${OPTARG}${r-} | for function | ${n-}${FUNCNAME[0]}${r-} |."
+                dna-exit
+                ;;
+        esac
+    done
+    OPTIND=1
+
+    if [ -z "${name-}" ]
+    then
+        dna-echo -e "Argument | ${n-}name [-n]${r-} | must be supplied for function | ${n-}${FUNCNAME[0]}${r-} |."
+        dna-exit
+    fi
+
+    ########################################################################
+
+    dna-echo_operation -h "generating SSH keypair for | ${y-}${name}${n-} |"
+
+    if [ -n "${hostname-}" ]
+    then
+        ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}" -C "${hostname}"
+    else
+        ssh-keygen -t rsa -b 8192 -N "" -f "/root/.ssh/${name}"
+    fi
+
+    echo
+
+    chmod 600 "/root/.ssh/${name}"
+
+    ssh_keypair_privkey_path="/root/.ssh/${name}"
+    ssh_keypair_pubkey_path="/root/.ssh/${name}.pub"
+
+    dna-echo -m "Stored SSH keypair files in: | ${y-}/root/.ssh/${name}[.pub]${n-} |."
+
+    dna-echo_operation -t
+
+}
+
 dna-abort_on_sslh_session() {
 
     # Determine if user is connected via SSH on SSLH port 443

@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+dna-get_hostname() {
+
+    hostname="$(cat /etc/hostname)"
+
+}
+
 dna-distro_install_dependencies() {
 
     dna-install_dependencies -p "lsb-release"

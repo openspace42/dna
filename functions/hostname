@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -eu
-
-dna-get_hostname() {
-
-    hostname="$(cat /etc/hostname)"
-
-}

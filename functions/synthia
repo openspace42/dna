@@ -1,0 +1,487 @@
+#!/usr/bin/env bash
+
+dna-define_vars() {
+
+	############################################################################
+
+	### define variables [don't change these! | no trailing slash on paths!].
+	### projects will be installed in: | /root/${proj_author}/${project_name} |.
+
+	############################################################################
+	############################################################################
+
+	### system.
+
+	export tls_dir="/etc/ssl"
+	export www_dir="/var/www"
+	export tmp_dir="/tmp"
+	export le_live_dir="/etc/letsencrypt/live"
+
+	############################################################################
+
+	### system ssh.
+
+	export ssh_auth_keys_file="/root/.ssh/authorized_keys"
+	export sshd_config_file="/etc/ssh/sshd_config"
+
+	############################################################################
+
+	### os.
+
+	export os_base_dir="/root/openspace42"
+	export os_conf_dir="${os_base_dir}/conf"
+
+	############################################################################
+
+	### dna.
+
+	export dna_dir="${os_base_dir}/dna"
+	export dna_version_file_path="${dna_dir}/version_installed"
+
+	############################################################################
+
+	### synthia
+
+	export source_dir="/root/${project_name}"
+	export base_dir="/root/${author_name}"
+	export install_dir="${base_dir}/${project_name}"
+	export modules_dir="${install_dir}/modules"
+
+	### synthia conf
+
+	export conf_dir="${install_dir}/conf"
+	export conf_backup_dir="${conf_dir}/backups"
+	export conf_backups_local_dir="${conf_backup_dir}/local"
+	export conf_backups_s3_dir="${conf_backup_dir}/s3"
+	export conf_dns_dir="${conf_dir}/dns"
+
+	### synthia tools
+
+	export tools_dir="${install_dir}/tools"
+
+	### synthia logs
+
+	export logs_dir="/root/logs"
+
+	############################################################################
+
+	### system project-specific
+
+	export tls_project_dir="${tls_dir}/${project_name}"
+	export tmp_project_dir="${tmp_dir}/${project_name}"
+
+	export tmp_project_backup_dir="${tmp_project_dir}/backup"
+
+	############################################################################
+	############################################################################
+
+}
+
+dna-check_install_version() {
+
+    ### Check if a previous installation was at the very least initiated.
+
+    if [ -f "${conf_dir}/version/version_initiated" ]
+    then
+
+        prev_install_initiated="y"
+        prev_version_initiated="$(cat ${conf_dir}/version/version_initiated)"
+
+        dna-echo -s "Found a previous install of ${project_name}."
+        dna-ask_for_boolean -d "y" -q "Skip the introduction on how it works?"
+
+        if [ "${boolean_output}" = "y" ]
+        then
+            skip_intro="y"
+        else
+            skip_intro="n"
+        fi
+        clear
+
+        if [ "${skip_intro}" = "y" ]
+        then
+            
+            dna-ask_for_boolean -d "n" -q "[development only] Skip full installation and only pull updated project files?"
+
+            if [ "${boolean_output}" = "y" ]
+            then
+                skip_full_installation="y"
+            else
+                skip_full_installation="n"
+            fi
+            clear
+            
+        fi
+
+    else
+
+        ### If instead this is the first install...
+
+        mkdir -p "${conf_dir}/version/"
+        skip_intro="n"
+        skip_full_installation="n"
+
+    fi
+
+    ### Log current version being initiated to version_initiated.
+
+    echo "${selected_vers}" > "${conf_dir}/version/version_initiated"
+
+    ### If a previous installation was at the very least initiated...
+
+    if [ "${prev_install_initiated-null}" = "y" ]
+    then
+
+        ### If a previous version was successfully finished installing...
+
+        if [ -f "${conf_dir}/version/version_installed" ]
+        then
+
+            ### Check that prev_version_initiated and prev_version_installed match.
+
+            prev_version_installed="$(cat ${conf_dir}/version/version_installed)"
+
+            if [ "${prev_version_installed}" = "${prev_version_initiated}" ]
+            then
+
+                ### Versions match, therefore the latest previous install was completed successfully.
+                ### Proceed to ensure that, if we're not installing a bleeding-edge version, there's no more recent version already installed.
+                ### If instead we're installing a bleeding-edge version, skip any checks as we're certainly intalling a newer version.
+
+                if [ ! "${custom_project_version-null}" = "b" ]
+                then
+
+                    if grep -q "+" "${conf_dir}/version/version_installed"
+                    then
+
+                        dna-echo -m "You're now installing stable version | ${c-}${selected_vers}${n-} | over a previously | ${r-}bleeding-edge${n-} | version of ${project_name}."
+                        dna-echo -m "This is normal if you're intentionally installing a stable release, but keep in mind that some features might stop working if they haven't yet been implemented in this latest stable version."
+                        dna-press_to_continue
+
+                    else
+
+                        ### Alert in case of an imminent downgrade
+
+                        if semverLT "${selected_vers}" "${prev_version_installed}"
+                        then
+                            dna-echo -e "You have previously installed a newer version of ${project_name}."
+                            dna-echo -m "This is likely an error. If you're trying to manually downgrade to a previous version, and you're sure you want to do so, then edit the installer to bypass this check."
+                            dna-exit
+                        fi
+
+                    fi
+
+                    ### In any event, alert about the re-install
+
+                    dna-echo -m "You're now re-running the ${project_name} installer."
+                    dna-echo -s "This is perfectly fine as ${project_name} is meant to be re-installed as many times as you'd like [also to update your current installation]."
+                    dna-echo -e "Keep in mind though that all customizations external to ${project_name} you might have made will be permanently deleted."
+                    dna-echo -m "This is because the installation script goes through every configuration and sets the default values, with no regard to any anomaly it finds."
+                    dna-echo -e "If you want to save any customizations you have made, exit this script and do so now."
+                    dna-press_to_continue
+
+                fi
+
+            else
+
+                ### It appears the previous install was not completed successfully, as version_initiated is different from version_installed.
+
+                prev_install_incomplete="y"
+
+            fi
+
+        else
+
+            ### It appears the previous install was not completed successfully, as there is no version_installed file, only the version_initiated one.
+
+            prev_install_incomplete="y"
+
+        fi
+
+        if [ "${prev_install_incomplete-null}" = "y" ]
+        then
+            dna-echo -e "It appears you have a previous incomplete installation of ${project_name}."
+            dna-echo -m "Either you intentionally aborted the install or the script got somehow terminated before it finished."
+            dna-echo -m "In either case, if you're having any trouble, please open an issue. Thanks!"
+            dna-press_to_continue
+            clear
+        fi
+
+        ### In any event, since there is a previous installation, at least partial, prompt for a backup.
+
+        if [ "${backup_prompt_during_install}" = "y" ]
+        then
+
+            dna-echo -m "It's highly recommended to run one last, fully automated backup before you proceed with the aenigma installer re-run."
+            dna-ask_for_boolean -d "y" -q "Do you want to run the backup now [without exiting this script]?"
+            if [ "${boolean_output}" = "y" ]
+            then
+
+                dna-echo -n -m "Ok, proceeding with backup..."
+
+                if bash "${source_dir}/tools/${project_name}-backup" -s
+                then
+
+                    backup_output="ok"
+
+                else
+
+                    backup_output="failed"
+
+                fi
+
+                sleep 1
+
+                if [ "${backup_output}" = "ok" ]
+                then
+
+                    dna-echo -s "Backup complete. Continuing installation..."
+
+                else
+
+                    dna-echo -e "Backup failed. It's likely that by completing this installation the backup functionality will be restored, but proceed at your own risk."
+                    dna-ask_for_boolean -d "y" -q "Continue anyway even without a backup?"
+
+                    if [ "${boolean_output}" = "y" ]
+                    then
+
+                        dna-echo -m "Ok, continuing..."
+
+                    else
+
+                        dna-echo -m "Ok, aborting..."
+                        dna-exit
+
+                    fi
+
+                fi
+
+            else
+
+                dna-echo -m "Ok, skipping backup..."
+
+            fi
+
+        fi
+
+    fi
+
+}
+
+dna-check_install_complete() {
+
+    if [ -f "${conf_dir}/version/version_initiated" ]
+    then
+        prev_version_initiated="$(cat $conf_dir/version/version_initiated)"
+        if [ -f "${conf_dir}/version/version_installed" ]
+        then
+            prev_version_installed="$(cat ${conf_dir}/version/version_installed)"
+            if [ "${prev_version_installed}" = "${prev_version_initiated}" ]
+            then
+                export install_complete="y"
+            else
+                export install_complete="n"
+            fi
+        else
+            export install_complete="n"
+        fi
+    else
+        export install_complete="n"
+    fi
+
+}
+
+dna-read_conf_settings() {
+
+    ############################################################################
+
+    ## fetch hostname.
+
+    dna-get_hostname
+
+    ############################################################################
+
+    ## read project-specific settings.
+
+    conf_files="$(find ${conf_dir} -type f | xargs)"
+
+    for conf_file in ${conf_files}
+    do
+
+        conf_file_name="$(basename ${conf_file})"
+        export $conf_file_name="$(cat ${conf_file})"
+
+    done
+
+    unset conf_files conf_file conf_file_name
+
+    ############################################################################
+
+    ## read os global settings if present.
+
+    if [ -d "${os_conf_dir}" ]
+    then
+
+        os_conf_files="$(find ${os_conf_dir} -type f | xargs)"
+
+        for os_conf_file in ${os_conf_files}
+        do
+
+            os_conf_file_name="$(basename ${os_conf_file})"
+            export $os_conf_file_name="$(cat ${os_conf_file})"
+
+        done
+
+        unset os_conf_files os_conf_file os_conf_file_name
+
+    fi
+
+    ############################################################################
+
+}
+
+dna-link_tools() {
+
+    (
+        cd "${tools_dir}"
+
+        for tool_script in "${project_name}"-*
+        do
+
+            chmod +x "${tool_script}"
+
+            if [ ! -f "/usr/local/bin/${tool_script}" ]
+            then
+                ln -s "${tools_dir}/${tool_script}" "/usr/local/bin/"
+            fi
+
+        done
+    )
+
+}
+
+dna-run_install() {
+
+    ############################################################################
+
+    ### Add padding to output
+
+    echo
+
+    ############################################################################
+
+    ### Store current date and time into a var
+
+    now="$(date +"%Y-%m-%d_%H-%M-%S")"
+
+    ############################################################################
+
+    ### Define latest version
+
+    export latest_vers_final="$(cd ${source_dir} && semtag getfinal)"
+    export latest_vers_tagged="$(cd ${source_dir} && semtag getlast)"
+    export latest_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
+
+    ############################################################################
+
+    ### Launch the installer
+
+    if [ "${custom_project_version-null}" = "l" ]
+    then
+
+        export selected_vers="v0.0.1-custom-local"
+
+        dna-echo -e "Installing | ${n-}local version${r-} | of | ${n-}${project_name}${r-} | respecting any local alteration performed as per | ${n-}-p l${r-} |."
+
+        ( cd "${source_dir}" && bash ./install --return-check )
+
+    elif [ "${custom_project_version-null}" = "b" ]
+    then
+
+        if [ -z "${custom_branch-}" ]
+        then
+
+            export selected_vers="${latest_vers_bl_edge}"
+
+            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | ${n-}${project_name}${r-} | up to latest git commit as per | ${n-}-p b${r-} |."
+
+            ( cd "${source_dir}" && git fetch && git reset --hard origin/master && echo && bash ./install --return-check )
+
+        else
+
+            dna-echo -e "Installing | ${n-}bleeding-edge version${r-} | of | branch ${n-}${custom_branch}${r-} | of | ${n-}${project_name}${r-} | as per | ${n-}-b ${custom_branch}${r-} |."
+
+            ( cd "${source_dir}" && git fetch && git reset --hard origin/${custom_branch} && git config advice.detachedHead false && git checkout "${custom_branch}" && git pull && echo )
+
+            export latest_custom_branch_vers_bl_edge="$(cd ${source_dir} && semtag getcurrent)"
+
+            export selected_vers="${latest_custom_branch_vers_bl_edge}"
+
+            ( cd "${source_dir}" && bash ./install --return-check )
+
+        fi
+
+    elif [[ "${custom_project_version-null}" == *"v"* ]]
+    then
+
+        export selected_vers="${custom_project_version}"
+
+        dna-echo -m "${c-}Installing | ${n-}version ${selected_vers}${c-} | of | ${n-}${project_name}${c-} | as per | ${n-}-p ${selected_vers}${c-} |."
+
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${selected_vers}" && echo && bash ./install --return-check )
+
+    elif [ "${custom_project_version-null}" = "t" ]
+    then
+
+        export selected_vers="${latest_vers_tagged}"
+
+        dna-echo -m "${o-}Installing | ${n-}latest-tagged version [${selected_vers}]${o-} | of | ${n-}${project_name}${o-} | [independently of its stability type] as per | ${n-}-p t${o-} |."
+
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_tagged}" && echo && bash ./install --return-check )
+
+    else
+
+        export selected_vers="${latest_vers_final}"
+
+        dna-echo -m "Installing | ${g-}version [${selected_vers}]${n-} | of | ${g-}${project_name}${n-} |."
+
+        ( cd "${source_dir}" && git config advice.detachedHead false && git checkout "tags/${latest_vers_final}" && echo && bash ./install --return-check )
+
+    fi
+
+    ############################################################################
+
+    ### Read the installer exit code and exit the script
+
+    if [ -f "${source_dir}/install_complete" ]
+    then
+
+        dna-echo -s "Installation complete."
+
+        ### Set installation complete checkfile with installed version
+
+        cp "${conf_dir}/version/version_initiated" "${conf_dir}/version/version_installed"
+
+        ### Remove installer directory
+
+        dna-echo -m "Now removing installer directory..."
+
+        dna-echo -m "Run | ${y-}git clone ${git_host}/${author_name}/${project_name}${n-} | once again to download the latest installer."
+
+        rm -r "${source_dir}"
+
+        dna-echo -m "Exiting installer."
+
+    else
+
+        dna-echo -e "The installation has encountered an error."
+
+        dna-echo -m "Please inspect the any error messages above and try performing the installation again or open an issue. Thank you."
+
+        dna-exit
+
+    fi
+
+    ############################################################################
+
+}
