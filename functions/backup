@@ -959,6 +959,12 @@ dna-backup_locally() {
 
 }
 
+dna-backup_move_temp_to_latest() {
+
+	mv "${backup_tmp_dir}/${backup_name}"/* "${backup_latest_dir}"
+
+}
+
 dna-backup() {
 
 	### initiate.
@@ -1030,7 +1036,7 @@ dna-backup() {
 			if [ "${backup_locally_mode_default}" = "enabled" ]
 			then
 
-		    	mv "${backup_tmp_dir}"/* "${backup_latest_dir}"
+		    	dna-backup_move_temp_to_latest
 
 			fi
 

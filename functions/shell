@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 : '
 
-    for get a current positon of cursor you nieed :
+    for get a current positon of cursor you need :
     
     dna-shell_cursor_position 
     dna-echo -n -m  "$dna_shell_position_x"   // x position at the time dna-shell_cursor_position was executed
