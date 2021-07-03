@@ -65,7 +65,7 @@ dna-add_cron_job() {
     touch "${job_path}"
     chmod 755 "${job_path}"
     echo "SHELL=/bin/bash" > "${job_path}"
-    echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "${job_path}"
+    echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/snap/bin" >> "${job_path}"
     echo "MAILTO=${admin_mail}" >> "${job_path}"
     echo >> "${job_path}"
     echo "${time} root cronic ${content}" >> "${job_path}"
