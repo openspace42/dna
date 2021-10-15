@@ -90,7 +90,7 @@ dna-sshd_set_config_value() {
 
     			dna-echo -m "SSHd | ${o-}${sshd_option_name}${n-} | currently set to: | ${y-}${sshd_option_value_current}${n-} |."
 
-          		sed -i "/${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
+          		sed -i "/^${sshd_option_name} /c${sshd_option_name} ${sshd_option_value}" "${sshd_config_extr_before}"
 
           		dna-echo -s "SSHd | ${o-}${sshd_option_name}${n-} | now set to | ${y-}${sshd_option_value}${n-} |."
 
